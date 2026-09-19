@@ -1,39 +1,40 @@
 # 🎵 Suno Prompt Generator
 
-[Suno AI](https://suno.com/) 用のスタイルプロンプトを、チェックボックスを選ぶだけで組み立てられるデスクトップアプリです。
+English | [日本語](README.ja.md)
+
 A desktop app for building [Suno AI](https://suno.com/) style prompts by simply ticking checkboxes.
 
 ![Suno Prompt Generator](snapshot/application-main.jpg)
 
-## 特徴 / Features
+## Features
 
-- **4つのカテゴリから選択** — ジャンル・ボーカル・楽器・構造を組み合わせてプロンプトを生成
-- **BPM 指定** — スライダーまたは数値入力でテンポを設定
-- **リアルタイムプレビュー** — 選択に合わせてプロンプトが即時更新
-- **ランダム生成** — ワンクリックでランダムな組み合わせを作成
-- **すべてクリア** — 選択とプレビューを一括リセット
-- **コピー / 保存** — クリップボードへのコピー、テキストファイルへの保存
-- **プロジェクト管理** — 選択内容に名前を付けて保存・読み込み・削除
-- **日本語 / English** — UI 言語を切り替え可能
+- **Pick from 4 categories** — combine genres, vocals, instruments and structures into a prompt
+- **BPM control** — set the tempo with a slider or by typing a number
+- **Live preview** — the prompt updates instantly as you select
+- **Random generate** — create a random combination with one click
+- **Clear all** — reset all selections and the preview at once
+- **Copy / Save** — copy to the clipboard or save as a text file
+- **Projects** — save, load and delete named sets of selections
+- **English / 日本語** — switch the UI language
 
-## ダウンロード / Download
+## Download
 
-[Releases](https://github.com/gadget114514/SunoPrompt/releases) から `SunoPromptGenerator.exe` をダウンロードして実行してください。
-インストール不要で、Node.js や npm も必要ありません（Windows x64）。
+Download `SunoPromptGenerator.exe` from [Releases](https://github.com/gadget114514/SunoPrompt/releases) and run it.
+No installation needed, and no Node.js or npm required (Windows x64).
 
-> 署名なしの実行ファイルのため、初回起動時に Windows SmartScreen の警告が出ることがあります。
-> その場合は「詳細情報」→「実行」を選んでください。
+> The executable is unsigned, so Windows SmartScreen may show a warning on first launch.
+> If it does, click "More info" → "Run anyway".
 
-## 使い方 / Usage
+## Usage
 
-1. 中央のタブ（Genres / Vocals / Instruments / Structures）から項目をチェック
-2. 右上のスライダーで BPM を調整
-3. Preview に表示されたプロンプトを **Copy to Clipboard** でコピー
-4. Suno の Style of Music 欄に貼り付け
+1. Tick items in the center tabs (Genres / Vocals / Instruments / Structures)
+2. Adjust the BPM with the slider at the top right
+3. Click **Copy to Clipboard** to copy the prompt shown in Preview
+4. Paste it into Suno's Style of Music field
 
-気に入った組み合わせは左パネルの **Save Project** で保存できます。
+Save combinations you like with **Save Project** in the left panel.
 
-## 開発 / Development
+## Development
 
 ```bash
 git clone https://github.com/gadget114514/SunoPrompt.git
@@ -42,25 +43,25 @@ npm install
 npm start
 ```
 
-### exe のビルド / Build the exe
+### Build the exe
 
 ```bash
 npm run dist
 ```
 
-`dist/SunoPromptGenerator.exe`（ポータブル版）が生成されます。
+This produces `dist/SunoPromptGenerator.exe` (portable build).
 
-## データファイル / Data files
+## Data files
 
-プロンプトの候補は以下の JSON から読み込まれます。編集すれば選択肢をカスタマイズできます。
+Prompt options are loaded from the following JSON files. Edit them to customize the choices.
 
-| ファイル | 内容 |
+| File | Contents |
 |---|---|
-| `genre.json` | ジャンル |
-| `suno_style_vocal_spec.json` | ボーカルのモード・表現 |
-| `suno_instrument_techniques.json` | 楽器と奏法 |
-| `suno_style_structure_phrases.json` | 曲構成のフレーズ |
+| `genre.json` | Genres |
+| `suno_style_vocal_spec.json` | Vocal modes and expressions |
+| `suno_instrument_techniques.json` | Instruments and playing techniques |
+| `suno_style_structure_phrases.json` | Song structure phrases |
 
-## ライセンス / License
+## License
 
 [MIT](LICENSE)
