@@ -1,0 +1,28 @@
+{
+  "name": "suno-prompt-generator",
+  "version": "1.0.0",
+  "description": "Suno AI用のプロンプト自動生成ツール",
+  "main": "main.js",
+  "homepage": "./",
+  "bin": {
+    "suno-prompt-generator": "launcher.js"
+  },
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "launch": "node launcher.js",
+    "package": "pkg launcher.js --targets node18-win-x64 --output suno-prompt-generator.exe"
+  },
+  "keywords": [
+    "suno",
+    "prompt",
+    "generator",
+    "music"
+  ],
+  "author": "gadget114514",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "pkg": "^5.8.1"
+  }
+}

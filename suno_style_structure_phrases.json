@@ -1,0 +1,62 @@
+{
+  "meta": {
+    "title": "Suno Style-field structure phrases",
+    "note": "Natural-language cues for the Style box. Not Lyrics metatags. These bias arrangement arc, contrast, and energy over time.",
+    "language": "en",
+    "usage": "Append after genre, vocal, and instrument terms in the Style field."
+  },
+  "categories": {
+    "intro": {
+     "description": "Intro",
+      "phrases": [
+        "instrumental intro",
+        "strictly no humming",
+        "no wordless vocals",
+        "short intro"
+
+      ]
+    
+    },
+    "time": {
+      "description": "Pacing and how the song begins or ends",
+      "phrases": [
+        "instrumental intro",
+        "strictly no humming",
+        "no wordless vocals",
+        "short intro",
+        "gradual build",
+        "final lift",
+        "fade out",
+        "hard stop"
+      ]
+    },
+    "contrast": {
+      "description": "Section-to-section contrast",
+      "phrases": [
+        "sparse verse",
+        "wide chorus",
+        "strip-back bridge",
+        "double chorus"
+      ]
+    },
+    "density": {
+      "description": "Arrangement density and intensity",
+      "phrases": [
+        "intimate",
+        "restrained",
+        "layered",
+        "full band",
+        "anthemic"
+      ]
+    },
+    "electronic": {
+      "description": "EDM / dance energy mechanics",
+      "phrases": [
+        "long build-up",
+        "heavy drop",
+        "breakdown",
+        "second drop bigger"
+      ]
+    }
+  }
+}

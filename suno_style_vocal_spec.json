@@ -1,0 +1,154 @@
+{
+  "meta": {
+    "title": "Suno Style field: how to specify sound and vocals",
+    "note": "Style box = genre, mood, instruments, vocal identity, arrangement arc. Lyrics box = words plus [Verse]/[Chorus] tags and per-section singer labels. Vocal phrases are steering cues, not hard locks.",
+    "language": "en"
+  },
+  "style_field_order": [
+    "genre",
+    "mood_or_energy",
+    "tempo_optional",
+    "vocal",
+    "lead_instruments",
+    "rhythm_section",
+    "production",
+    "structure_arc"
+  ],
+  "style_template": "{genre}, {mood}, {vocal}, {instruments}, {production}, {structure_arc}",
+  "vocal_modes": {
+    "unspecified": {
+      "id": "unspecified",
+      "use_when": "Let Suno pick a singer from genre bias. Pop often leans female; rock/hip-hop often lean male.",
+      "style_phrases": [
+        "lead vocal",
+        "solo vocal",
+        "clear lead vocal",
+        "expressive lead vocal"
+      ],
+      "style_examples": [
+        "indie pop, warm, clear lead vocal, jangly guitar, punchy drums, polished mix, sparse verse, wide chorus",
+        "lo-fi hip hop, late night, lead vocal, dusty drums, warm bass, vinyl texture, short intro, fade out"
+      ],
+      "lyrics_anchors": [],
+      "notes": [
+        "Omitting gender is valid.",
+        "Genre will often decide the voice.",
+        "Do not write male or female anywhere if you want it open."
+      ]
+    },
+    "male": {
+      "id": "male",
+      "use_when": "Lock a single male lead.",
+      "style_phrases": [
+        "male vocal",
+        "male lead vocal",
+        "male singer",
+        "one male vocalist"
+      ],
+      "style_modifiers": [
+        "baritone male vocal",
+        "tenor male vocal",
+        "raspy male vocal",
+        "smooth male vocal",
+        "soft male vocal",
+        "powerful male vocal",
+        "spoken-sung male vocal"
+      ],
+      "style_examples": [
+        "pop rock, anthemic, male lead vocal, electric guitar, live drums, warm bass, sparse verse, wide chorus, hard stop",
+        "R&B ballad, intimate, smooth male vocal, Rhodes, brushed drums, restrained verse, layered final chorus"
+      ],
+      "lyrics_anchors": [
+        "[male lead vocal]",
+        "[Verse 1 - Male]",
+        "[Chorus - Male]"
+      ],
+      "notes": [
+        "Repeat male in Style and as a Lyrics anchor for fewer mid-song gender swaps.",
+        "Add register (baritone / tenor) if the genre keeps flipping the voice."
+      ]
+    },
+    "female": {
+      "id": "female",
+      "use_when": "Lock a single female lead.",
+      "style_phrases": [
+        "female vocal",
+        "female lead vocal",
+        "female singer",
+        "one female vocalist"
+      ],
+      "style_modifiers": [
+        "alto female vocal",
+        "soprano female vocal",
+        "breathy female vocal",
+        "soulful female vocal",
+        "powerful female vocal",
+        "soft female vocal",
+        "belted female vocal"
+      ],
+      "style_examples": [
+        "synth pop, bright, breathy female vocal, analog synths, tight drums, short intro, wide chorus, fade out",
+        "cinematic ballad, emotional, powerful female vocal, piano, strings, intimate verse, final lift"
+      ],
+      "lyrics_anchors": [
+        "[female lead vocal]",
+        "[Verse 1 - Female]",
+        "[Chorus - Female]"
+      ],
+      "notes": [
+        "Repeat female in Style and as a Lyrics anchor.",
+        "Pop defaults female often; still specify if you need it stable."
+      ]
+    },
+    "duet": {
+      "id": "duet",
+      "use_when": "Two distinct singers. Must say duet and name both voices.",
+      "style_phrases": [
+        "male and female duet",
+        "one male vocalist and one female vocalist",
+        "duet, male and female vocals",
+        "two singers, male and female"
+      ],
+      "interaction_phrases": [
+        "alternating verses",
+        "call and response",
+        "harmonized chorus",
+        "shared chorus",
+        "verses sung separately, chorus together",
+        "never both at once until the chorus"
+      ],
+      "style_examples": [
+        "pop ballad, male and female duet, alternating verses, harmonized chorus, piano, soft drums, gradual build, final lift",
+        "country duet, one male vocalist and one female vocalist, call and response verses, blended chorus, acoustic guitar, pedal steel, restrained verse, wide chorus",
+        "R&B duet, male and female vocals, verses sung separately, chorus together, Rhodes, tight groove, intimate, layered chorus"
+      ],
+      "lyrics_anchors": [
+        "[male lead]",
+        "[female lead]",
+        "[Verse 1 - Male]",
+        "[Verse 2 - Female]",
+        "[Chorus - Both]",
+        "[Bridge - call and response]"
+      ],
+      "lyrics_pattern": "[Verse 1 - Male]\n...\n[Verse 2 - Female]\n...\n[Chorus - Both]\n...",
+      "notes": [
+        "Put the word duet in Style. 'male and female vocals' alone is weaker.",
+        "Name roles once in Style, then the same names in Lyrics tags.",
+        "Say how they interact: alternate / call-and-response / harmony together.",
+        "Unspecified duet often collapses into one blended voice."
+      ]
+    }
+  },
+  "combine_with_structure_arc": {
+    "time": ["short intro", "gradual build", "final lift", "fade out", "hard stop"],
+    "contrast": ["sparse verse", "wide chorus", "strip-back bridge", "double chorus"],
+    "density": ["intimate", "restrained", "layered", "full band", "anthemic"],
+    "electronic": ["long build-up", "heavy drop", "breakdown", "second drop bigger"]
+  },
+  "ready_style_lines": {
+    "unspecified": "modern pop, warm, lead vocal, clean guitar, punchy drums, polished mix, short intro, sparse verse, wide chorus, fade out",
+    "male": "modern pop, warm, male lead vocal, clean guitar, punchy drums, polished mix, short intro, sparse verse, wide chorus, fade out",
+    "female": "modern pop, warm, female lead vocal, clean guitar, punchy drums, polished mix, short intro, sparse verse, wide chorus, fade out",
+    "duet": "modern pop, warm, male and female duet, alternating verses, harmonized chorus, clean guitar, punchy drums, polished mix, short intro, sparse verse, wide chorus, fade out"
+  }
+}

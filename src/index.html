@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suno Prompt Generator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-top">
+        <div>
+          <h1>🎵 <span data-i18n="title">Suno Prompt Generator</span></h1>
+          <p data-i18n="subtitle">4つのカテゴリから選択してプロンプトを生成</p>
+        </div>
+        <div class="language-switcher">
+          <button class="lang-btn active" data-lang="en">English</button>
+          <button class="lang-btn" data-lang="ja">日本語</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <!-- Left Panel: Project Tree -->
+      <div class="left-panel">
+        <div class="panel-tabs">
+          <button class="panel-tab-button active" data-panel-tab="projects">📁 Projects</button>
+          <button class="panel-tab-button" data-panel-tab="settings">⚙️ Settings</button>
+        </div>
+
+        <div class="panel-tab-content active" id="projects-panel-tab">
+          <div class="projects-section">
+            <div class="project-input-group">
+              <input type="text" id="project-name" placeholder="Project name..." class="project-name-input" data-i18n-placeholder="projectNamePlaceholder">
+              <button id="save-project-btn" class="btn btn-primary btn-small" data-i18n="saveProject">💾 Save</button>
+            </div>
+            <div id="projects-list" class="projects-list"></div>
+          </div>
+        </div>
+
+        <div class="panel-tab-content" id="settings-panel-tab">
+          <div class="settings-section">
+            <div class="setting-item">
+              <label data-i18n="saveFolder">Save Folder</label>
+              <div class="setting-value">
+                <span id="current-folder" class="folder-path">Default folder</span>
+                <button id="select-folder-btn" class="btn btn-secondary btn-small" data-i18n="browse">Browse</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Panel: Tabs & Content -->
+      <div class="center-panel">
+        <div class="tabs">
+          <button class="tab-button active" data-tab="genres" data-i18n="genres">Genres</button>
+          <button class="tab-button" data-tab="vocals" data-i18n="vocals">Vocals</button>
+          <button class="tab-button" data-tab="instruments" data-i18n="instruments">Instruments</button>
+          <button class="tab-button" data-tab="structures" data-i18n="structures">Structures</button>
+        </div>
+
+        <div class="selections-container">
+          <div class="tab-content active" id="genres-tab">
+            <div id="genres-list" class="items-list"></div>
+          </div>
+          <div class="tab-content" id="vocals-tab">
+            <div id="vocals-list" class="items-list"></div>
+          </div>
+          <div class="tab-content" id="instruments-tab">
+            <div id="instruments-list" class="items-list"></div>
+          </div>
+          <div class="tab-content" id="structures-tab">
+            <div id="structures-list" class="items-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel: BPM + Preview + Buttons -->
+      <div class="right-panel">
+        <div class="bpm-section">
+          <label data-i18n="bpm">BPM</label>
+          <div class="bpm-input-group">
+            <input type="range" id="bpm-slider" min="40" max="200" value="120" class="bpm-slider">
+            <input type="number" id="bpm-input" min="40" max="200" value="120" class="bpm-number">
+            <span class="bpm-label">BPM</span>
+          </div>
+        </div>
+
+        <div class="preview-section">
+          <h3 data-i18n="preview">Preview</h3>
+          <div id="preview" class="preview-box" data-i18n-placeholder="previewPlaceholder">Preview will appear here</div>
+        </div>
+
+        <div class="button-group">
+          <button id="random-btn" class="btn btn-primary btn-block" data-i18n="random">🎲 Random</button>
+          <button id="copy-btn" class="btn btn-secondary btn-block" data-i18n="copy">📋 Copy</button>
+          <button id="save-btn" class="btn btn-secondary btn-block" data-i18n="save">💾 Save</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom: Log Container -->
+    <div class="log-container">
+      <div class="log-header">
+        <h4 data-i18n="log">Log</h4>
+        <button id="clear-log-btn" class="btn-small" data-i18n="clearLog">Clear</button>
+      </div>
+      <div id="log-window" class="log-window"></div>
+    </div>
+  </div>
+
+  <script src="utils/promptGenerator.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

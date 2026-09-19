@@ -1,0 +1,96 @@
+{
+  "Rock / Metal": [
+    "Alternative Rock",
+    "Pop Punk",
+    "Shoegaze",
+    "Piano Rock",
+    "Indie Rock",
+    "Grunge",
+    "Post-Rock",
+    "Djent",
+    "Symphonic Metal",
+    "Emo Rock / Screamo"
+  ],
+  "Pop / Electronic": [
+    "Synthpop",
+    "Future Bass",
+    "Hyperpop",
+    "Dream Pop",
+    "Chillwave",
+    "Vaporwave",
+    "Synthwave / Retrowave",
+    "Dubstep",
+    "Melodic Dubstep",
+    "J-pop",
+    "K-pop",
+    "Spanish Pop",
+    "Dance Pop",
+    "Synth-Pop",
+    "Acoustic-Pop"
+  ],
+  "Groove / Black Music": [
+    "R&B",
+    "Funk",
+    "Hip Hop",
+    "Neo Soul",
+    "Trap",
+    "UK Drill",
+    "Boom Bap",
+    "Afrobeats"
+  ],
+  "Chill / Atmospheric": [
+    "City Pop",
+    "Lo-fi Hip Hop",
+    "Ambient",
+    "Bedroom Pop",
+    "Indie Folk",
+    "Trip Hop"
+  ],
+  "Hardcore / Club": [
+    "Drum & Bass",
+    "Artcore",
+    "Jersey Club",
+    "Kawaii Metal",
+    "Hardstyle / Gabber"
+  ],
+  "Retro / Aesthetic": [
+    "Shibuya-kei",
+    "New Wave",
+    "Electro Swing",
+    "French House / Nu-Disco"
+  ],
+  "Technical / Complex": [
+    "Math Rock",
+    "Progressive Rock",
+    "J-Fusion"
+  ],
+  "Subculture": [
+    "Denpa Song",
+    "Visual Kei"
+  ],
+  "TikTok / Drive": [
+    "Drift Phonk",
+    "Eurobeat",
+    "Tropical House"
+  ],
+  "Fantasy / Story": [
+    "Celtic Pop",
+    "Wagakki Rock",
+    "Gothic Rock",
+    "Dark Wave",
+    "Epic Orchestral"
+  ],
+  "Rhythm / Fun / World": [
+    "Ska",
+    "Ska Punk",
+    "Reggae",
+    "Bossa Nova",
+    "Flamenco",
+    "Reggaeton"
+  ],
+  "Chaos / Internet": [
+    "Breakcore",
+    "Glitch Hop",
+    "Glitchcore"
+  ]
+}

@@ -1,0 +1,249 @@
+class PromptGenerator {
+  constructor(jsonData) {
+    this.data = jsonData;
+  }
+
+  generatePrompt(selections) {
+    const parts = [];
+
+    // BPM (if specified)
+    if (selections.bpm) {
+      parts.push(`${selections.bpm} bpm`);
+    }
+
+    // Genre
+    if (selections.genres && selections.genres.length > 0) {
+      parts.push(selections.genres.join(', '));
+    }
+
+    // Vocal (can be mode names or phrases/modifiers)
+    if (selections.vocals && selections.vocals.length > 0) {
+      selections.vocals.forEach(item => {
+        // Check if it's a vocal mode name
+        if (this.data.vocal?.vocal_modes?.[item]) {
+          // Use the first style phrase for this mode
+          const modeData = this.data.vocal.vocal_modes[item];
+          if (modeData.style_phrases && modeData.style_phrases.length > 0) {
+            parts.push(modeData.style_phrases[0]);
+          }
+        } else {
+          // It's a phrase or modifier
+          parts.push(item);
+        }
+      });
+    }
+
+    // Instruments (can be either instrument names or techniques)
+    if (selections.instruments && selections.instruments.length > 0) {
+      selections.instruments.forEach(item => {
+        // Check if it's an instrument name
+        if (this.data.instruments?.instruments?.[item]) {
+          const instrumentData = this.data.instruments.instruments[item];
+          if (instrumentData.aliases) {
+            parts.push(instrumentData.aliases[0]);
+          }
+        } else {
+          // It's a technique
+          parts.push(item);
+        }
+      });
+    }
+
+    // Structure phrases
+    if (selections.structures && selections.structures.length > 0) {
+      const structurePhrases = selections.structures.map(s => {
+        if (this.data.structure?.categories?.[s]?.phrases) {
+          return this.data.structure.categories[s].phrases[0];
+        }
+        return s;
+      });
+      parts.push(...structurePhrases);
+    }
+
+    return parts.join(', ');
+  }
+
+  getRandomSelection() {
+    const selection = {
+      genres: [],
+      vocals: [],
+      instruments: [],
+      structures: [],
+      bpm: this.getRandomBPM()
+    };
+
+    // Random genres (1-2)
+    if (this.data.genre) {
+      const allGenres = [];
+      for (const genreList of Object.values(this.data.genre)) {
+        if (Array.isArray(genreList)) {
+          allGenres.push(...genreList);
+        }
+      }
+      if (allGenres.length > 0) {
+        const count = Math.random() > 0.5 ? 2 : 1;
+        for (let i = 0; i < count && allGenres.length > 0; i++) {
+          const idx = Math.floor(Math.random() * allGenres.length);
+          selection.genres.push(allGenres[idx]);
+          allGenres.splice(idx, 1);
+        }
+      }
+    }
+
+    // Random vocal (mode + 1-2 phrases)
+    if (this.data.vocal?.vocal_modes) {
+      const vocalModes = Object.entries(this.data.vocal.vocal_modes);
+      if (vocalModes.length > 0) {
+        const [modeName, modeData] = vocalModes[Math.floor(Math.random() * vocalModes.length)];
+
+        // Add vocal mode
+        selection.vocals.push(modeName);
+
+        // Add 1-2 style phrases from this mode
+        const phrases = [];
+        if (modeData.style_phrases) phrases.push(...modeData.style_phrases);
+        if (modeData.style_modifiers) phrases.push(...modeData.style_modifiers);
+
+        if (phrases.length > 0) {
+          const phraseCount = Math.min(Math.random() > 0.6 ? 2 : 1, phrases.length);
+          for (let i = 0; i < phraseCount; i++) {
+            const idx = Math.floor(Math.random() * phrases.length);
+            selection.vocals.push(phrases[idx]);
+            phrases.splice(idx, 1);
+          }
+        }
+      }
+    }
+
+    // Random instruments (2-4 with more techniques each)
+    if (this.data.instruments?.instruments) {
+      const instruments = Object.entries(this.data.instruments.instruments);
+      if (instruments.length > 0) {
+        // Weighted selection: more instruments used
+        const weights = [2, 2, 3, 4];
+        const instrumentCount = weights[Math.floor(Math.random() * weights.length)];
+        const selectedInstruments = [];
+
+        for (let i = 0; i < instrumentCount && instruments.length > 0; i++) {
+          const idx = Math.floor(Math.random() * instruments.length);
+          const [instName, instData] = instruments[idx];
+
+          // Add instrument
+          selectedInstruments.push(instName);
+
+          // Add 2-3 techniques from this instrument
+          if (instData.techniques && instData.techniques.length > 0) {
+            const techniques = [...instData.techniques];
+            const techCount = Math.min(Math.floor(Math.random() * 2) + 2, techniques.length);
+            for (let j = 0; j < techCount; j++) {
+              const tidx = Math.floor(Math.random() * techniques.length);
+              selectedInstruments.push(techniques[tidx]);
+              techniques.splice(tidx, 1);
+            }
+          }
+
+          instruments.splice(idx, 1);
+        }
+        selection.instruments = selectedInstruments;
+      }
+    }
+
+    // Random structures (2-3 phrases)
+    if (this.data.structure?.categories) {
+      const allStructures = [];
+      for (const categoryData of Object.values(this.data.structure.categories)) {
+        if (categoryData.phrases) {
+          allStructures.push(...categoryData.phrases);
+        }
+      }
+      if (allStructures.length > 0) {
+        const count = Math.min(Math.floor(Math.random() * 3) + 2, allStructures.length);
+        for (let i = 0; i < count; i++) {
+          const idx = Math.floor(Math.random() * allStructures.length);
+          selection.structures.push(allStructures[idx]);
+          allStructures.splice(idx, 1);
+        }
+      }
+    }
+
+    return selection;
+  }
+
+  getRandomBPM() {
+    // Weighted random BPM distribution
+    const weights = [
+      { range: [60, 90], weight: 0.2 },    // Slow (20%)
+      { range: [90, 140], weight: 0.5 },   // Medium (50%)
+      { range: [140, 200], weight: 0.3 }   // Fast (30%)
+    ];
+
+    const rand = Math.random();
+    let accumulated = 0;
+
+    for (const { range, weight } of weights) {
+      accumulated += weight;
+      if (rand < accumulated) {
+        return Math.floor(Math.random() * (range[1] - range[0]) + range[0]);
+      }
+    }
+
+    return 120; // Default
+  }
+
+  flattenAllItems() {
+    const items = {
+      genres: [],
+      vocals: [],
+      instruments: { byInstrument: {}, allTechniques: [] },
+      structures: { byCategory: {}, allPhrases: [] }
+    };
+
+    // Flatten genres
+    if (this.data.genre) {
+      for (const category of Object.values(this.data.genre)) {
+        if (Array.isArray(category)) {
+          items.genres.push(...category);
+        }
+      }
+    }
+
+    // Structure vocals by mode with phrases and modifiers
+    items.vocals = { byMode: {}, allPhrases: [] };
+    if (this.data.vocal?.vocal_modes) {
+      for (const [modeName, modeData] of Object.entries(this.data.vocal.vocal_modes)) {
+        items.vocals.byMode[modeName] = [];
+
+        if (modeData.style_phrases) {
+          items.vocals.byMode[modeName].push(...modeData.style_phrases);
+          items.vocals.allPhrases.push(...modeData.style_phrases);
+        }
+        if (modeData.style_modifiers) {
+          items.vocals.byMode[modeName].push(...modeData.style_modifiers);
+          items.vocals.allPhrases.push(...modeData.style_modifiers);
+        }
+      }
+    }
+
+    // Structure instruments by instrument with techniques
+    if (this.data.instruments?.instruments) {
+      for (const [instrumentName, instrumentData] of Object.entries(this.data.instruments.instruments)) {
+        if (instrumentData.techniques) {
+          items.instruments.byInstrument[instrumentName] = instrumentData.techniques;
+          items.instruments.allTechniques.push(...instrumentData.techniques);
+        }
+      }
+    }
+
+    // Structure by category with phrases
+    if (this.data.structure?.categories) {
+      for (const [categoryName, categoryData] of Object.entries(this.data.structure.categories)) {
+        if (categoryData.phrases) {
+          items.structures.byCategory[categoryName] = categoryData.phrases;
+          items.structures.allPhrases.push(...categoryData.phrases);
+        }
+      }
+    }
+
+    return items;
+  }
+}

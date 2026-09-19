@@ -1,0 +1,1767 @@
+{
+  "meta": {
+    "title": "Suno V6 instrument technique phrases",
+    "note": "Phrases Suno attempted to express, not a guarantee of accurate playback. Collected from ~100 instrument-specified tracks.",
+    "language": "en",
+    "format": "dictionary keyed by instrument name; techniques split into individual phrases",
+    "categories": [
+      "keyboard",
+      "guitar_plucked",
+      "bowed_strings",
+      "bass",
+      "brass",
+      "woodwind",
+      "percussion",
+      "electronic",
+      "ensemble",
+      "traditional_world",
+      "other"
+    ]
+  },
+  "instruments": {
+    "Grand Piano / Piano": {
+      "category": "keyboard",
+      "aliases": [
+        "Grand Piano",
+        "Piano"
+      ],
+      "techniques": [
+        "deep sustain pedal",
+        "overlapping resonant chords",
+        "legato arpeggios",
+        "flowing arpeggios",
+        "release the sustain pedal",
+        "short detached single notes",
+        "dry staccato notes",
+        "sparse detached chords",
+        "gentle half-pedal",
+        "soft half-pedal",
+        "restrained resonance gradually returning after dry notes",
+        "short staccato pulses",
+        "clipped chords",
+        "accented pulses",
+        "repeated figures",
+        "ostinato",
+        "pizzicato-like repeated figures",
+        "isolated low notes",
+        "high-register staccato replies",
+        "low octaves",
+        "sparse high-register dyads",
+        "bare fifth",
+        "harmonics",
+        "isolated overtones",
+        "sparse pointillistic harmonics",
+        "soft sustained chords",
+        "open chords",
+        "gradually widening voicings",
+        "soft final chord",
+        "quiet closing cadence"
+      ]
+    },
+    "Acoustic Guitar": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Acoustic Guitar"
+      ],
+      "techniques": [
+        "fingerpicking",
+        "sparse fingerpicked accompaniment",
+        "gentle 6/8 fingerpicking",
+        "soft fingerpicked pulse",
+        "picking",
+        "alternating picking and strumming",
+        "soft strums",
+        "fuller warm strumming",
+        "driving rhythmic strums",
+        "rapid rhythmic strumming",
+        "energetic rasgueado strums",
+        "soft alternating-bass pulse",
+        "sparse alternating-bass pattern",
+        "muted thumb-led rhythm",
+        "open-chord pulse with gentle bass movement",
+        "harmonics",
+        "isolated harmonic notes",
+        "muted harmonics",
+        "soft sustained patterns",
+        "suspended chords",
+        "gentle closing chord"
+      ]
+    },
+    "Electric Guitar": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Electric Guitar"
+      ],
+      "techniques": [
+        "palm-muted playing",
+        "short staccato figures",
+        "clean single notes",
+        "clipped plucks",
+        "sharp accents",
+        "clean arpeggios",
+        "repeated short phrases",
+        "fingerpicked harmonics",
+        "ringing harmonics",
+        "muted harmonics",
+        "tremolo",
+        "tremolo harmonics",
+        "bowed guitar swells",
+        "restrained sustained swells",
+        "held feedback",
+        "soft feedback sustain",
+        "open sustained chords",
+        "low-register sustained phrases"
+      ]
+    },
+    "Drum Kit": {
+      "category": "percussion",
+      "aliases": [
+        "Drum Kit",
+        "Drums"
+      ],
+      "techniques": [
+        "brushed playing",
+        "soft brushed groove",
+        "tight kick-and-snare patterns",
+        "half-time groove",
+        "stop-start patterns",
+        "short fills",
+        "gradual tom-led builds",
+        "soft cymbal lift",
+        "abrupt coordinated stop"
+      ]
+    },
+    "Violin": {
+      "category": "bowed_strings",
+      "aliases": [
+        "Violin"
+      ],
+      "techniques": [
+        "pizzicato",
+        "short dry plucked interjections",
+        "plucked replies between vocal phrases",
+        "transition from pizzicato to light arco",
+        "quick light spiccato bowing",
+        "delicate sautillé arco",
+        "soft sustained countermelody",
+        "long bowed curves",
+        "legato",
+        "legatissimo",
+        "long expressive sustained phrases",
+        "delicate arco harmonics",
+        "soft sustained harmonics",
+        "muted tone",
+        "bowed drone",
+        "two violins in soft harmony",
+        "interweaving lines",
+        "sustained thirds"
+      ]
+    },
+    "Electric Bass": {
+      "category": "bass",
+      "aliases": [
+        "Electric Bass"
+      ],
+      "techniques": [
+        "muted notes",
+        "repeated ostinato",
+        "sustained low notes",
+        "bowed electric bass",
+        "bass harmonics",
+        "melodic bass lines",
+        "short accented hits"
+      ]
+    },
+    "Trumpet": {
+      "category": "brass",
+      "aliases": [
+        "Trumpet"
+      ],
+      "techniques": [
+        "smooth sustained tones",
+        "warm steady single-pitch sustain",
+        "rapid flutter-tonguing on one sustained pitch",
+        "continuous flowing breath",
+        "rough grainy continuous texture",
+        "stop flutter-tonguing completely and return to a smooth sustained tone on the exact same pitch",
+        "alternating smooth sustained tones and restrained breath texture",
+        "short high-register bursts",
+        "muted punctuations",
+        "final sustained tone with natural decay"
+      ]
+    },
+    "Flute": {
+      "category": "woodwind",
+      "aliases": [
+        "Flute"
+      ],
+      "techniques": [
+        "rapid neighboring-note alternation",
+        "adjacent-note trills",
+        "one long smooth melody on a single breath",
+        "continuous legato",
+        "sustained cantabile",
+        "long arching one-breath phrases",
+        "warm low register rising gently",
+        "short answering phrases",
+        "lyrical counterlines",
+        "breathy tones",
+        "soft single-breath echoes",
+        "gently descending phrases"
+      ]
+    },
+    "Classical Guitar / Nylon-string Guitar": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Classical Guitar",
+        "Nylon-string Guitar"
+      ],
+      "techniques": [
+        "fingerstyle",
+        "light plucks",
+        "delicate fingerpicking",
+        "arpeggios",
+        "sparse plucked figures",
+        "isolated high-string single notes",
+        "widely spaced treble responses",
+        "rapid repeated same-pitch treble notes on one string",
+        "ring-middle-index finger repetition",
+        "slow thumb bass notes inserted between treble repetitions",
+        "measured alternating thumb bass beneath rapid treble repetition",
+        "stop the high-string repetition and return to widely spaced single notes",
+        "harmonics",
+        "muted harmonics",
+        "final single note allowed to decay naturally"
+      ]
+    },
+    "Tambourine": {
+      "category": "percussion",
+      "aliases": [
+        "Tambourine"
+      ],
+      "techniques": [
+        "shaking",
+        "light rhythmic accents"
+      ]
+    },
+    "Cymbals": {
+      "category": "percussion",
+      "aliases": [
+        "Cymbals"
+      ],
+      "techniques": [
+        "brushed strokes",
+        "brushed swells",
+        "bowed cymbal",
+        "bowed swells",
+        "isolated crash",
+        "soft final brushed stroke"
+      ]
+    },
+    "Taiko / Taiko-like Low Drums": {
+      "category": "percussion",
+      "aliases": [
+        "Taiko",
+        "Taiko-like Low Drums"
+      ],
+      "techniques": [
+        "booming low strikes",
+        "broad heavy impacts",
+        "layered low-drum pulses"
+      ]
+    },
+    "Xylophone": {
+      "category": "percussion",
+      "aliases": [
+        "Xylophone"
+      ],
+      "techniques": [
+        "muted isolated notes",
+        "thin single-note figures",
+        "short repeated patterns with gradual variation"
+      ]
+    },
+    "Accordion": {
+      "category": "keyboard",
+      "aliases": [
+        "Accordion"
+      ],
+      "techniques": [
+        "short melodic accents",
+        "answering phrases",
+        "melodic countermelody",
+        "brief flourishes",
+        "soft sustained phrases"
+      ]
+    },
+    "Clarinet": {
+      "category": "woodwind",
+      "aliases": [
+        "Clarinet"
+      ],
+      "techniques": [
+        "short tongued notes",
+        "individually tongued detached notes",
+        "one note per tongue stroke",
+        "continuous legato melody on one breath",
+        "uninterrupted airflow",
+        "alternating detached and fully legato versions of the same motif",
+        "short high-register bursts",
+        "warm accents",
+        "muted tone",
+        "gentle counterpoint",
+        "detached phrase followed by a legato echo"
+      ]
+    },
+    "Trombone": {
+      "category": "brass",
+      "aliases": [
+        "Trombone"
+      ],
+      "techniques": [
+        "breath-supported glissando between two neighboring pitches",
+        "slow short-distance legato slide",
+        "continuous unbroken tone",
+        "repeat the same adjacent pitches as distinct separated notes",
+        "clearly articulated and settled",
+        "sustained low tones",
+        "short answering phrases",
+        "muted tone"
+      ]
+    },
+    "Cello": {
+      "category": "bowed_strings",
+      "aliases": [
+        "Cello"
+      ],
+      "techniques": [
+        "long rounded low tones",
+        "broad legato bowing",
+        "sustained low support",
+        "repeat the same short melody while gradually moving the bow toward the bridge",
+        "sul ponticello",
+        "thin grainy tone",
+        "dry rasping harmonics",
+        "fragile sustained notes",
+        "sul tasto",
+        "bowing toward the fingerboard for a warmer rounder tone",
+        "return from near-bridge bowing to the earlier warm contact point",
+        "changes in bow contact and bow pressure",
+        "pizzicato",
+        "sparse plucked notes",
+        "bowed harmonics",
+        "low harmonics",
+        "repeated ostinato",
+        "surging figures",
+        "low drone",
+        "soft sustained answers",
+        "quiet bass-line support",
+        "fading final low tone"
+      ]
+    },
+    "Harp": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Harp"
+      ],
+      "techniques": [
+        "widely spaced single-string plucks",
+        "isolated notes",
+        "low-to-high placement of separated notes",
+        "soft rolled chords",
+        "arpeggios",
+        "ascending adjacent-string glissando from low to high",
+        "continuous descending glissando from high to low",
+        "sustained high-register resonance after a glissando",
+        "sparse harmonics",
+        "soft low plucks"
+      ]
+    },
+    "Shamisen": {
+      "category": "traditional_world",
+      "aliases": [
+        "Shamisen"
+      ],
+      "techniques": [
+        "crisp articulated phrases"
+      ]
+    },
+    "Koto": {
+      "category": "traditional_world",
+      "aliases": [
+        "Koto"
+      ],
+      "techniques": [
+        "thin isolated single notes",
+        "gentle legato connections with short lingering resonance",
+        "soft harmonics"
+      ]
+    },
+    "Shakuhachi": {
+      "category": "traditional_world",
+      "aliases": [
+        "Shakuhachi"
+      ],
+      "techniques": [
+        "long breath-supported tones",
+        "low breathy phrases",
+        "slowly rising and falling sustained lines"
+      ]
+    },
+    "Organ": {
+      "category": "keyboard",
+      "aliases": [
+        "Organ"
+      ],
+      "techniques": [
+        "sustained chords",
+        "low drone",
+        "sustained pad"
+      ]
+    },
+    "Pipe Organ": {
+      "category": "keyboard",
+      "aliases": [
+        "Pipe Organ"
+      ],
+      "techniques": [
+        "both hands playing a short manual melody over one sustained low pedalboard note",
+        "hold the pedal tone while releasing all manual keys",
+        "manuals silent beneath the voice",
+        "sustained pedal alone",
+        "return to the same manual melody with unchanged registration",
+        "soft flute-stop registration",
+        "release both manuals and pedal after the final vocal phrase"
+      ]
+    },
+    "Synthesizer / Synth Bass": {
+      "category": "electronic",
+      "aliases": [
+        "Synthesizer",
+        "Synth Bass",
+        "Synth"
+      ],
+      "techniques": [
+        "sustained drone",
+        "long held low tones",
+        "repeated pulses",
+        "interlocking pulses in offset cycles",
+        "bass ostinato",
+        "staggered repeating figures",
+        "arpeggios",
+        "ascending sequences",
+        "long arpeggiated lines",
+        "short plucked figures",
+        "staccato chords",
+        "clipped stabs",
+        "long pitch bends",
+        "glides",
+        "rising and falling sustained lines",
+        "gradual swells",
+        "brief isolated high tones"
+      ]
+    },
+    "Double Bass / Upright Bass": {
+      "category": "bowed_strings",
+      "aliases": [
+        "Double Bass",
+        "Upright Bass"
+      ],
+      "techniques": [
+        "arco",
+        "bowed open-string low tone",
+        "sustained low fundamental",
+        "unfretted open-string pedal",
+        "open-string drone",
+        "natural harmonics",
+        "lightly touching the string midpoint without pressing to the fingerboard",
+        "thin clear octave harmonic",
+        "delicate bow pressure",
+        "release the harmonic touch and return to the full bowed open-string low tone",
+        "pizzicato",
+        "isolated plucks",
+        "gentle plucked bass support",
+        "bowed harmonics",
+        "sustained bass drones",
+        "bowed glissandi",
+        "thin descending glissandi",
+        "soft sustained notes",
+        "muted bass ostinato",
+        "sparse pulses",
+        "rhythmic bass movement"
+      ]
+    },
+    "French Horn": {
+      "category": "brass",
+      "aliases": [
+        "French Horn",
+        "Horn"
+      ],
+      "techniques": [
+        "hand-stopped tone",
+        "muffled narrow resonance",
+        "gradually opening the hand inside the bell",
+        "changing to full warm round resonance",
+        "alternating stopped and open tones",
+        "soft sustained breath tones",
+        "long sustained phrases",
+        "gently undulating phrases",
+        "low swells",
+        "sparse pulses",
+        "soft resolution and natural decay"
+      ]
+    },
+    "Marimba": {
+      "category": "percussion",
+      "aliases": [
+        "Marimba"
+      ],
+      "techniques": [
+        "soft-headed yarn-wrapped mallet attacks",
+        "rounded muted attacks",
+        "slightly firmer or harder yarn-wrapped mallets",
+        "clearer initial attacks",
+        "stop completely to change mallets",
+        "then repeat the same motif",
+        "keep pitches",
+        "note order",
+        "and spacing unchanged during the mallet change",
+        "short isolated notes placed only in vocal gaps",
+        "sparse rounded motifs",
+        "repeated single notes",
+        "short staccato accents",
+        "muted notes",
+        "interlocking ostinatos",
+        "two interlocking marimba parts",
+        "repeating stepwise figures",
+        "gradually changing repeated patterns"
+      ]
+    },
+    "Timpani": {
+      "category": "percussion",
+      "aliases": [
+        "Timpani"
+      ],
+      "techniques": [
+        "widely spaced alternating soft-mallet strokes",
+        "gradually shorten the gaps between alternating strokes",
+        "accelerating tremolo",
+        "closer alternating rolls",
+        "continuous swell built from rapidly alternating soft mallets",
+        "dense roll",
+        "measured crescendo",
+        "abrupt hand damping",
+        "stop the resonance with the palm",
+        "muted low strokes"
+      ]
+    },
+    "Tuba": {
+      "category": "brass",
+      "aliases": [
+        "Tuba"
+      ],
+      "techniques": [
+        "low answering phrases following short high-register trumpet and clarinet bursts"
+      ]
+    },
+    "Oboe": {
+      "category": "woodwind",
+      "aliases": [
+        "Oboe"
+      ],
+      "techniques": [
+        "single brief upper-neighbor ornament before a sustained tone",
+        "quickly touch a neighboring note once and return",
+        "short ornamental answers",
+        "lyrical countermelody",
+        "repeat the melody with plainly sustained notes and no ornament",
+        "unison sustained note with the singer"
+      ]
+    },
+    "Viola": {
+      "category": "bowed_strings",
+      "aliases": [
+        "Viola"
+      ],
+      "techniques": [
+        "long dark soft arco tones",
+        "warm low-register bowing",
+        "sul tasto",
+        "smooth sustained legato",
+        "col legno taps",
+        "lightly tapping the strings with the wooden bow stick",
+        "sparse dry wooden-bow replies separated by silence",
+        "return from wooden-bow taps to bow-hair arco",
+        "long seamless diminuendo",
+        "pizzicato",
+        "plucked responses",
+        "tremolo",
+        "sul ponticello",
+        "muted harmonics",
+        "solo harmonics",
+        "bowed swells",
+        "sustained drones",
+        "restrained chords"
+      ]
+    },
+    "Snare Drum": {
+      "category": "percussion",
+      "aliases": [
+        "Snare Drum",
+        "Snare"
+      ],
+      "techniques": [
+        "brush strokes",
+        "light snare brushes",
+        "brushed rim",
+        "rim clicks",
+        "sharp rimshots",
+        "marching patterns",
+        "marching rolls",
+        "short fills",
+        "clipped attacks"
+      ]
+    },
+    "Kick / Bass Drum": {
+      "category": "percussion",
+      "aliases": [
+        "Kick",
+        "Bass Drum",
+        "Kick Drum"
+      ],
+      "techniques": [
+        "soft isolated strokes",
+        "muted pulses",
+        "syncopated hits",
+        "heartbeat-like pulse",
+        "heavy uneven strokes",
+        "pounding repeated hits",
+        "brushed kick",
+        "bass-drum swells",
+        "abrupt stops"
+      ]
+    },
+    "Hi-hat": {
+      "category": "percussion",
+      "aliases": [
+        "Hi-hat",
+        "Hihat"
+      ],
+      "techniques": [
+        "closed hi-hat strokes",
+        "dry repeated ticks",
+        "crisp subdivisions",
+        "precise hi-hat rolls",
+        "brushed hi-hat"
+      ]
+    },
+    "Toms / Floor Toms": {
+      "category": "percussion",
+      "aliases": [
+        "Toms",
+        "Floor Toms"
+      ],
+      "techniques": [
+        "muted strokes",
+        "sparse low hits",
+        "rolling figures",
+        "repeated rolls",
+        "accelerating builds",
+        "syncopated patterns",
+        "alternating tom and light-tap figures",
+        "half-time pulses",
+        "soft swells",
+        "dense synchronized low strokes",
+        "short low-register bursts"
+      ]
+    },
+    "Bells / Handbells / Chimes": {
+      "category": "percussion",
+      "aliases": [
+        "Bells",
+        "Handbells",
+        "Chimes"
+      ],
+      "techniques": [
+        "short isolated strikes",
+        "sparse bell-like accents",
+        "repeated brief notes at even intervals",
+        "alternating bell hits",
+        "rapid repeated hits",
+        "tremolo",
+        "harmonic tones",
+        "octave figures",
+        "short flourishes",
+        "descending cascades",
+        "single closing strike allowed to decay"
+      ]
+    },
+    "Glockenspiel": {
+      "category": "percussion",
+      "aliases": [
+        "Glockenspiel"
+      ],
+      "techniques": [
+        "delicate short accents"
+      ]
+    },
+    "Mokugyo": {
+      "category": "traditional_world",
+      "aliases": [
+        "Mokugyo"
+      ],
+      "techniques": [
+        "fine bouncing repeated strikes"
+      ]
+    },
+    "Gong": {
+      "category": "percussion",
+      "aliases": [
+        "Gong"
+      ],
+      "techniques": [
+        "soft low punctuation at structural boundaries",
+        "isolated resonant strike",
+        "natural decay"
+      ]
+    },
+    "Electric Piano / Rhodes": {
+      "category": "keyboard",
+      "aliases": [
+        "Electric Piano",
+        "Rhodes"
+      ],
+      "techniques": [
+        "short rounded chords",
+        "subtle chordal accompaniment",
+        "clean arpeggios",
+        "muted notes",
+        "percussive attacks",
+        "plucked tones",
+        "isolated notes",
+        "softly fading sustained tones"
+      ]
+    },
+    "Felt Piano / Upright Piano": {
+      "category": "keyboard",
+      "aliases": [
+        "Felt Piano",
+        "Upright Piano"
+      ],
+      "techniques": [
+        "soft single notes",
+        "sparse repeating figures",
+        "minor-key ostinato",
+        "soft voicings",
+        "arpeggios",
+        "short chords",
+        "muted notes",
+        "dry accents",
+        "irregular muted knocks",
+        "sparse harmonics",
+        "isolated low-register notes"
+      ]
+    },
+    "Bassoon": {
+      "category": "woodwind",
+      "aliases": [
+        "Bassoon"
+      ],
+      "techniques": [
+        "short dry isolated low notes",
+        "one clear attack after each vocal phrase",
+        "rapid repeated low notes at one pitch",
+        "every attack distinct and evenly separated",
+        "crisp detached attacks",
+        "sharply separated single-pitch pulses",
+        "stop the repetition cleanly",
+        "pause",
+        "then return to one spaced low note",
+        "final isolated low note followed by silence"
+      ]
+    },
+    "Mandolin": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Mandolin"
+      ],
+      "techniques": [
+        "plucked nimble melodies",
+        "melodic doubling with oud"
+      ]
+    },
+    "Vibraphone": {
+      "category": "percussion",
+      "aliases": [
+        "Vibraphone"
+      ],
+      "techniques": [
+        "bowed vibraphone",
+        "bowed harmonics",
+        "sustain pedal held",
+        "motor off",
+        "short chords struck at even intervals",
+        "allow each struck chord to ring with steady resonance",
+        "start the motor during the resonance after a strike",
+        "slow gentle volume undulation",
+        "slightly increase motor speed for faster volume undulation",
+        "stop the motor and return to steady ringing",
+        "release the sustain pedal and damp the instrument completely"
+      ]
+    },
+    "Shinobue": {
+      "category": "traditional_world",
+      "aliases": [
+        "Shinobue"
+      ],
+      "techniques": [
+        "bright short answering phrases",
+        "thin breathy phrases",
+        "long gently rising and falling lines"
+      ]
+    },
+    "Kalimba": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Kalimba"
+      ],
+      "techniques": [
+        "gentle plucked motifs"
+      ]
+    },
+    "Harpsichord": {
+      "category": "keyboard",
+      "aliases": [
+        "Harpsichord"
+      ],
+      "techniques": [
+        "restrained sparse continuo",
+        "quiet continuo cadence",
+        "sparse accompaniment",
+        "soft closing cadence"
+      ]
+    },
+    "Bandoneon": {
+      "category": "keyboard",
+      "aliases": [
+        "Bandoneon"
+      ],
+      "techniques": [
+        "long expressive breath-shaped phrases",
+        "broad sustained lines",
+        "short answering sighs",
+        "featured melodic solo",
+        "long descending phrase",
+        "swelling and releasing sustained tones"
+      ]
+    },
+    "Electronic Drums / Drum Machine": {
+      "category": "electronic",
+      "aliases": [
+        "Electronic Drums",
+        "Drum Machine"
+      ],
+      "techniques": [
+        "syncopated programmed patterns",
+        "tight repeated pulses",
+        "short snare fills",
+        "repeated hi-hat subdivisions",
+        "stop-start figures",
+        "clipped percussion",
+        "abrupt mutes"
+      ]
+    },
+    "Djembe": {
+      "category": "percussion",
+      "aliases": [
+        "Djembe"
+      ],
+      "techniques": [
+        "deep rhythmic hand-drum tones"
+      ]
+    },
+    "Shakers / Guasá / Seed Shakers": {
+      "category": "percussion",
+      "aliases": [
+        "Shakers",
+        "Guasá",
+        "Seed Shakers"
+      ],
+      "techniques": [
+        "soft repeated shaking",
+        "fine rhythmic subdivisions",
+        "interlocking repeated patterns",
+        "delicate brushed-shaker textures"
+      ]
+    },
+    "Woodblock / Wooden Percussion": {
+      "category": "percussion",
+      "aliases": [
+        "Woodblock",
+        "Wooden Percussion"
+      ],
+      "techniques": [
+        "dry isolated taps",
+        "clipped strikes",
+        "short staccato patterns",
+        "fine repeated clicks",
+        "regularly spaced knocks",
+        "uneven syncopated knocks",
+        "alternating hollow bamboo-like knocks",
+        "finger taps on wood",
+        "wooden rim taps",
+        "interlocking rhythmic figures",
+        "phrase-answering accents"
+      ]
+    },
+    "Celesta": {
+      "category": "keyboard",
+      "aliases": [
+        "Celesta"
+      ],
+      "techniques": [
+        "short chiming notes",
+        "sparse plucked-style figures"
+      ]
+    },
+    "Bass Clarinet": {
+      "category": "woodwind",
+      "aliases": [
+        "Bass Clarinet"
+      ],
+      "techniques": [
+        "muted low-register staccato replies",
+        "long undulating phrases",
+        "sustained low drones",
+        "breath tones"
+      ]
+    },
+    "Piccolo Trumpet": {
+      "category": "brass",
+      "aliases": [
+        "Piccolo Trumpet"
+      ],
+      "techniques": [
+        "short bright separated notes in a comfortable high register",
+        "crisp detached articulation",
+        "rapid repetition of one pitch with alternating light front-of-tongue and farther-back articulations",
+        "every attack crisp and separate",
+        "two distinct neighboring response notes",
+        "continuous flowing breath",
+        "rapidly alternating valves between the same two neighboring pitches without repeated tonguing",
+        "smooth valve motion",
+        "gradually slowing the two-note alternation and settling on the lower sustained note",
+        "one smooth breath-connected legato phrase without note-by-note rearticulation",
+        "return to crisp separated notes",
+        "final clear sustained tone",
+        "complete release before the voice returns"
+      ]
+    },
+    "Slide Guitar": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Slide Guitar"
+      ],
+      "techniques": [
+        "sliding sustained phrases",
+        "swelling slide-guitar tones"
+      ]
+    },
+    "Orchestral Snare Drum": {
+      "category": "percussion",
+      "aliases": [
+        "Orchestral Snare Drum"
+      ],
+      "techniques": [
+        "isolated soft center strokes",
+        "single-stick head-and-rim simultaneous hits",
+        "sharp rimshots",
+        "hard separated replies",
+        "alternating center strokes and head-and-rim hits",
+        "return to tiny centered strokes",
+        "gradually widen the gaps and reduce stroke intensity",
+        "final soft center stroke followed by silence"
+      ]
+    },
+    "Clash Cymbals": {
+      "category": "percussion",
+      "aliases": [
+        "Clash Cymbals"
+      ],
+      "techniques": [
+        "one struck clash",
+        "separate immediately and allow full metallic resonance",
+        "second clash immediately damped against the performer's body",
+        "abrupt stop with no remaining cymbal sustain"
+      ]
+    },
+    "Suspended Cymbal": {
+      "category": "percussion",
+      "aliases": [
+        "Suspended Cymbal"
+      ],
+      "techniques": [
+        "roll",
+        "sustained swelling resonance"
+      ]
+    },
+    "Pipa": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Pipa"
+      ],
+      "techniques": [
+        "horizontally held playing",
+        "delicate short plucked phrases",
+        "short dry plucks",
+        "sparse isolated notes",
+        "harmonics",
+        "solo harmonic figures"
+      ]
+    },
+    "Lute / Lute-like Strings": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Lute",
+        "Lute-like Strings"
+      ],
+      "techniques": [
+        "plucked phrases",
+        "repeating plucked figures"
+      ]
+    },
+    "Oud": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Oud"
+      ],
+      "techniques": [
+        "plucked phrases",
+        "arpeggiated solo figures",
+        "nimble melodic lines",
+        "melodic doubling with mandolin"
+      ]
+    },
+    "Fiddle": {
+      "category": "bowed_strings",
+      "aliases": [
+        "Fiddle"
+      ],
+      "techniques": [
+        "open-string playing",
+        "repeated open-string figures",
+        "bowed sustained lines",
+        "quiet bowed drone"
+      ]
+    },
+    "Frame Drum": {
+      "category": "percussion",
+      "aliases": [
+        "Frame Drum"
+      ],
+      "techniques": [
+        "soft isolated hits",
+        "sparse regular pulses",
+        "brushed playing",
+        "muted strokes",
+        "soft swells",
+        "rounded low strikes",
+        "irregular pulses",
+        "synchronized repeated strokes",
+        "accelerating patterns",
+        "interlocking rhythmic figures"
+      ]
+    },
+    "Hand Drums": {
+      "category": "percussion",
+      "aliases": [
+        "Hand Drums"
+      ],
+      "techniques": [
+        "muted taps",
+        "rounded hand strikes",
+        "soft finger taps",
+        "isolated low strokes",
+        "rapid repeated strokes",
+        "interlocking patterns",
+        "irregular syncopation",
+        "call-and-response figures",
+        "alternating left-and-right drum responses"
+      ]
+    },
+    "Harmonium": {
+      "category": "keyboard",
+      "aliases": [
+        "Harmonium"
+      ],
+      "techniques": [
+        "long sustained drone",
+        "soft breath-like sustained tones"
+      ]
+    },
+    "Prepared Piano": {
+      "category": "keyboard",
+      "aliases": [
+        "Prepared Piano"
+      ],
+      "techniques": [
+        "plucked notes",
+        "soft prepared-piano plucks",
+        "dry taps",
+        "delicate ticks",
+        "short percussive accents",
+        "harmonics",
+        "clipped harmonic notes"
+      ]
+    },
+    "Bass Flute": {
+      "category": "woodwind",
+      "aliases": [
+        "Bass Flute"
+      ],
+      "techniques": [
+        "breath tones",
+        "sparse breathy responses"
+      ]
+    },
+    "Electric Cello": {
+      "category": "bowed_strings",
+      "aliases": [
+        "Electric Cello"
+      ],
+      "techniques": [
+        "bowed sustained phrases"
+      ]
+    },
+    "Jaw Harp": {
+      "category": "traditional_world",
+      "aliases": [
+        "Jaw Harp"
+      ],
+      "techniques": [
+        "sparse rhythmic accents"
+      ]
+    },
+    "Portuguese Guitar": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Portuguese Guitar"
+      ],
+      "techniques": [
+        "delicate high-register arpeggios",
+        "descending arpeggios",
+        "delicate tremolo fills",
+        "nimble ornamented responses",
+        "lyrical high-string answers",
+        "ringing counterlines",
+        "flowing countermelody",
+        "suspended chords",
+        "high harmonics",
+        "expressive melodic solo",
+        "lingering string resonance"
+      ]
+    },
+    "Cavaquinho": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Cavaquinho"
+      ],
+      "techniques": [
+        "high rhythmic pulses",
+        "sparse accents",
+        "crisp strumming",
+        "delicate strumming"
+      ]
+    },
+    "Zither / Kannel-like Zither": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Zither",
+        "Kannel-like Zither"
+      ],
+      "techniques": [
+        "sparse plucked phrases"
+      ]
+    },
+    "Angklung": {
+      "category": "traditional_world",
+      "aliases": [
+        "Angklung"
+      ],
+      "techniques": [
+        "bamboo shaking",
+        "rapid shaking",
+        "alternating groups",
+        "note-by-note melodic handoffs",
+        "interlocking melody",
+        "cascading overlapping resonances",
+        "single bamboo note with fading resonance"
+      ]
+    },
+    "Xiao / Bamboo Flute": {
+      "category": "traditional_world",
+      "aliases": [
+        "Xiao",
+        "Bamboo Flute"
+      ],
+      "techniques": [
+        "airy breath tones",
+        "restrained breathy phrasing",
+        "soft sustained lines",
+        "sparse answering phrases",
+        "fading breath tones",
+        "gentle melodic descent"
+      ]
+    },
+    "Ney": {
+      "category": "traditional_world",
+      "aliases": [
+        "Ney"
+      ],
+      "techniques": [
+        "sparse answering phrases between vocal lines"
+      ]
+    },
+    "Tanpura": {
+      "category": "traditional_world",
+      "aliases": [
+        "Tanpura"
+      ],
+      "techniques": [
+        "sustained drone"
+      ]
+    },
+    "Sarangi": {
+      "category": "traditional_world",
+      "aliases": [
+        "Sarangi"
+      ],
+      "techniques": [
+        "bowed responses",
+        "sustained drone",
+        "slides",
+        "melodic flourishes and ornaments"
+      ]
+    },
+    "Kamancheh / Kamancha": {
+      "category": "traditional_world",
+      "aliases": [
+        "Kamancheh",
+        "Kamancha"
+      ],
+      "techniques": [
+        "bowed answering phrases",
+        "long sustained tones",
+        "improvised solo phrases",
+        "bowed-string taksim",
+        "sustained drone",
+        "countermelody",
+        "call-and-response with tar and voice"
+      ]
+    },
+    "Setar": {
+      "category": "traditional_world",
+      "aliases": [
+        "Setar"
+      ],
+      "techniques": [
+        "sparse plucked motifs",
+        "repeated ostinato",
+        "sustained drone support",
+        "solo phrases",
+        "unison motifs with tar",
+        "answering phrases"
+      ]
+    },
+    "Tar": {
+      "category": "traditional_world",
+      "aliases": [
+        "Tar"
+      ],
+      "techniques": [
+        "sparse plucks",
+        "arpeggiated figures",
+        "rhythmic plucking",
+        "taksim",
+        "extended improvisation",
+        "call-and-response with bowed strings",
+        "unison motifs with setar",
+        "isolated closing plucks"
+      ]
+    },
+    "Daf": {
+      "category": "traditional_world",
+      "aliases": [
+        "Daf"
+      ],
+      "techniques": [
+        "sparse measured accents",
+        "restrained frame-drum pulse"
+      ]
+    },
+    "Tombak": {
+      "category": "traditional_world",
+      "aliases": [
+        "Tombak"
+      ],
+      "techniques": [
+        "soft hand-drum punctuation",
+        "sparse accents",
+        "solo rhythmic phrases"
+      ]
+    },
+    "Dholak": {
+      "category": "traditional_world",
+      "aliases": [
+        "Dholak"
+      ],
+      "techniques": [
+        "light theka",
+        "rolling figures",
+        "muted strokes",
+        "repeated fast rhythmic patterns"
+      ]
+    },
+    "Kendang": {
+      "category": "traditional_world",
+      "aliases": [
+        "Kendang"
+      ],
+      "techniques": [
+        "light taps",
+        "hand-played rhythmic patterns",
+        "dynamic accents",
+        "layered drum patterns"
+      ]
+    },
+    "Vihuela": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Vihuela"
+      ],
+      "techniques": [
+        "arpeggios",
+        "sustained chords"
+      ]
+    },
+    "Guitarra de Golpe": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Guitarra de Golpe"
+      ],
+      "techniques": [
+        "soft plucks",
+        "sparse rhythmic accompaniment"
+      ]
+    },
+    "Guembri / Gimbri": {
+      "category": "traditional_world",
+      "aliases": [
+        "Guembri",
+        "Gimbri"
+      ],
+      "techniques": [
+        "low plucked ostinato",
+        "syncopated repeating figures",
+        "call-and-response",
+        "increasingly dense ostinato",
+        "virtuosic solo phrases",
+        "gradually fading repetition"
+      ]
+    },
+    "Suling": {
+      "category": "traditional_world",
+      "aliases": [
+        "Suling"
+      ],
+      "techniques": [
+        "improvised flute phrases",
+        "solo melodic responses"
+      ]
+    },
+    "Algoza": {
+      "category": "traditional_world",
+      "aliases": [
+        "Algoza"
+      ],
+      "techniques": [
+        "twin-flute phrases",
+        "short answering figures",
+        "melodic fills",
+        "improvisation",
+        "call-and-response with the singer",
+        "fading duet phrases"
+      ]
+    },
+    "Been / Pungi-like Reed": {
+      "category": "traditional_world",
+      "aliases": [
+        "Been",
+        "Pungi-like Reed",
+        "Pungi"
+      ],
+      "techniques": [
+        "sustained reed drone",
+        "winding melodic responses",
+        "rising improvised phrases",
+        "free solo passages"
+      ]
+    },
+    "Rubab-like Strings": {
+      "category": "traditional_world",
+      "aliases": [
+        "Rubab-like Strings",
+        "Rubab"
+      ],
+      "techniques": [
+        "low plucked support",
+        "isolated bass plucks"
+      ]
+    },
+    "Khanjari": {
+      "category": "traditional_world",
+      "aliases": [
+        "Khanjari"
+      ],
+      "techniques": [
+        "soft taps",
+        "accelerating rhythmic figures"
+      ]
+    },
+    "Bombo": {
+      "category": "traditional_world",
+      "aliases": [
+        "Bombo"
+      ],
+      "techniques": [
+        "phrase-ending strikes",
+        "soft pulses",
+        "polyrhythmic interplay with cununo"
+      ]
+    },
+    "Cununo": {
+      "category": "traditional_world",
+      "aliases": [
+        "Cununo"
+      ],
+      "techniques": [
+        "interlocking drum parts",
+        "call-and-response figures",
+        "polyrhythmic interplay with bombo"
+      ]
+    },
+    "Tbel / Tbal": {
+      "category": "traditional_world",
+      "aliases": [
+        "Tbel",
+        "Tbal"
+      ],
+      "techniques": [
+        "slow ritual pulse",
+        "heavy rhythmic strikes",
+        "driving repeated beat",
+        "accelerating rhythmic pattern",
+        "soft final pulse"
+      ]
+    },
+    "Qraqeb": {
+      "category": "traditional_world",
+      "aliases": [
+        "Qraqeb"
+      ],
+      "techniques": [
+        "bright ringing metal-clapper patterns",
+        "interlocking rhythms",
+        "syncopated accents",
+        "accelerating and increasingly dense repeated figures"
+      ]
+    },
+    "Kartal / Khartal": {
+      "category": "traditional_world",
+      "aliases": [
+        "Kartal",
+        "Khartal"
+      ],
+      "techniques": [
+        "dry rhythmic clacks",
+        "scattered accents"
+      ]
+    },
+    "Paiban / Wooden Clappers / Bamboo Clappers": {
+      "category": "traditional_world",
+      "aliases": [
+        "Paiban",
+        "Wooden Clappers",
+        "Bamboo Clappers"
+      ],
+      "techniques": [
+        "short dry claps marking phrase boundaries",
+        "offbeat accents",
+        "repeated rhythmic clacks",
+        "single soft closing strike"
+      ]
+    },
+    "Calung": {
+      "category": "traditional_world",
+      "aliases": [
+        "Calung"
+      ],
+      "techniques": [
+        "light repeated wooden-tone support"
+      ]
+    },
+    "Tidnit": {
+      "category": "traditional_world",
+      "aliases": [
+        "Tidnit"
+      ],
+      "techniques": [
+        "lute picking",
+        "intricate melodic phrasing",
+        "syncopated rhythmic figures",
+        "resonant solo phrases"
+      ]
+    },
+    "Ardin": {
+      "category": "traditional_world",
+      "aliases": [
+        "Ardin"
+      ],
+      "techniques": [
+        "expressive harp runs",
+        "syncopated rhythmic figures",
+        "soaring countermelody"
+      ]
+    },
+    "Mouth Bow": {
+      "category": "traditional_world",
+      "aliases": [
+        "Mouth Bow"
+      ],
+      "techniques": [
+        "short punctuations",
+        "sustained drones",
+        "answering tones",
+        "final isolated tone"
+      ]
+    },
+    "Bowed Monochord": {
+      "category": "traditional_world",
+      "aliases": [
+        "Bowed Monochord"
+      ],
+      "techniques": [
+        "sustained bowed drone",
+        "bowed harmonics"
+      ]
+    },
+    "Gourd-bodied Lute": {
+      "category": "traditional_world",
+      "aliases": [
+        "Gourd-bodied Lute"
+      ],
+      "techniques": [
+        "bright plucked figures",
+        "arpeggios",
+        "alternating phrases with hand-drum responses",
+        "improvised lead phrases",
+        "repeated melody"
+      ]
+    },
+    "Gourd-bodied Bowed String Instrument": {
+      "category": "traditional_world",
+      "aliases": [
+        "Gourd-bodied Bowed String Instrument"
+      ],
+      "techniques": [
+        "bowed melodic phrases",
+        "sparse repeated responses"
+      ]
+    },
+    "Barrel Drum / Double-headed Drum": {
+      "category": "percussion",
+      "aliases": [
+        "Barrel Drum",
+        "Double-headed Drum"
+      ],
+      "techniques": [
+        "low repeated strokes supporting coordinated steps",
+        "interlocking patterns with hand drums"
+      ]
+    },
+    "Slit Drum / Wooden Drum": {
+      "category": "percussion",
+      "aliases": [
+        "Slit Drum",
+        "Wooden Drum"
+      ],
+      "techniques": [
+        "short offbeat figures",
+        "low repeated pulse",
+        "phrase-answering strikes",
+        "sparse wooden accents",
+        "slowing final strokes"
+      ]
+    },
+    "Rattles / Ankle Rattles / Ankle Bells": {
+      "category": "percussion",
+      "aliases": [
+        "Rattles",
+        "Ankle Rattles",
+        "Ankle Bells"
+      ],
+      "techniques": [
+        "repeated rattling accents",
+        "rhythmic articulation accompanying footwork"
+      ]
+    },
+    "Bowed Glass / Bowed Bamboo": {
+      "category": "other",
+      "aliases": [
+        "Bowed Glass",
+        "Bowed Bamboo"
+      ],
+      "techniques": [
+        "long sustained bowed tones",
+        "delicate bowed swells",
+        "harmonic overtones",
+        "thin sustained lines with small bending gestures"
+      ]
+    },
+    "String Ensemble": {
+      "category": "ensemble",
+      "aliases": [
+        "String Ensemble",
+        "Strings"
+      ],
+      "techniques": [
+        "pizzicato",
+        "lightly bouncing plucks",
+        "short plucked bursts",
+        "short staccato figures",
+        "repeated ostinatos",
+        "arco",
+        "long legato curves",
+        "sustained tones and drones",
+        "tremolo",
+        "rising tremolo",
+        "harmonics",
+        "thin sustained overtones",
+        "glissandi",
+        "long rising and falling lines",
+        "muted sustained strings",
+        "divided strings",
+        "swells",
+        "crescendo",
+        "swelling and releasing phrases"
+      ]
+    },
+    "Brass Ensemble": {
+      "category": "ensemble",
+      "aliases": [
+        "Brass Ensemble",
+        "Brass"
+      ],
+      "techniques": [
+        "muted repeating figures",
+        "short stabs",
+        "rhythmic pulses",
+        "broad sustained chords",
+        "low drones",
+        "swelling phrases"
+      ]
+    },
+    "Woodwinds / Reed Ensemble": {
+      "category": "ensemble",
+      "aliases": [
+        "Woodwinds",
+        "Reed Ensemble"
+      ],
+      "techniques": [
+        "short call-and-response phrases",
+        "breathy reed tones",
+        "long sustained phrases",
+        "rising and falling melodic lines",
+        "brief high-register responses",
+        "gentle melodic flourishes"
+      ]
+    },
+    "Bass / Acoustic Bass — Unspecified": {
+      "category": "bass",
+      "aliases": [
+        "Bass",
+        "Acoustic Bass"
+      ],
+      "techniques": [
+        "plucked notes",
+        "sparse pulses",
+        "repeated ostinato",
+        "long sustained tones",
+        "bowed drones",
+        "harmonics",
+        "rolling bass movement",
+        "alternating rhythmic support"
+      ]
+    },
+    "Mallet Instruments — Unspecified": {
+      "category": "percussion",
+      "aliases": [
+        "Mallet Instruments"
+      ],
+      "techniques": [
+        "soft muted attacks",
+        "short repeated high-register notes",
+        "rounded stepwise motifs",
+        "irregular repeated figures",
+        "brushed mallet accents",
+        "harmonic tones",
+        "descending arpeggios"
+      ]
+    },
+    "Metal Percussion / Anvil": {
+      "category": "percussion",
+      "aliases": [
+        "Metal Percussion",
+        "Anvil"
+      ],
+      "techniques": [
+        "muted anvil strikes",
+        "sparse hammer clanks",
+        "isolated metal taps",
+        "short ringing strikes",
+        "brushed metal tones",
+        "long sustained brushed-metal textures",
+        "bowed metal",
+        "sustained drones",
+        "bowed swells",
+        "dry scrapes",
+        "repeated sharply articulated scraping",
+        "muted strikes",
+        "ratchet-like figures",
+        "irregular metallic clinks",
+        "sparse syncopated chain-like strikes"
+      ]
+    },
+    "Body Percussion": {
+      "category": "percussion",
+      "aliases": [
+        "Body Percussion"
+      ],
+      "techniques": [
+        "dry handclaps",
+        "alternating palm claps",
+        "offbeat claps",
+        "rapid handclap bursts",
+        "interlocking polyrhythmic claps",
+        "finger snaps",
+        "soft finger taps",
+        "synchronized foot stomps",
+        "heavy stamps",
+        "light heel taps",
+        "alternating heavy stomps and light shoe taps",
+        "call-and-response footwork",
+        "layered stepping patterns"
+      ]
+    }
+  }
+}
