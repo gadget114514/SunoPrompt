@@ -1,7 +1,7 @@
-# Suno Prompt Generator - C++ Invoker
+# Suno Style Generator - C++ Invoker
 
 ## Overview
-The C++ invoker is a lightweight executable program that launches the Suno Prompt Generator Electron application without requiring the user to open a terminal or run `npm start` manually.
+The C++ invoker is a lightweight executable program that launches the Suno Style Generator Electron application without requiring the user to open a terminal or run `npm start` manually.
 
 ## Files
 - `invoker.cpp` - C++ source code for the invoker program
@@ -38,7 +38,7 @@ g++.exe -O2 -std=c++17 invoker.cpp -o invoker.exe -lkernel32 -luser32
 After successful compilation, `invoker.exe` will be created in the same directory.
 
 ## Usage
-Simply double-click `invoker.exe` to launch the Suno Prompt Generator application. The program will:
+Simply double-click `invoker.exe` to launch the Suno Style Generator application. The program will:
 1. Detect its own location
 2. Navigate to the application directory
 3. Execute `npm start` to launch Electron
@@ -70,5 +70,5 @@ Simply double-click `invoker.exe` to launch the Suno Prompt Generator applicatio
 You can create a Windows shortcut to `invoker.exe` for easier access:
 1. Right-click `invoker.exe`
 2. Select "Send to" > "Desktop (create shortcut)"
-3. Rename the shortcut to "Suno Prompt Generator"
+3. Rename the shortcut to "Suno Style Generator"
 4. (Optional) Right-click shortcut > Properties > Change Icon to customize

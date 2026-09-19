@@ -1,10 +1,10 @@
 @echo off
-REM Suno Prompt Generator Launcher
+REM Suno Style Generator Launcher
 REM Simple batch script to start the application
 
 echo.
 echo =====================================
-echo   Suno Prompt Generator
+echo   Suno Style Generator
 echo =====================================
 echo.
 

@@ -1,4 +1,4 @@
-# Building Executable for Suno Prompt Generator
+# Building Executable for Suno Style Generator
 
 ## Quick Start
 Run this command to create a standalone executable:
@@ -45,7 +45,7 @@ npm run package
 ### Creating a Desktop Shortcut
 1. Right-click `suno-prompt-generator.exe`
 2. Select "Send to" > "Desktop (create shortcut)"
-3. Rename shortcut to "Suno Prompt Generator"
+3. Rename shortcut to "Suno Style Generator"
 4. (Optional) Right-click shortcut > Properties > Change Icon
 
 ---

@@ -1,6 +1,6 @@
 const translations = {
   en: {
-    title: 'Suno Prompt Generator',
+    title: 'Suno Style Generator',
     subtitle: 'Select from 5 categories to generate your prompt',
     genres: 'Genres',
     vocals: 'Vocals',
@@ -35,7 +35,7 @@ const translations = {
     instrumentOnly: 'instrument name only'
   },
   ja: {
-    title: 'Suno プロンプトジェネレーター',
+    title: 'Suno スタイルジェネレーター',
     subtitle: '5つのカテゴリから選択してプロンプトを生成',
     genres: 'ジャンル',
     vocals: 'ボーカル',

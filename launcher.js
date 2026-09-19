@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Suno Prompt Generator Launcher
+ * Suno Style Generator Launcher
  * This script launches the Electron application
  */
 
@@ -14,7 +14,7 @@ const appDir = __dirname;
 // Check if npm is available
 const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
-console.log('🎵 Starting Suno Prompt Generator...');
+console.log('🎵 Starting Suno Style Generator...');
 console.log(`📁 Application directory: ${appDir}`);
 
 // Spawn npm start process

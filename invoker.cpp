@@ -47,8 +47,8 @@ int main() {
         // Error handling
         MessageBoxA(
             NULL,
-            "Failed to start Suno Prompt Generator.\nMake sure npm is installed and in PATH.",
-            "Suno Prompt Generator",
+            "Failed to start Suno Style Generator.\nMake sure npm is installed and in PATH.",
+            "Suno Style Generator",
             MB_ICONERROR | MB_OK
         );
         return 1;

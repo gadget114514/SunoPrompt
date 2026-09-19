@@ -1,10 +1,10 @@
-# 🎵 Suno Prompt Generator
+# 🎵 Suno Style Generator
 
 [English](README.md) | 日本語
 
 [Suno AI](https://suno.com/) 用のスタイルプロンプトを、チェックボックスを選ぶだけで組み立てられるデスクトップアプリです。
 
-![Suno Prompt Generator](snapshot/application-main.jpg)
+![Suno Style Generator](snapshot/application-main.jpg)
 
 ## 特徴
 
