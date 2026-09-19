@@ -558,6 +558,18 @@ header p {
   flex: 1;
 }
 
+.char-count {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #667eea;
+  text-align: right;
+}
+
+.char-count.over-limit {
+  color: #dc2626;
+  font-weight: 600;
+}
+
 .preview-box.updated {
   border-color: #667eea;
   box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);

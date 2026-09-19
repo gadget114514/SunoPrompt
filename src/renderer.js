@@ -10,6 +10,7 @@ const translations = {
     bpm: 'BPM (Tempo)',
     preview: 'Preview',
     previewPlaceholder: 'Preview will appear here',
+    chars: 'chars',
     random: '🎲 Random Generate',
     copy: '📋 Copy to Clipboard',
     save: '💾 Save to File',
@@ -48,6 +49,7 @@ const translations = {
     bpm: 'BPM (テンポ)',
     preview: 'プレビュー',
     previewPlaceholder: 'ここにプレビューが表示されます',
+    chars: '文字',
     random: '🎲 ランダム生成',
     copy: '📋 クリップボードにコピー',
     save: '💾 ファイルに保存',
@@ -121,6 +123,7 @@ const updateLanguage = (lang) => {
   if (preview.textContent === 'Preview will appear here' || preview.textContent === 'ここにプレビューが表示されます') {
     preview.textContent = t('previewPlaceholder');
   }
+  updateCharCount(generator ? generator.generatePrompt(selections).length : 0);
 
   // Update lang buttons
   document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -151,6 +154,15 @@ const addLog = (message, type = 'info') => {
   logWindow.scrollTop = logWindow.scrollHeight;
 };
 
+// Suno's Style field accepts up to 1000 characters
+const STYLE_CHAR_LIMIT = 1000;
+
+const updateCharCount = (count) => {
+  const el = document.getElementById('char-count');
+  el.textContent = `${count} / ${STYLE_CHAR_LIMIT} ${t('chars')}`;
+  el.classList.toggle('over-limit', count > STYLE_CHAR_LIMIT);
+};
+
 const updatePreview = () => {
   if (!generator) return;
   const prompt = generator.generatePrompt(selections);
@@ -169,6 +181,7 @@ const updatePreview = () => {
     previewEl.style.color = '#999';
     previewEl.style.fontStyle = 'italic';
   }
+  updateCharCount(prompt ? prompt.length : 0);
 
   updateFolderHighlights();
 
