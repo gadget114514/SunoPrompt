@@ -532,7 +532,7 @@ header p {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 180px;
+  min-height: 270px;
 }
 
 .preview-section h3 {
@@ -547,8 +547,8 @@ header p {
   background: white;
   border: 2px solid #ddd;
   border-radius: 4px;
-  min-height: 100px;
-  max-height: 200px;
+  min-height: 150px;
+  max-height: 300px;
   overflow-y: auto;
   word-wrap: break-word;
   font-size: 12px;
