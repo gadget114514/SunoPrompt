@@ -2,6 +2,7 @@ dist/
 *.zip
 sunoprompt-releases/
 2ne44/
+.claude/
 
 # Logs
 logs

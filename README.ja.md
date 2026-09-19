@@ -1,3 +1,5 @@
+**▶ オンラインで試す: [https://gadget114514.github.io/SunoPrompt/](https://gadget114514.github.io/SunoPrompt/)**
+
 # 🎵 Suno Style Generator
 
 [English](README.md) | 日本語
