@@ -84,12 +84,14 @@ let selections = {
 
 const CATEGORIES = ['genres', 'vocals', 'instruments', 'chords', 'structures'];
 
-// Fill in categories missing from older saved projects
+// Bring older saved projects up to the current data format
 const normalizeSelections = (sel) => {
   const normalized = { ...sel };
   CATEGORIES.forEach(category => {
     if (!Array.isArray(normalized[category])) normalized[category] = [];
   });
+  // Genres such as "Synthwave / Retrowave" were split into separate items
+  normalized.genres = [...new Set(normalized.genres.flatMap(g => g.split(' / ').map(x => x.trim())))];
   return normalized;
 };
 
