@@ -170,6 +170,8 @@ const updatePreview = () => {
     previewEl.style.fontStyle = 'italic';
   }
 
+  updateFolderHighlights();
+
   // Trigger animation
   setTimeout(() => {
     previewEl.classList.add('updated');
@@ -179,6 +181,17 @@ const updatePreview = () => {
   setTimeout(() => {
     previewEl.classList.remove('updated');
   }, 300);
+};
+
+// Color folders that contain a checked item or a position setting
+const updateFolderHighlights = () => {
+  document.querySelectorAll('.folder-item').forEach(folder => {
+    const checked = folder.querySelectorAll('input[type="checkbox"]:checked').length;
+    const hasPosition = [...folder.querySelectorAll('.position-select')].some(select => select.value);
+    folder.classList.toggle('has-selection', checked > 0 || hasPosition);
+    const count = folder.querySelector('.selection-count');
+    if (count) count.textContent = checked > 0 ? checked : '';
+  });
 };
 
 const renderCheckboxList = (containerId, items, category) => {
@@ -245,8 +258,12 @@ const renderHierarchicalList = (container, hierarchyObj, category, folderType) =
     folderLabel.className = 'folder-name';
     folderLabel.textContent = parentName;
 
+    const selectionCount = document.createElement('span');
+    selectionCount.className = 'selection-count';
+
     header.appendChild(toggle);
     header.appendChild(folderLabel);
+    header.appendChild(selectionCount);
 
     // Folder content
     const content = document.createElement('div');

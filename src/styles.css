@@ -801,3 +801,35 @@ body.is-web .left-panel {
   font-size: 11px;
   color: #667eea;
 }
+
+/* Folders with checked items or a position setting */
+.folder-item.has-selection {
+  border-color: #667eea;
+}
+
+.folder-item.has-selection > .folder-header {
+  background: #e8ecff;
+  color: #4c5fd5;
+  font-weight: 600;
+}
+
+.folder-item.has-selection > .folder-header:hover {
+  background: #dde3ff;
+}
+
+.selection-count {
+  order: 3;
+  margin-left: 8px;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #667eea;
+  color: white;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+}
+
+.selection-count:empty {
+  display: none;
+}
