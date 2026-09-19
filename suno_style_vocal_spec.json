@@ -25,6 +25,19 @@
         "clear lead vocal",
         "expressive lead vocal"
       ],
+      "style_modifiers": [
+        "whisper vocals",
+        "breathy ASMR vocal",
+        "androgynous whisper vocal",
+        "spoken-word vocal",
+        "rap vocal",
+        "stacked harmonies",
+        "layered vocals",
+        "vocal chops",
+        "call-and-response ad-libs",
+        "light autotune",
+        "strictly solo lead vocal"
+      ],
       "style_examples": [
         "indie pop, warm, clear lead vocal, jangly guitar, punchy drums, polished mix, sparse verse, wide chorus",
         "lo-fi hip hop, late night, lead vocal, dusty drums, warm bass, vinyl texture, short intro, fade out"
@@ -52,7 +65,15 @@
         "smooth male vocal",
         "soft male vocal",
         "powerful male vocal",
-        "spoken-sung male vocal"
+        "spoken-sung male vocal",
+        "gritty male vocal",
+        "male falsetto vocal",
+        "whispered male vocal",
+        "nasal ghostly male vocal",
+        "male rap vocal",
+        "fast male rap",
+        "crooner male vocal",
+        "old male vocal"
       ],
       "style_examples": [
         "pop rock, anthemic, male lead vocal, electric guitar, live drums, warm bass, sparse verse, wide chorus, hard stop",
@@ -84,7 +105,16 @@
         "soulful female vocal",
         "powerful female vocal",
         "soft female vocal",
-        "belted female vocal"
+        "belted female vocal",
+        "whispery female vocal",
+        "airy female vocal",
+        "straight-tone female vocal",
+        "head-voice female vocal",
+        "whistle-register female vocal",
+        "youthful female vocal",
+        "female rap vocal",
+        "diva female vocal",
+        "raspy Sprechgesang female vocal"
       ],
       "style_examples": [
         "synth pop, bright, breathy female vocal, analog synths, tight drums, short intro, wide chorus, fade out",
@@ -108,6 +138,12 @@
         "one male vocalist and one female vocalist",
         "duet, male and female vocals",
         "two singers, male and female"
+      ],
+      "style_modifiers": [
+        "call and response duet",
+        "overlapping duet vocals",
+        "female-led chorus with male lower harmony",
+        "gritty male rapper and powerhouse female vocalist"
       ],
       "interaction_phrases": [
         "alternating verses",
@@ -136,6 +172,38 @@
         "Name roles once in Style, then the same names in Lyrics tags.",
         "Say how they interact: alternate / call-and-response / harmony together.",
         "Unspecified duet often collapses into one blended voice."
+      ]
+    },
+    "choir": {
+      "id": "choir",
+      "use_when": "Group or choral vocals: gospel choir, a cappella, gang vocals, chants.",
+      "style_phrases": [
+        "choir vocals",
+        "gospel choir",
+        "a cappella vocals",
+        "gang vocals"
+      ],
+      "style_modifiers": [
+        "massive choir harmony",
+        "Gregorian-style choir",
+        "ghost-choir layers",
+        "barbershop quartet harmony",
+        "crowd chants",
+        "call-and-response coros",
+        "children counting"
+      ],
+      "style_examples": [
+        "modern dynamic gospel, majestic, gospel choir, massive choir harmony, cinematic strings, gradual build, final lift",
+        "raw root gospel, a cappella vocals, call and response, handclaps, foot stomps, unpolished"
+      ],
+      "lyrics_anchors": [
+        "[Choir]",
+        "[Chorus - Choir]",
+        "[Gang Vocals]"
+      ],
+      "notes": [
+        "Name the choir type (gospel, Gregorian, gang) for a steadier result.",
+        "Combine with a lead vocal phrase when a soloist should sit on top of the choir."
       ]
     }
   },

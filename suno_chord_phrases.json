@@ -49,7 +49,11 @@
         "City Pop chord progression",
         "smooth R&B chord progression",
         "jazzy seventh-chord progression",
-        "sophisticated chord progression"
+        "sophisticated chord progression",
+        "melancholic chords",
+        "bossa nova chord progression",
+        "warped lullaby harmony",
+        "uneasy chord changes"
       ]
     },
     "Chord Colors": {
@@ -68,7 +72,11 @@
         "power chords",
         "open voicings",
         "close voicings",
-        "lush chord voicings"
+        "lush chord voicings",
+        "maj7 and add9 chords",
+        "dissonant piano arpeggios",
+        "subtle dissonance",
+        "warm pop chords"
       ]
     },
     "Harmonic Movement": {
@@ -86,7 +94,9 @@
         "one-chord vamp",
         "slow harmonic rhythm",
         "fast harmonic rhythm",
-        "unresolved ending"
+        "unresolved ending",
+        "follows chord root",
+        "unresolved harmony"
       ]
     },
     "Key Change": {
@@ -113,7 +123,10 @@
         "melodic minor",
         "pentatonic scale",
         "blues scale",
-        "whole-tone harmony"
+        "whole-tone harmony",
+        "D Phrygian mode",
+        "tense minor key",
+        "microtonal inflections"
       ]
     },
     "Major Keys": {
@@ -147,7 +160,17 @@
         "in F minor",
         "in C minor",
         "in G minor",
-        "in D minor"
+        "in D minor",
+        "in A# minor"
+      ]
+    },
+    "Tuning": {
+      "description": "Reference pitch and tuning",
+      "phrases": [
+        "432 Hz tuning",
+        "440 Hz tuning",
+        "detuned",
+        "slightly out of tune"
       ]
     }
   }

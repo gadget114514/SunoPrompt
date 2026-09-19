@@ -7,15 +7,23 @@
   },
   "categories": {
     "intro": {
-     "description": "Intro",
+      "description": "Intro",
       "phrases": [
         "instrumental intro",
         "strictly no humming",
         "no wordless vocals",
-        "short intro"
-
+        "short intro",
+        "no intro",
+        "start with a catchy dry vocal hook",
+        "hook-first",
+        "sparse intro",
+        "cool drum intro",
+        "very long instrumental intro and outro",
+        "no humming at intro",
+        "no vocalise",
+        "no scat singing",
+        "lyrics only during vocal sections"
       ]
-    
     },
     "time": {
       "description": "Pacing and how the song begins or ends",
@@ -23,7 +31,15 @@
         "gradual build",
         "final lift",
         "fade out",
-        "hard stop"
+        "hard stop",
+        "slow gradual build up",
+        "dynamic build",
+        "rising tension release",
+        "towering climax",
+        "grand finale",
+        "abrupt end",
+        "seamless loop",
+        "soft tail"
       ]
     },
     "contrast": {
@@ -32,7 +48,21 @@
         "sparse verse",
         "wide chorus",
         "strip-back bridge",
-        "double chorus"
+        "double chorus",
+        "short verses",
+        "minimal verses",
+        "pre-chorus lift",
+        "explosive earworm chorus",
+        "halftime breakdown",
+        "sudden silence drop",
+        "rhythmic cuts",
+        "spoken bridge",
+        "rap verses, sung chorus",
+        "bridge drops to rap",
+        "no hook, no chorus",
+        "final double hook",
+        "call and response hooks",
+        "recurring hook"
       ]
     },
     "density": {
@@ -42,7 +72,13 @@
         "restrained",
         "layered",
         "full band",
-        "anthemic"
+        "anthemic",
+        "minimal",
+        "sparse",
+        "lush production",
+        "spacious mix",
+        "claustrophobic mix",
+        "full ensemble"
       ]
     },
     "electronic": {
@@ -51,7 +87,73 @@
         "long build-up",
         "heavy drop",
         "breakdown",
-        "second drop bigger"
+        "second drop bigger",
+        "risers",
+        "reverse swells",
+        "abrupt glitch transitions",
+        "minimal but clean drop",
+        "club ready drops",
+        "no EDM drop"
+      ]
+    },
+    "meter": {
+      "description": "Time signature and groove feel",
+      "phrases": [
+        "4/4 time",
+        "3/4 waltz time",
+        "6/8 time",
+        "swung 6/8 pulse",
+        "odd time signature",
+        "half-time groove",
+        "swing feel",
+        "shuffle feel",
+        "behind-the-beat feel",
+        "rubato",
+        "motorik pulse",
+        "syncopated groove"
+      ]
+    },
+    "production": {
+      "description": "Mix, space and recording texture",
+      "phrases": [
+        "tape saturation",
+        "vinyl crackle",
+        "cassette hiss",
+        "plate reverb",
+        "spring reverb",
+        "sidechain pumping",
+        "wide stereo field",
+        "dry close mix",
+        "close-mic",
+        "live room bleed",
+        "lo-fi",
+        "polished radio mix",
+        "high-fidelity",
+        "warm analog feel",
+        "1970s studio warmth",
+        "4-track cassette recording",
+        "binaural",
+        "cinematic depth",
+        "punchy compression"
+      ]
+    },
+    "exclusions": {
+      "description": "Things to keep out of the song",
+      "phrases": [
+        "no background vocals",
+        "no harmonies",
+        "no doubles",
+        "no adlibs",
+        "no autotune",
+        "no male vocals",
+        "no female vocals",
+        "no singing",
+        "no guitar",
+        "no synth",
+        "no trap hats",
+        "no 4x4 kick",
+        "no heavy reverb",
+        "no aggressive energy"
       ]
     }
   }

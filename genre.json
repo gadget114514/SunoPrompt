@@ -29,14 +29,20 @@
     "Gothic Rock",
     "Emo Rock",
     "Surf Rock",
-    "Rockabilly"
+    "Rockabilly",
+    "J-Rock",
+    "Slacker Rock",
+    "Neo-Psychedelia",
+    "Indie Alternative"
   ],
   "Punk": [
     "Punk Rock",
     "Pop Punk",
     "Ska Punk",
     "Post-Punk",
-    "Screamo"
+    "Screamo",
+    "Post-Hardcore",
+    "Emo"
   ],
   "Metal": [
     "Heavy Metal",
@@ -44,7 +50,9 @@
     "Metalcore",
     "Djent",
     "Symphonic Metal",
-    "Kawaii Metal"
+    "Kawaii Metal",
+    "Progressive Metal",
+    "Pop Metal"
   ],
   "Pop": [
     "Dance Pop",
@@ -58,7 +66,20 @@
     "K-pop",
     "Spanish Pop",
     "New Wave",
-    "Ballad"
+    "Ballad",
+    "Indie Pop",
+    "Alt-Pop",
+    "Dark Pop",
+    "Psychedelic Pop",
+    "Glitch Pop",
+    "Bubblegum Pop",
+    "Soul Pop",
+    "French Pop",
+    "Swedish Pop",
+    "Turkish Pop",
+    "Experimental Pop",
+    "Folk Pop",
+    "Traditional Pop"
   ],
   "Japanese": [
     "J-pop",
@@ -70,7 +91,10 @@
     "Visual Kei",
     "Wagakki Rock",
     "J-Fusion",
-    "Enka"
+    "Enka",
+    "Japanese Traditional",
+    "Gagaku",
+    "Anime Soundtrack"
   ],
   "Electronic": [
     "EDM",
@@ -86,7 +110,19 @@
     "Industrial",
     "Glitch Hop",
     "Glitchcore",
-    "Breakcore"
+    "Breakcore",
+    "Electronica",
+    "Glitch",
+    "IDM",
+    "Experimental Electronic",
+    "Complextro",
+    "Big Beat",
+    "Breakbeat",
+    "Dark Synthwave",
+    "Cloud Wave",
+    "Uncanny Electronica",
+    "Plunderphonics",
+    "Electro Horror"
   ],
   "Dance": [
     "House",
@@ -102,14 +138,20 @@
     "Jersey Club",
     "Hardstyle",
     "Gabber",
-    "Artcore"
+    "Artcore",
+    "Tech House",
+    "Indie Dance",
+    "Afro-Tech",
+    "Deep UK House"
   ],
   "Bass Music": [
     "Dubstep",
     "Melodic Dubstep",
     "Drum & Bass",
     "Jungle",
-    "UK Garage"
+    "UK Garage",
+    "2-Step",
+    "Tearout Dubstep"
   ],
   "Hip Hop": [
     "Hip Hop",
@@ -119,7 +161,21 @@
     "Grime",
     "Drift Phonk",
     "Lo-fi Hip Hop",
-    "Chillhop"
+    "Chillhop",
+    "Jazz Rap",
+    "Instrumental Hip Hop",
+    "Abstract Hip Hop",
+    "Horrorcore",
+    "Phonk",
+    "Trapwave",
+    "West Coast Trap",
+    "French Rap",
+    "French Trap",
+    "Electro Trap",
+    "Afroswing",
+    "Samba-Drill",
+    "Hyphy",
+    "Turntablism"
   ],
   "R&B": [
     "R&B",
@@ -129,14 +185,25 @@
     "Doo-wop",
     "Gospel",
     "Funk",
-    "Disco Funk"
+    "Disco Funk",
+    "Alternative R&B",
+    "Dark R&B",
+    "Trap Soul",
+    "UK Street Soul",
+    "A Cappella",
+    "Barbershop"
   ],
   "Jazz": [
     "Jazz",
     "Swing",
     "Bebop",
     "Smooth Jazz",
-    "Acid Jazz"
+    "Acid Jazz",
+    "Vocal Jazz",
+    "Jazz Fusion",
+    "Dark Jazz",
+    "Jazz Ballad",
+    "Jazz Hop"
   ],
   "Blues": [
     "Blues",
@@ -152,7 +219,12 @@
     "Folk",
     "Indie Folk",
     "Singer-Songwriter",
-    "Celtic Pop"
+    "Celtic Pop",
+    "Neofolk",
+    "Industrial Folk",
+    "Celtic Folk",
+    "Acoustic Folk",
+    "Balkan Folk"
   ],
   "Latin": [
     "Reggaeton",
@@ -162,7 +234,14 @@
     "Cumbia",
     "Samba",
     "Bossa Nova",
-    "Tango"
+    "Tango",
+    "Samba Rock",
+    "Rumba",
+    "Afro-Cuban",
+    "Spanish Rumba",
+    "Baile Funk",
+    "Dembow",
+    "Latin Club"
   ],
   "Reggae": [
     "Reggae",
@@ -198,7 +277,11 @@
     "Hawaiian",
     "Calypso",
     "Soca",
-    "Zouk"
+    "Zouk",
+    "African Electronic Fusion",
+    "Gypsy Music",
+    "Maghreb",
+    "Arabic Folk"
   ],
   "Classical": [
     "Classical",
@@ -210,18 +293,31 @@
     "Romantic",
     "Impressionist",
     "Modern Classical",
-    "Minimalism"
+    "Minimalism",
+    "Neo-Classical",
+    "Gregorian Chant",
+    "Chamber Music",
+    "Hymn"
   ],
   "Cinematic": [
     "Cinematic",
     "Film Score",
     "Epic Orchestral",
-    "Musical Theatre"
+    "Musical Theatre",
+    "Cinematic Ballad",
+    "Horror Soundtrack"
   ],
   "Ambient": [
     "Ambient",
     "Downtempo",
     "Trip Hop",
-    "New Age"
+    "New Age",
+    "Dark Ambient",
+    "Drone Ambient",
+    "Martial Ambient",
+    "Psybient",
+    "Chill Out",
+    "Lo-Fi",
+    "Soundscape"
   ]
 }
