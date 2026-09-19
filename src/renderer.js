@@ -181,7 +181,7 @@ const renderCheckboxList = (containerId, items, category) => {
     renderHierarchicalList(container, items.byInstrument, category, 'instrument');
   } else if (category === 'vocals' && items.byMode) {
     renderHierarchicalList(container, items.byMode, category, 'mode');
-  } else if ((category === 'structures' || category === 'chords') && items.byCategory) {
+  } else if (items.byCategory) {
     renderHierarchicalList(container, items.byCategory, category, 'category');
   } else {
     // Simple flat list

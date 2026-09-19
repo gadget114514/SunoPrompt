@@ -11,9 +11,14 @@ class PromptGenerator {
       parts.push(`${selections.bpm} bpm`);
     }
 
-    // Genre
+    // Genre, with any era (e.g. "1980s") placed first
     if (selections.genres && selections.genres.length > 0) {
-      parts.push(selections.genres.join(', '));
+      const eras = this.data.genre?.[PromptGenerator.ERA_GROUP] || [];
+      const genres = [
+        ...selections.genres.filter(g => eras.includes(g)),
+        ...selections.genres.filter(g => !eras.includes(g))
+      ];
+      parts.push(genres.join(', '));
     }
 
     // Vocal (can be mode names or phrases/modifiers)
@@ -120,13 +125,17 @@ class PromptGenerator {
       bpm: this.getRandomBPM()
     };
 
-    // Random genres (1-2)
+    // Random genres (1-2), plus an era some of the time
     if (this.data.genre) {
       const allGenres = [];
-      for (const genreList of Object.values(this.data.genre)) {
-        if (Array.isArray(genreList)) {
+      for (const [groupName, genreList] of Object.entries(this.data.genre)) {
+        if (Array.isArray(genreList) && groupName !== PromptGenerator.ERA_GROUP) {
           allGenres.push(...genreList);
         }
+      }
+      const eras = this.data.genre[PromptGenerator.ERA_GROUP];
+      if (Array.isArray(eras) && eras.length > 0 && Math.random() < 0.3) {
+        selection.genres.push(eras[Math.floor(Math.random() * eras.length)]);
       }
       if (allGenres.length > 0) {
         const count = Math.random() > 0.5 ? 2 : 1;
@@ -250,18 +259,19 @@ class PromptGenerator {
 
   flattenAllItems() {
     const items = {
-      genres: [],
+      genres: { byCategory: {}, allGenres: [] },
       vocals: [],
       instruments: { byInstrument: {}, allTechniques: [] },
       chords: { byCategory: {}, allPhrases: [] },
       structures: { byCategory: {}, allPhrases: [] }
     };
 
-    // Flatten genres
+    // Genres grouped by major genre
     if (this.data.genre) {
-      for (const category of Object.values(this.data.genre)) {
-        if (Array.isArray(category)) {
-          items.genres.push(...category);
+      for (const [groupName, genres] of Object.entries(this.data.genre)) {
+        if (Array.isArray(genres)) {
+          items.genres.byCategory[groupName] = genres;
+          items.genres.allGenres.push(...genres);
         }
       }
     }
@@ -318,3 +328,4 @@ class PromptGenerator {
 }
 
 PromptGenerator.TECHNIQUE_SEPARATOR = '::';
+PromptGenerator.ERA_GROUP = 'Era';

@@ -1,101 +1,201 @@
 {
-  "Rock / Metal": [
+  "Era": [
+    "1920s",
+    "1930s",
+    "1940s",
+    "1950s",
+    "1960s",
+    "1970s",
+    "1980s",
+    "1990s",
+    "2000s",
+    "2010s",
+    "2020s"
+  ],
+  "Rock": [
     "Alternative Rock",
-    "Pop Punk",
-    "Shoegaze",
-    "Piano Rock",
     "Indie Rock",
+    "Hard Rock",
+    "Pop Rock",
+    "Piano Rock",
     "Grunge",
+    "Shoegaze",
     "Post-Rock",
-    "Djent",
-    "Symphonic Metal",
-    "Emo Rock",
-    "Screamo"
-  ],
-  "Pop / Electronic": [
-    "Synthpop",
-    "Future Bass",
-    "Hyperpop",
-    "Dream Pop",
-    "Chillwave",
-    "Vaporwave",
-    "Synthwave",
-    "Retrowave",
-    "Dubstep",
-    "Melodic Dubstep",
-    "J-pop",
-    "K-pop",
-    "Spanish Pop",
-    "Dance Pop",
-    "Synth-Pop",
-    "Acoustic-Pop"
-  ],
-  "Groove / Black Music": [
-    "R&B",
-    "Funk",
-    "Hip Hop",
-    "Neo Soul",
-    "Trap",
-    "UK Drill",
-    "Boom Bap",
-    "Afrobeats"
-  ],
-  "Chill / Atmospheric": [
-    "City Pop",
-    "Lo-fi Hip Hop",
-    "Ambient",
-    "Bedroom Pop",
-    "Indie Folk",
-    "Trip Hop"
-  ],
-  "Hardcore / Club": [
-    "Drum & Bass",
-    "UK Garage",
-    "Artcore",
-    "Jersey Club",
-    "Kawaii Metal",
-    "Hardstyle",
-    "Gabber"
-  ],
-  "Retro / Aesthetic": [
-    "Shibuya-kei",
-    "New Wave",
-    "Electro Swing",
-    "French House",
-    "Nu-Disco"
-  ],
-  "Technical / Complex": [
     "Math Rock",
     "Progressive Rock",
-    "J-Fusion"
-  ],
-  "Subculture": [
-    "Denpa Song",
-    "Visual Kei"
-  ],
-  "TikTok / Drive": [
-    "Drift Phonk",
-    "Eurobeat",
-    "Tropical House"
-  ],
-  "Fantasy / Story": [
-    "Celtic Pop",
-    "Wagakki Rock",
+    "Psychedelic Rock",
+    "Garage Rock",
+    "Britpop",
     "Gothic Rock",
-    "Dark Wave",
-    "Epic Orchestral"
+    "Emo Rock",
+    "Surf Rock",
+    "Rockabilly"
   ],
-  "Rhythm / Fun / World": [
-    "Ska",
+  "Punk": [
+    "Punk Rock",
+    "Pop Punk",
     "Ska Punk",
-    "Reggae",
-    "Bossa Nova",
-    "Flamenco",
-    "Reggaeton"
+    "Post-Punk",
+    "Screamo"
   ],
-  "Chaos / Internet": [
-    "Breakcore",
+  "Metal": [
+    "Heavy Metal",
+    "Thrash Metal",
+    "Metalcore",
+    "Djent",
+    "Symphonic Metal",
+    "Kawaii Metal"
+  ],
+  "Pop": [
+    "Dance Pop",
+    "Synthpop",
+    "Synth-Pop",
+    "Electropop",
+    "Dream Pop",
+    "Bedroom Pop",
+    "Acoustic-Pop",
+    "Hyperpop",
+    "K-pop",
+    "Spanish Pop",
+    "New Wave",
+    "Ballad"
+  ],
+  "Japanese": [
+    "J-pop",
+    "City Pop",
+    "Shibuya-kei",
+    "Anison",
+    "Vocaloid",
+    "Denpa Song",
+    "Visual Kei",
+    "Wagakki Rock",
+    "J-Fusion",
+    "Enka"
+  ],
+  "Electronic": [
+    "EDM",
+    "Future Bass",
+    "Synthwave",
+    "Retrowave",
+    "Chillwave",
+    "Vaporwave",
+    "Future Funk",
+    "Chiptune",
+    "Electro Swing",
+    "Dark Wave",
+    "Industrial",
     "Glitch Hop",
-    "Glitchcore"
+    "Glitchcore",
+    "Breakcore"
+  ],
+  "Dance": [
+    "House",
+    "Deep House",
+    "French House",
+    "Tropical House",
+    "Techno",
+    "Trance",
+    "Big Room",
+    "Disco",
+    "Nu-Disco",
+    "Eurobeat",
+    "Jersey Club",
+    "Hardstyle",
+    "Gabber",
+    "Artcore"
+  ],
+  "Bass Music": [
+    "Dubstep",
+    "Melodic Dubstep",
+    "Drum & Bass",
+    "Jungle",
+    "UK Garage"
+  ],
+  "Hip Hop": [
+    "Hip Hop",
+    "Trap",
+    "Boom Bap",
+    "UK Drill",
+    "Grime",
+    "Drift Phonk",
+    "Lo-fi Hip Hop",
+    "Chillhop"
+  ],
+  "R&B": [
+    "R&B",
+    "Neo Soul",
+    "Soul",
+    "Motown",
+    "Doo-wop",
+    "Gospel",
+    "Funk",
+    "Disco Funk"
+  ],
+  "Jazz": [
+    "Jazz",
+    "Swing",
+    "Bebop",
+    "Smooth Jazz",
+    "Acid Jazz"
+  ],
+  "Blues": [
+    "Blues",
+    "Blues Rock"
+  ],
+  "Country": [
+    "Country",
+    "Country Pop",
+    "Bluegrass",
+    "Americana"
+  ],
+  "Folk": [
+    "Folk",
+    "Indie Folk",
+    "Singer-Songwriter",
+    "Celtic Pop"
+  ],
+  "Latin": [
+    "Reggaeton",
+    "Latin Pop",
+    "Salsa",
+    "Bachata",
+    "Cumbia",
+    "Samba",
+    "Bossa Nova",
+    "Tango"
+  ],
+  "Reggae": [
+    "Reggae",
+    "Ska",
+    "Dancehall"
+  ],
+  "World": [
+    "Afrobeats",
+    "Amapiano",
+    "Flamenco"
+  ],
+  "Classical": [
+    "Classical",
+    "Opera",
+    "Medieval",
+    "Renaissance",
+    "Baroque",
+    "Classical Period",
+    "Romantic",
+    "Impressionist",
+    "Modern Classical",
+    "Minimalism"
+  ],
+  "Cinematic": [
+    "Cinematic",
+    "Film Score",
+    "Epic Orchestral",
+    "Musical Theatre"
+  ],
+  "Ambient": [
+    "Ambient",
+    "Downtempo",
+    "Trip Hop",
+    "New Age"
   ]
 }
