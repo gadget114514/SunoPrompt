@@ -17,7 +17,13 @@
 - **プロジェクト管理** — 選択内容に名前を付けて保存・読み込み・削除
 - **日本語 / English** — UI 言語を切り替え可能
 
-## ダウンロード
+## Web版
+
+インストール不要でブラウザからすぐに使えます: **[https://gadget114514.github.io/SunoPrompt/](https://gadget114514.github.io/SunoPrompt/)**
+
+プロジェクトの保存・読み込みは Windows アプリ版のみの機能です。
+
+## ダウンロード (Windowsアプリ)
 
 [Releases](https://github.com/gadget114514/SunoPrompt/releases) から `SunoPromptGenerator.exe` をダウンロードして実行してください。
 インストール不要で、Node.js や npm も必要ありません（Windows x64）。
@@ -41,6 +47,15 @@ git clone https://github.com/gadget114514/SunoPrompt.git
 cd SunoPrompt
 npm install
 npm start
+```
+
+### Web版 (GitHub Pages)
+
+`main` へ push すると `.github/workflows/pages.yml` が `src/` と JSON データをまとめて GitHub Pages にデプロイします。
+ローカルで確認する場合はリポジトリのルートを配信して `/src/index.html` を開いてください。
+
+```bash
+npx http-server . -c-1
 ```
 
 ### exe のビルド

@@ -17,7 +17,13 @@ A desktop app for building [Suno AI](https://suno.com/) style prompts by simply 
 - **Projects** — save, load and delete named sets of selections
 - **English / 日本語** — switch the UI language
 
-## Download
+## Web version
+
+Use it right in your browser — nothing to install: **[https://gadget114514.github.io/SunoPrompt/](https://gadget114514.github.io/SunoPrompt/)**
+
+Project save/load is available only in the Windows app.
+
+## Download (Windows app)
 
 Download `SunoPromptGenerator.exe` from [Releases](https://github.com/gadget114514/SunoPrompt/releases) and run it.
 No installation needed, and no Node.js or npm required (Windows x64).
@@ -41,6 +47,15 @@ git clone https://github.com/gadget114514/SunoPrompt.git
 cd SunoPrompt
 npm install
 npm start
+```
+
+### Web version (GitHub Pages)
+
+Every push to `main` deploys the site via `.github/workflows/pages.yml`, which bundles `src/` with the JSON data files.
+To preview locally, serve the repository root and open `/src/index.html`:
+
+```bash
+npx http-server . -c-1
 ```
 
 ### Build the exe

@@ -369,8 +369,12 @@ const setupButtons = () => {
     }
 
     try {
-      await window.electronAPI.copyToClipboard(prompt);
-      addLog(t('logCopied'), 'success');
+      const result = await window.electronAPI.copyToClipboard(prompt);
+      if (result && result.success === false) {
+        addLog(`Error: ${result.error}`, 'error');
+      } else {
+        addLog(t('logCopied'), 'success');
+      }
     } catch (error) {
       addLog(`Error: ${error.message}`, 'error');
     }
@@ -444,6 +448,12 @@ const setupButtons = () => {
         updatePreview();
       }
     });
+  }
+
+  // Projects and save folder exist only in the desktop app
+  if (window.electronAPI.isWeb) {
+    document.body.classList.add('is-web');
+    return;
   }
 
   // Project save

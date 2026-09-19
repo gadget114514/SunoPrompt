@@ -707,3 +707,54 @@ header p {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* Browser (GitHub Pages) build: no projects panel */
+body.is-web .left-panel {
+  display: none;
+}
+
+/* Narrow screens: stack panels and let the page scroll */
+@media (max-width: 900px) {
+  body,
+  .container {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  header h1 {
+    font-size: 22px;
+  }
+
+  .header-top {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .workspace {
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .left-panel,
+  .center-panel,
+  .right-panel {
+    width: 100%;
+    max-width: none;
+  }
+
+  /* Preview and actions first, then options, then projects */
+  .right-panel {
+    order: 1;
+  }
+
+  .center-panel {
+    order: 2;
+    height: 70vh;
+  }
+
+  .left-panel {
+    order: 3;
+    max-height: 260px;
+  }
+}
