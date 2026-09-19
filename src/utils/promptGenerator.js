@@ -33,19 +33,22 @@ class PromptGenerator {
       });
     }
 
-    // Instruments (can be either instrument names or techniques)
+    // Instruments: techniques are always attached to their instrument name,
+    // e.g. "Grand Piano (legato arpeggios, deep sustain pedal)"
     if (selections.instruments && selections.instruments.length > 0) {
+      const groups = new Map();
       selections.instruments.forEach(item => {
-        // Check if it's an instrument name
-        if (this.data.instruments?.instruments?.[item]) {
-          const instrumentData = this.data.instruments.instruments[item];
-          if (instrumentData.aliases) {
-            parts.push(instrumentData.aliases[0]);
-          }
-        } else {
-          // It's a technique
-          parts.push(item);
+        const { instrument, technique } = this.parseInstrumentItem(item);
+        if (!instrument) {
+          parts.push(technique);
+          return;
         }
+        if (!groups.has(instrument)) groups.set(instrument, []);
+        if (technique) groups.get(instrument).push(technique);
+      });
+      groups.forEach((techniques, instrument) => {
+        const name = this.getInstrumentName(instrument);
+        parts.push(techniques.length > 0 ? `${name} (${techniques.join(', ')})` : name);
       });
     }
 
@@ -61,6 +64,35 @@ class PromptGenerator {
     }
 
     return parts.join(', ');
+  }
+
+  // Display name used in prompts: first alias, e.g. "Grand Piano / Piano" -> "Grand Piano"
+  getInstrumentName(instrumentKey) {
+    const instrumentData = this.data.instruments?.instruments?.[instrumentKey];
+    return instrumentData?.aliases?.[0] || instrumentKey;
+  }
+
+  // Instrument selection values are either an instrument key (name only)
+  // or "<instrument key>::<technique>". Bare techniques from older projects
+  // are matched to the first instrument that has them.
+  parseInstrumentItem(item) {
+    const instruments = this.data.instruments?.instruments || {};
+    if (instruments[item]) {
+      return { instrument: item, technique: null };
+    }
+    const sep = item.indexOf(PromptGenerator.TECHNIQUE_SEPARATOR);
+    if (sep >= 0) {
+      return {
+        instrument: item.slice(0, sep),
+        technique: item.slice(sep + PromptGenerator.TECHNIQUE_SEPARATOR.length)
+      };
+    }
+    const owner = Object.keys(instruments).find(key => instruments[key].techniques?.includes(item));
+    return { instrument: owner || null, technique: item };
+  }
+
+  static techniqueValue(instrumentKey, technique) {
+    return `${instrumentKey}${PromptGenerator.TECHNIQUE_SEPARATOR}${technique}`;
   }
 
   getRandomSelection() {
@@ -137,7 +169,7 @@ class PromptGenerator {
             const techCount = Math.min(Math.floor(Math.random() * 2) + 2, techniques.length);
             for (let j = 0; j < techCount; j++) {
               const tidx = Math.floor(Math.random() * techniques.length);
-              selectedInstruments.push(techniques[tidx]);
+              selectedInstruments.push(PromptGenerator.techniqueValue(instName, techniques[tidx]));
               techniques.splice(tidx, 1);
             }
           }
@@ -247,3 +279,5 @@ class PromptGenerator {
     return items;
   }
 }
+
+PromptGenerator.TECHNIQUE_SEPARATOR = '::';

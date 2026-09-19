@@ -30,7 +30,8 @@ const translations = {
     saveFolder: 'Save Folder',
     logProjectSaved: 'Project saved: ',
     logProjectLoaded: 'Project loaded: ',
-    logProjectDeleted: 'Project deleted'
+    logProjectDeleted: 'Project deleted',
+    instrumentOnly: 'instrument name only'
   },
   ja: {
     title: 'Suno プロンプトジェネレーター',
@@ -63,7 +64,8 @@ const translations = {
     saveFolder: '保存フォルダ',
     logProjectSaved: 'プロジェクトを保存しました: ',
     logProjectLoaded: 'プロジェクトをロードしました: ',
-    logProjectDeleted: 'プロジェクトを削除しました'
+    logProjectDeleted: 'プロジェクトを削除しました',
+    instrumentOnly: '楽器名のみ'
   }
 };
 
@@ -225,37 +227,53 @@ const renderHierarchicalList = (container, hierarchyObj, category, folderType) =
     const content = document.createElement('div');
     content.className = 'folder-content hidden';
 
+    const addChild = (value, text, extraClass = '') => {
+      const itemId = `${category}-${value}`;
+      const wrapper = document.createElement('div');
+      wrapper.className = `checkbox-item folder-item-child ${extraClass}`.trim();
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = itemId;
+      checkbox.value = value;
+      checkbox.checked = selections[category].includes(value);
+      checkbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          if (!selections[category].includes(value)) {
+            selections[category].push(value);
+          }
+        } else {
+          selections[category] = selections[category].filter(x => x !== value);
+        }
+        // Force immediate preview update
+        setTimeout(updatePreview, 0);
+      });
+
+      const label = document.createElement('label');
+      label.htmlFor = itemId;
+      label.textContent = text;
+
+      wrapper.appendChild(checkbox);
+      wrapper.appendChild(label);
+      content.appendChild(wrapper);
+      return label;
+    };
+
+    // Instruments: a name-only checkbox, and techniques tied to their instrument
+    if (category === 'instruments') {
+      const label = addChild(parentName, generator.getInstrumentName(parentName), 'instrument-name-item');
+      const note = document.createElement('span');
+      note.className = 'instrument-only-note';
+      note.setAttribute('data-i18n', 'instrumentOnly');
+      note.textContent = t('instrumentOnly');
+      label.append(' ', note);
+    }
+
     // Add children checkboxes
     if (Array.isArray(children)) {
       children.forEach(child => {
-        const itemId = `${category}-${child}`;
-        const wrapper = document.createElement('div');
-        wrapper.className = 'checkbox-item folder-item-child';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = itemId;
-        checkbox.value = child;
-        checkbox.checked = selections[category].includes(child);
-        checkbox.addEventListener('change', (e) => {
-          if (e.target.checked) {
-            if (!selections[category].includes(child)) {
-              selections[category].push(child);
-            }
-          } else {
-            selections[category] = selections[category].filter(x => x !== child);
-          }
-          // Force immediate preview update
-          setTimeout(updatePreview, 0);
-        });
-
-        const label = document.createElement('label');
-        label.htmlFor = itemId;
-        label.textContent = child;
-
-        wrapper.appendChild(checkbox);
-        wrapper.appendChild(label);
-        content.appendChild(wrapper);
+        const value = category === 'instruments' ? PromptGenerator.techniqueValue(parentName, child) : child;
+        addChild(value, child);
       });
     }
 
