@@ -769,3 +769,35 @@ body.is-web .left-panel {
   font-weight: normal;
   color: #999;
 }
+
+/* Stereo / depth position for vocal modes and instruments */
+.position-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  background: #f0f4ff;
+  border-radius: 4px;
+}
+
+.position-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.position-select {
+  font-size: 12px;
+  padding: 2px 4px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: white;
+}
+
+.position-badge {
+  margin-left: 8px;
+  font-size: 11px;
+  color: #667eea;
+}

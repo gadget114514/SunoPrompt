@@ -32,7 +32,10 @@ const translations = {
     logProjectSaved: 'Project saved: ',
     logProjectLoaded: 'Project loaded: ',
     logProjectDeleted: 'Project deleted',
-    instrumentOnly: 'instrument name only'
+    instrumentOnly: 'instrument name only',
+    position: 'Position',
+    panNone: 'Pan: —',
+    depthNone: 'Distance: —'
   },
   ja: {
     title: 'Suno スタイルジェネレーター',
@@ -67,7 +70,10 @@ const translations = {
     logProjectSaved: 'プロジェクトを保存しました: ',
     logProjectLoaded: 'プロジェクトをロードしました: ',
     logProjectDeleted: 'プロジェクトを削除しました',
-    instrumentOnly: '楽器名のみ'
+    instrumentOnly: '楽器名のみ',
+    position: '定位',
+    panNone: '左右: —',
+    depthNone: '距離: —'
   }
 };
 
@@ -79,6 +85,7 @@ let selections = {
   instruments: [],
   chords: [],
   structures: [],
+  positions: {},
   bpm: 120
 };
 
@@ -90,6 +97,7 @@ const normalizeSelections = (sel) => {
   CATEGORIES.forEach(category => {
     if (!Array.isArray(normalized[category])) normalized[category] = [];
   });
+  if (!normalized.positions || typeof normalized.positions !== 'object') normalized.positions = {};
   // Genres such as "Synthwave / Retrowave" were split into separate items
   normalized.genres = [...new Set(normalized.genres.flatMap(g => g.split(' / ').map(x => x.trim())))];
   return normalized;
@@ -285,6 +293,16 @@ const renderHierarchicalList = (container, hierarchyObj, category, folderType) =
       label.append(' ', note);
     }
 
+    // Vocal modes and instruments can be placed in the stereo field
+    if (category === 'instruments' || category === 'vocals') {
+      const positionKey = PromptGenerator.positionKey(category, parentName);
+      const badge = document.createElement('span');
+      badge.className = 'position-badge';
+      badge.dataset.positionKey = positionKey;
+      header.appendChild(badge);
+      content.appendChild(createPositionRow(positionKey));
+    }
+
     // Add children checkboxes
     if (Array.isArray(children)) {
       children.forEach(child => {
@@ -304,6 +322,62 @@ const renderHierarchicalList = (container, hierarchyObj, category, folderType) =
     folder.appendChild(content);
     container.appendChild(folder);
   }
+};
+
+const createPositionRow = (positionKey) => {
+  const row = document.createElement('div');
+  row.className = 'position-row';
+
+  const label = document.createElement('span');
+  label.className = 'position-label';
+  label.setAttribute('data-i18n', 'position');
+  label.textContent = t('position');
+  row.appendChild(label);
+
+  [['pan', 'panNone'], ['depth', 'depthNone']].forEach(([axis, noneKey]) => {
+    const select = document.createElement('select');
+    select.className = 'position-select';
+    select.dataset.positionKey = positionKey;
+    select.dataset.axis = axis;
+
+    const none = document.createElement('option');
+    none.value = '';
+    none.setAttribute('data-i18n', noneKey);
+    none.textContent = t(noneKey);
+    select.appendChild(none);
+
+    PromptGenerator.POSITIONS[axis].forEach(phrase => {
+      const option = document.createElement('option');
+      option.value = phrase;
+      option.textContent = phrase;
+      select.appendChild(option);
+    });
+
+    select.addEventListener('change', () => {
+      const position = { ...selections.positions[positionKey], [axis]: select.value };
+      if (!position.pan && !position.depth) {
+        delete selections.positions[positionKey];
+      } else {
+        selections.positions[positionKey] = position;
+      }
+      syncPositionControls();
+      updatePreview();
+    });
+    row.appendChild(select);
+  });
+
+  return row;
+};
+
+// Reflect selections.positions in the dropdowns and folder badges
+const syncPositionControls = () => {
+  document.querySelectorAll('.position-select').forEach(select => {
+    select.value = selections.positions[select.dataset.positionKey]?.[select.dataset.axis] || '';
+  });
+  document.querySelectorAll('.position-badge').forEach(badge => {
+    const position = selections.positions[badge.dataset.positionKey];
+    badge.textContent = position ? `📍 ${[position.pan, position.depth].filter(Boolean).join(', ')}` : '';
+  });
 };
 
 const populateTabs = () => {
@@ -353,8 +427,7 @@ const setupTabs = () => {
 const setupButtons = () => {
   // Random generation
   document.getElementById('random-btn').addEventListener('click', () => {
-    const randomSelection = generator.getRandomSelection();
-    selections = randomSelection;
+    selections = normalizeSelections(generator.getRandomSelection());
 
     // Update BPM
     const bpmSlider = document.getElementById('bpm-slider');
@@ -364,15 +437,7 @@ const setupButtons = () => {
       bpmInput.value = selections.bpm;
     }
 
-    // Update checkboxes
-    const items = generator.flattenAllItems();
-    CATEGORIES.forEach(category => {
-      const checkboxes = document.querySelectorAll(`input[id^="${category}-"]`);
-      checkboxes.forEach(cb => {
-        cb.checked = selections[category].includes(cb.value);
-      });
-    });
-
+    updateAllCheckboxes();
     updatePreview();
     addLog(t('logRandomGenerated'), 'info');
   });
@@ -384,6 +449,7 @@ const setupButtons = () => {
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
       cb.checked = false;
     });
+    syncPositionControls();
 
     updatePreview();
     addLog(t('logCleared'), 'info');
@@ -608,15 +674,14 @@ const loadProjectsList = async () => {
 };
 
 const updateAllCheckboxes = () => {
-  // Update all checkboxes to match current selections
-  const items = generator.flattenAllItems();
-
+  // Update all checkboxes and position dropdowns to match current selections
   CATEGORIES.forEach(category => {
     const checkboxes = document.querySelectorAll(`input[id^="${category}-"]`);
     checkboxes.forEach(cb => {
       cb.checked = selections[category].includes(cb.value);
     });
   });
+  syncPositionControls();
 };
 
 // Initialize

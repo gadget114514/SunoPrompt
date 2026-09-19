@@ -21,27 +21,33 @@ class PromptGenerator {
       parts.push(genres.join(', '));
     }
 
-    // Vocal (can be mode names or phrases/modifiers)
-    if (selections.vocals && selections.vocals.length > 0) {
-      selections.vocals.forEach(item => {
-        // Check if it's a vocal mode name
-        if (this.data.vocal?.vocal_modes?.[item]) {
-          // Use the first style phrase for this mode
-          const modeData = this.data.vocal.vocal_modes[item];
-          if (modeData.style_phrases && modeData.style_phrases.length > 0) {
-            parts.push(modeData.style_phrases[0]);
-          }
-        } else {
-          // It's a phrase or modifier
-          parts.push(item);
-        }
-      });
+    // Vocal (can be mode names or phrases/modifiers). A mode's position is
+    // attached to its first selected phrase, e.g. "female vocal (panned left)"
+    const vocalModes = this.data.vocal?.vocal_modes || {};
+    const vocalParts = (selections.vocals || []).map(item => {
+      if (vocalModes[item]) {
+        // Use the first style phrase for this mode
+        return { mode: item, text: vocalModes[item].style_phrases?.[0] };
+      }
+      // It's a phrase or modifier
+      return { mode: this.findVocalMode(item), text: item };
+    }).filter(part => part.text);
+    for (const [modeName, modeData] of Object.entries(vocalModes)) {
+      const position = this.getPositionPhrases(selections, 'vocals', modeName);
+      if (position.length === 0) continue;
+      const target = vocalParts.find(part => part.mode === modeName);
+      if (target) {
+        target.text = `${target.text} (${position.join(', ')})`;
+      } else if (modeData.style_phrases?.[0]) {
+        vocalParts.push({ mode: modeName, text: `${modeData.style_phrases[0]} (${position.join(', ')})` });
+      }
     }
+    parts.push(...vocalParts.map(part => part.text));
 
-    // Instruments: techniques are always attached to their instrument name,
-    // e.g. "Grand Piano (legato arpeggios, deep sustain pedal)"
+    // Instruments: techniques and position are always attached to their
+    // instrument name, e.g. "Grand Piano (legato arpeggios, panned left)"
+    const groups = new Map();
     if (selections.instruments && selections.instruments.length > 0) {
-      const groups = new Map();
       selections.instruments.forEach(item => {
         const { instrument, technique } = this.parseInstrumentItem(item);
         if (!instrument) {
@@ -51,11 +57,17 @@ class PromptGenerator {
         if (!groups.has(instrument)) groups.set(instrument, []);
         if (technique) groups.get(instrument).push(technique);
       });
-      groups.forEach((techniques, instrument) => {
-        const name = this.getInstrumentName(instrument);
-        parts.push(techniques.length > 0 ? `${name} (${techniques.join(', ')})` : name);
-      });
     }
+    // Setting a position is enough to include the instrument
+    Object.keys(selections.positions || {}).forEach(key => {
+      const [category, instrument] = PromptGenerator.splitPositionKey(key);
+      if (category === 'instruments' && !groups.has(instrument)) groups.set(instrument, []);
+    });
+    groups.forEach((techniques, instrument) => {
+      const name = this.getInstrumentName(instrument);
+      const details = [...techniques, ...this.getPositionPhrases(selections, 'instruments', instrument)];
+      parts.push(details.length > 0 ? `${name} (${details.join(', ')})` : name);
+    });
 
     // Chord / harmony phrases
     if (selections.chords && selections.chords.length > 0) {
@@ -109,6 +121,28 @@ class PromptGenerator {
     }
     const owner = Object.keys(instruments).find(key => instruments[key].techniques?.includes(item));
     return { instrument: owner || null, technique: item };
+  }
+
+  findVocalMode(phrase) {
+    const vocalModes = this.data.vocal?.vocal_modes || {};
+    return Object.keys(vocalModes).find(mode =>
+      vocalModes[mode].style_phrases?.includes(phrase) || vocalModes[mode].style_modifiers?.includes(phrase)
+    ) || null;
+  }
+
+  // Stereo / depth placement chosen for a vocal mode or instrument
+  getPositionPhrases(selections, category, name) {
+    const position = selections.positions?.[PromptGenerator.positionKey(category, name)];
+    return position ? [position.pan, position.depth].filter(Boolean) : [];
+  }
+
+  static positionKey(category, name) {
+    return `${category}:${name}`;
+  }
+
+  static splitPositionKey(key) {
+    const sep = key.indexOf(':');
+    return [key.slice(0, sep), key.slice(sep + 1)];
   }
 
   static techniqueValue(instrumentKey, technique) {
@@ -329,3 +363,7 @@ class PromptGenerator {
 
 PromptGenerator.TECHNIQUE_SEPARATOR = '::';
 PromptGenerator.ERA_GROUP = 'Era';
+PromptGenerator.POSITIONS = {
+  pan: ['centered', 'panned left', 'panned right', 'panned hard left', 'panned hard right', 'wide stereo'],
+  depth: ['upfront', 'close-miked', 'in the background', 'distant']
+};
