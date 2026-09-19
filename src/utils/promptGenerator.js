@@ -72,20 +72,30 @@ class PromptGenerator {
     return instrumentData?.aliases?.[0] || instrumentKey;
   }
 
+  // Older data combined instruments as "Grand Piano / Piano"; map such keys
+  // to the first instrument they were split into.
+  resolveInstrumentKey(instrumentKey) {
+    const instruments = this.data.instruments?.instruments || {};
+    if (instruments[instrumentKey]) return instrumentKey;
+    const first = instrumentKey.replace(/\s*—.*$/, '').split(' / ')[0].trim();
+    return instruments[first] ? first : instrumentKey;
+  }
+
   // Instrument selection values are either an instrument key (name only)
   // or "<instrument key>::<technique>". Bare techniques from older projects
   // are matched to the first instrument that has them.
   parseInstrumentItem(item) {
     const instruments = this.data.instruments?.instruments || {};
-    if (instruments[item]) {
-      return { instrument: item, technique: null };
-    }
     const sep = item.indexOf(PromptGenerator.TECHNIQUE_SEPARATOR);
     if (sep >= 0) {
       return {
-        instrument: item.slice(0, sep),
+        instrument: this.resolveInstrumentKey(item.slice(0, sep)),
         technique: item.slice(sep + PromptGenerator.TECHNIQUE_SEPARATOR.length)
       };
+    }
+    const instrumentKey = this.resolveInstrumentKey(item);
+    if (instruments[instrumentKey]) {
+      return { instrument: instrumentKey, technique: null };
     }
     const owner = Object.keys(instruments).find(key => instruments[key].techniques?.includes(item));
     return { instrument: owner || null, technique: item };
