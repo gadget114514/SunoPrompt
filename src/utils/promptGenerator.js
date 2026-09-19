@@ -52,6 +52,11 @@ class PromptGenerator {
       });
     }
 
+    // Chord / harmony phrases
+    if (selections.chords && selections.chords.length > 0) {
+      parts.push(...selections.chords);
+    }
+
     // Structure phrases
     if (selections.structures && selections.structures.length > 0) {
       const structurePhrases = selections.structures.map(s => {
@@ -110,6 +115,7 @@ class PromptGenerator {
       genres: [],
       vocals: [],
       instruments: [],
+      chords: [],
       structures: [],
       bpm: this.getRandomBPM()
     };
@@ -190,6 +196,16 @@ class PromptGenerator {
       }
     }
 
+    // Random chords: sometimes one progression, sometimes one chord color
+    if (this.data.chord?.categories) {
+      for (const categoryName of ['Progressions', 'Chord Colors']) {
+        const phrases = this.data.chord.categories[categoryName]?.phrases;
+        if (phrases && phrases.length > 0 && Math.random() < 0.5) {
+          selection.chords.push(phrases[Math.floor(Math.random() * phrases.length)]);
+        }
+      }
+    }
+
     // Random structures (2-3 phrases)
     if (this.data.structure?.categories) {
       const allStructures = [];
@@ -237,6 +253,7 @@ class PromptGenerator {
       genres: [],
       vocals: [],
       instruments: { byInstrument: {}, allTechniques: [] },
+      chords: { byCategory: {}, allPhrases: [] },
       structures: { byCategory: {}, allPhrases: [] }
     };
 
@@ -272,6 +289,16 @@ class PromptGenerator {
         if (instrumentData.techniques) {
           items.instruments.byInstrument[instrumentName] = instrumentData.techniques;
           items.instruments.allTechniques.push(...instrumentData.techniques);
+        }
+      }
+    }
+
+    // Chords by category with phrases
+    if (this.data.chord?.categories) {
+      for (const [categoryName, categoryData] of Object.entries(this.data.chord.categories)) {
+        if (categoryData.phrases) {
+          items.chords.byCategory[categoryName] = categoryData.phrases;
+          items.chords.allPhrases.push(...categoryData.phrases);
         }
       }
     }

@@ -8,7 +8,7 @@ A desktop app for building [Suno AI](https://suno.com/) style prompts by simply 
 
 ## Features
 
-- **Pick from 4 categories** — combine genres, vocals, instruments and structures into a prompt
+- **Pick from 5 categories** — combine genres, vocals, instruments, chords and structures into a prompt
 - **BPM control** — set the tempo with a slider or by typing a number
 - **Live preview** — the prompt updates instantly as you select
 - **Random generate** — create a random combination with one click
@@ -33,7 +33,7 @@ No installation needed, and no Node.js or npm required (Windows x64).
 
 ## Usage
 
-1. Tick items in the center tabs (Genres / Vocals / Instruments / Structures)
+1. Tick items in the center tabs (Genres / Vocals / Instruments / Chords / Structures)
 2. Adjust the BPM with the slider at the top right
 3. Click **Copy to Clipboard** to copy the prompt shown in Preview
 4. Paste it into Suno's Style of Music field
@@ -75,6 +75,7 @@ Prompt options are loaded from the following JSON files. Edit them to customize 
 | `genre.json` | Genres |
 | `suno_style_vocal_spec.json` | Vocal modes and expressions |
 | `suno_instrument_techniques.json` | Instruments and playing techniques |
+| `suno_chord_phrases.json` | Chord progressions, harmony and keys |
 | `suno_style_structure_phrases.json` | Song structure phrases |
 
 ## License

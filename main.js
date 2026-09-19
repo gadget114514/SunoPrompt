@@ -16,6 +16,7 @@ const loadJSONFiles = () => {
     genre: 'genre.json',
     vocal: 'suno_style_vocal_spec.json',
     instruments: 'suno_instrument_techniques.json',
+    chord: 'suno_chord_phrases.json',
     structure: 'suno_style_structure_phrases.json'
   };
 

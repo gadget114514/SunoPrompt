@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "title": "Suno Style-field chord and harmony phrases",
+    "note": "Natural-language harmony cues for the Style box. They bias progression, chord color and key, but exact chords are not guaranteed.",
+    "language": "en",
+    "usage": "Append after instrument terms in the Style field."
+  },
+  "categories": {
+    "Progressions": {
+      "description": "Common chord progressions",
+      "phrases": [
+        "I-V-vi-IV progression",
+        "vi-IV-I-V progression",
+        "I-vi-IV-V progression",
+        "ii-V-I progression",
+        "IV-V-iii-vi royal road progression",
+        "Canon progression",
+        "Andalusian cadence",
+        "12-bar blues progression",
+        "circle of fifths progression",
+        "i-VI-III-VII minor progression",
+        "i-iv-v minor progression",
+        "descending bass line progression"
+      ]
+    },
+    "Chord Colors": {
+      "description": "Chord types and voicings",
+      "phrases": [
+        "major 7th chords",
+        "minor 7th chords",
+        "minor 9th chords",
+        "dominant 7th chords",
+        "extended jazz chords",
+        "sus2 chords",
+        "sus4 chords",
+        "add9 chords",
+        "diminished passing chords",
+        "augmented chords",
+        "power chords",
+        "open voicings",
+        "close voicings",
+        "lush chord voicings"
+      ]
+    },
+    "Harmonic Movement": {
+      "description": "How the harmony moves over time",
+      "phrases": [
+        "modal interchange",
+        "borrowed chords",
+        "chromatic chord movement",
+        "chromatic mediants",
+        "secondary dominants",
+        "tritone substitution",
+        "pedal point",
+        "drone harmony",
+        "two-chord vamp",
+        "one-chord vamp",
+        "slow harmonic rhythm",
+        "fast harmonic rhythm",
+        "unresolved ending"
+      ]
+    },
+    "Key Change": {
+      "description": "Modulation",
+      "phrases": [
+        "key change in the final chorus",
+        "half-step key change",
+        "whole-step key change",
+        "modulates to the relative minor",
+        "modulates to the relative major",
+        "no key change"
+      ]
+    },
+    "Key / Mode": {
+      "description": "Tonality and modes",
+      "phrases": [
+        "major key",
+        "minor key",
+        "Dorian mode",
+        "Phrygian mode",
+        "Lydian mode",
+        "Mixolydian mode",
+        "harmonic minor",
+        "melodic minor",
+        "pentatonic scale",
+        "blues scale",
+        "whole-tone harmony"
+      ]
+    },
+    "Major Keys": {
+      "description": "Specific major keys",
+      "phrases": [
+        "in C major",
+        "in G major",
+        "in D major",
+        "in A major",
+        "in E major",
+        "in B major",
+        "in F# major",
+        "in Db major",
+        "in Ab major",
+        "in Eb major",
+        "in Bb major",
+        "in F major"
+      ]
+    },
+    "Minor Keys": {
+      "description": "Specific minor keys",
+      "phrases": [
+        "in A minor",
+        "in E minor",
+        "in B minor",
+        "in F# minor",
+        "in C# minor",
+        "in G# minor",
+        "in Eb minor",
+        "in Bb minor",
+        "in F minor",
+        "in C minor",
+        "in G minor",
+        "in D minor"
+      ]
+    }
+  }
+}

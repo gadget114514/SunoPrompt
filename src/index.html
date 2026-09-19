@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Build Suno AI style prompts by ticking checkboxes — genres, vocals, instruments, structures and BPM.">
+  <meta name="description" content="Build Suno AI style prompts by ticking checkboxes — genres, vocals, instruments, chords, structures and BPM.">
   <title>Suno Prompt Generator</title>
   <link rel="icon" href="favicon.ico">
   <link rel="stylesheet" href="styles.css">
@@ -14,7 +14,7 @@
       <div class="header-top">
         <div>
           <h1>🎵 <span data-i18n="title">Suno Prompt Generator</span></h1>
-          <p data-i18n="subtitle">4つのカテゴリから選択してプロンプトを生成</p>
+          <p data-i18n="subtitle">5つのカテゴリから選択してプロンプトを生成</p>
         </div>
         <div class="language-switcher">
           <button class="lang-btn active" data-lang="en">English</button>
@@ -60,6 +60,7 @@
           <button class="tab-button active" data-tab="genres" data-i18n="genres">Genres</button>
           <button class="tab-button" data-tab="vocals" data-i18n="vocals">Vocals</button>
           <button class="tab-button" data-tab="instruments" data-i18n="instruments">Instruments</button>
+          <button class="tab-button" data-tab="chords" data-i18n="chords">Chords</button>
           <button class="tab-button" data-tab="structures" data-i18n="structures">Structures</button>
         </div>
 
@@ -72,6 +73,9 @@
           </div>
           <div class="tab-content" id="instruments-tab">
             <div id="instruments-list" class="items-list"></div>
+          </div>
+          <div class="tab-content" id="chords-tab">
+            <div id="chords-list" class="items-list"></div>
           </div>
           <div class="tab-content" id="structures-tab">
             <div id="structures-list" class="items-list"></div>

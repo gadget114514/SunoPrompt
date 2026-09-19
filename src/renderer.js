@@ -1,10 +1,11 @@
 const translations = {
   en: {
     title: 'Suno Prompt Generator',
-    subtitle: 'Select from 4 categories to generate your prompt',
+    subtitle: 'Select from 5 categories to generate your prompt',
     genres: 'Genres',
     vocals: 'Vocals',
     instruments: 'Instruments',
+    chords: 'Chords',
     structures: 'Structures',
     bpm: 'BPM (Tempo)',
     preview: 'Preview',
@@ -35,10 +36,11 @@ const translations = {
   },
   ja: {
     title: 'Suno プロンプトジェネレーター',
-    subtitle: '4つのカテゴリから選択してプロンプトを生成',
+    subtitle: '5つのカテゴリから選択してプロンプトを生成',
     genres: 'ジャンル',
     vocals: 'ボーカル',
     instruments: '楽器',
+    chords: 'コード',
     structures: '構造',
     bpm: 'BPM (テンポ)',
     preview: 'プレビュー',
@@ -75,8 +77,20 @@ let selections = {
   genres: [],
   vocals: [],
   instruments: [],
+  chords: [],
   structures: [],
   bpm: 120
+};
+
+const CATEGORIES = ['genres', 'vocals', 'instruments', 'chords', 'structures'];
+
+// Fill in categories missing from older saved projects
+const normalizeSelections = (sel) => {
+  const normalized = { ...sel };
+  CATEGORIES.forEach(category => {
+    if (!Array.isArray(normalized[category])) normalized[category] = [];
+  });
+  return normalized;
 };
 
 const t = (key) => translations[currentLang][key] || translations.en[key] || key;
@@ -165,7 +179,7 @@ const renderCheckboxList = (containerId, items, category) => {
     renderHierarchicalList(container, items.byInstrument, category, 'instrument');
   } else if (category === 'vocals' && items.byMode) {
     renderHierarchicalList(container, items.byMode, category, 'mode');
-  } else if (category === 'structures' && items.byCategory) {
+  } else if ((category === 'structures' || category === 'chords') && items.byCategory) {
     renderHierarchicalList(container, items.byCategory, category, 'category');
   } else {
     // Simple flat list
@@ -297,6 +311,7 @@ const populateTabs = () => {
   renderCheckboxList('genres-list', items.genres, 'genres');
   renderCheckboxList('vocals-list', items.vocals, 'vocals');
   renderCheckboxList('instruments-list', items.instruments, 'instruments');
+  renderCheckboxList('chords-list', items.chords, 'chords');
   renderCheckboxList('structures-list', items.structures, 'structures');
 
   addLog(t('logDataLoaded'), 'success');
@@ -349,7 +364,7 @@ const setupButtons = () => {
 
     // Update checkboxes
     const items = generator.flattenAllItems();
-    ['genres', 'vocals', 'instruments', 'structures'].forEach(category => {
+    CATEGORIES.forEach(category => {
       const checkboxes = document.querySelectorAll(`input[id^="${category}-"]`);
       checkboxes.forEach(cb => {
         cb.checked = selections[category].includes(cb.value);
@@ -362,13 +377,7 @@ const setupButtons = () => {
 
   // Clear all selections and preview
   document.getElementById('clear-all-btn').addEventListener('click', () => {
-    selections = {
-      genres: [],
-      vocals: [],
-      instruments: [],
-      structures: [],
-      bpm: null
-    };
+    selections = normalizeSelections({ bpm: null });
 
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
       cb.checked = false;
@@ -564,7 +573,7 @@ const loadProjectsList = async () => {
       loadBtn.addEventListener('click', async () => {
         const loadResult = await window.electronAPI.loadProject(project.fileName);
         if (loadResult.success) {
-          selections = loadResult.project.selections;
+          selections = normalizeSelections(loadResult.project.selections);
           updateAllCheckboxes();
           updatePreview();
           addLog(t('logProjectLoaded') + project.name, 'success');
@@ -600,18 +609,8 @@ const updateAllCheckboxes = () => {
   // Update all checkboxes to match current selections
   const items = generator.flattenAllItems();
 
-  ['genres', 'vocals', 'instruments', 'structures'].forEach(category => {
-    let checkboxes = [];
-    if (category === 'vocals' && items.vocals.byMode) {
-      checkboxes = document.querySelectorAll(`input[id^="${category}-"]`);
-    } else if (category === 'instruments' && items.instruments.byInstrument) {
-      checkboxes = document.querySelectorAll(`input[id^="${category}-"]`);
-    } else if (category === 'structures' && items.structures.byCategory) {
-      checkboxes = document.querySelectorAll(`input[id^="${category}-"]`);
-    } else {
-      checkboxes = document.querySelectorAll(`input[id^="${category}-"]`);
-    }
-
+  CATEGORIES.forEach(category => {
+    const checkboxes = document.querySelectorAll(`input[id^="${category}-"]`);
     checkboxes.forEach(cb => {
       cb.checked = selections[category].includes(cb.value);
     });

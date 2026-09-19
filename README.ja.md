@@ -8,7 +8,7 @@
 
 ## 特徴
 
-- **4つのカテゴリから選択** — ジャンル・ボーカル・楽器・構造を組み合わせてプロンプトを生成
+- **5つのカテゴリから選択** — ジャンル・ボーカル・楽器・コード・構造を組み合わせてプロンプトを生成
 - **BPM 指定** — スライダーまたは数値入力でテンポを設定
 - **リアルタイムプレビュー** — 選択に合わせてプロンプトが即時更新
 - **ランダム生成** — ワンクリックでランダムな組み合わせを作成
@@ -33,7 +33,7 @@
 
 ## 使い方
 
-1. 中央のタブ（Genres / Vocals / Instruments / Structures）から項目をチェック
+1. 中央のタブ（Genres / Vocals / Instruments / Chords / Structures）から項目をチェック
 2. 右上のスライダーで BPM を調整
 3. Preview に表示されたプロンプトを **Copy to Clipboard** でコピー
 4. Suno の Style of Music 欄に貼り付け
@@ -75,6 +75,7 @@ npm run dist
 | `genre.json` | ジャンル |
 | `suno_style_vocal_spec.json` | ボーカルのモード・表現 |
 | `suno_instrument_techniques.json` | 楽器と奏法 |
+| `suno_chord_phrases.json` | コード進行・和声・キー |
 | `suno_style_structure_phrases.json` | 曲構成のフレーズ |
 
 ## ライセンス
