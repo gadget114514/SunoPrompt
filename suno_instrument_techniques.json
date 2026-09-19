@@ -55,6 +55,12 @@
         "gradually widening voicings",
         "soft final chord",
         "quiet closing cadence",
+        "stride piano",
+        "boogie-woogie",
+        "gospel chords",
+        "block chords",
+        "glissando",
+        "rolled chords",
         "trap",
         "follow"
       ]
@@ -95,6 +101,12 @@
         "gradually widening voicings",
         "soft final chord",
         "quiet closing cadence",
+        "stride piano",
+        "boogie-woogie",
+        "gospel chords",
+        "block chords",
+        "glissando",
+        "rolled chords",
         "trap",
         "follow"
       ]
@@ -126,6 +138,11 @@
         "soft sustained patterns",
         "suspended chords",
         "gentle closing chord",
+        "slap",
+        "percussive body taps",
+        "travis picking",
+        "capo high voicing",
+        "slide",
         "trap",
         "follow"
       ]
@@ -154,6 +171,18 @@
         "soft feedback sustain",
         "open sustained chords",
         "low-register sustained phrases",
+        "slap",
+        "power chords",
+        "distorted riffs",
+        "string bending",
+        "vibrato",
+        "hammer-ons and pull-offs",
+        "pinch harmonics",
+        "wah-wah",
+        "tapping",
+        "sweep picking",
+        "chugging palm mutes",
+        "funky chicken-scratch strumming",
         "trap",
         "follow"
       ]
@@ -174,6 +203,13 @@
         "gradual tom-led builds",
         "soft cymbal lift",
         "abrupt coordinated stop",
+        "four-on-the-floor",
+        "blast beats",
+        "double-kick",
+        "shuffle groove",
+        "ghost notes",
+        "breakbeat",
+        "drum fill into chorus",
         "trap",
         "follow"
       ]
@@ -202,6 +238,11 @@
         "two violins in soft harmony",
         "interweaving lines",
         "sustained thirds",
+        "tremolo",
+        "col legno",
+        "double stops",
+        "glissando",
+        "fiddle-style bowing",
         "trap",
         "follow"
       ]
@@ -219,6 +260,14 @@
         "bass harmonics",
         "melodic bass lines",
         "short accented hits",
+        "slap",
+        "slap and pop",
+        "fingerstyle",
+        "picked bass",
+        "walking bass",
+        "fretless slides",
+        "octave bounce",
+        "ghost notes",
         "trap",
         "follow"
       ]
@@ -260,6 +309,12 @@
         "short high-register bursts",
         "muted punctuations",
         "final sustained tone with natural decay",
+        "growl",
+        "shake",
+        "fall-off",
+        "brass stabs",
+        "wah-wah mute",
+        "Harmon mute",
         "trap",
         "follow"
       ]
@@ -282,6 +337,8 @@
         "breathy tones",
         "soft single-breath echoes",
         "gently descending phrases",
+        "flutter-tonguing",
+        "overblowing",
         "trap",
         "follow"
       ]
@@ -307,6 +364,7 @@
         "harmonics",
         "muted harmonics",
         "final single note allowed to decay naturally",
+        "slap",
         "trap",
         "follow"
       ]
@@ -332,6 +390,7 @@
         "harmonics",
         "muted harmonics",
         "final single note allowed to decay naturally",
+        "slap",
         "trap",
         "follow"
       ]
@@ -435,6 +494,8 @@
         "muted tone",
         "gentle counterpoint",
         "detached phrase followed by a legato echo",
+        "flutter-tonguing",
+        "glissando",
         "trap",
         "follow"
       ]
@@ -453,6 +514,11 @@
         "sustained low tones",
         "short answering phrases",
         "muted tone",
+        "growl",
+        "shake",
+        "fall-off",
+        "brass stabs",
+        "wah-wah mute",
         "trap",
         "follow"
       ]
@@ -485,6 +551,10 @@
         "soft sustained answers",
         "quiet bass-line support",
         "fading final low tone",
+        "tremolo",
+        "col legno",
+        "double stops",
+        "glissando",
         "trap",
         "follow"
       ]
@@ -516,6 +586,8 @@
       ],
       "techniques": [
         "crisp articulated phrases",
+        "bachi strikes",
+        "sawari buzz",
         "trap",
         "follow"
       ]
@@ -529,6 +601,8 @@
         "thin isolated single notes",
         "gentle legato connections with short lingering resonance",
         "soft harmonics",
+        "tremolo",
+        "oshide pitch bends",
         "trap",
         "follow"
       ]
@@ -542,6 +616,7 @@
         "long breath-supported tones",
         "low breathy phrases",
         "slowly rising and falling sustained lines",
+        "muraiki breath attacks",
         "trap",
         "follow"
       ]
@@ -555,6 +630,9 @@
         "sustained chords",
         "low drone",
         "sustained pad",
+        "Leslie rotary swirl",
+        "drawbar swells",
+        "gospel organ stabs",
         "trap",
         "follow"
       ]
@@ -600,6 +678,11 @@
         "rising and falling sustained lines",
         "gradual swells",
         "brief isolated high tones",
+        "filter sweep",
+        "sidechain pumping",
+        "supersaw chords",
+        "portamento lead",
+        "detuned pads",
         "trap",
         "follow"
       ]
@@ -658,6 +741,7 @@
         "muted bass ostinato",
         "sparse pulses",
         "rhythmic bass movement",
+        "slap",
         "trap",
         "follow"
       ]
@@ -689,6 +773,7 @@
         "muted bass ostinato",
         "sparse pulses",
         "rhythmic bass movement",
+        "slap",
         "trap",
         "follow"
       ]
@@ -834,6 +919,8 @@
         "marching rolls",
         "short fills",
         "clipped attacks",
+        "snare roll build-up",
+        "cross-stick",
         "trap",
         "follow"
       ]
@@ -889,6 +976,8 @@
         "crisp subdivisions",
         "precise hi-hat rolls",
         "brushed hi-hat",
+        "open hi-hat",
+        "hi-hat rolls",
         "trap",
         "follow"
       ]
@@ -1267,6 +1356,23 @@
         "follow"
       ]
     },
+    "Turntables": {
+      "category": "electronic",
+      "aliases": [
+        "Turntables",
+        "DJ Scratching"
+      ],
+      "techniques": [
+        "scratching",
+        "baby scratch",
+        "transformer scratch",
+        "chirp scratch",
+        "rewinds",
+        "beat juggling",
+        "trap",
+        "follow"
+      ]
+    },
     "Djembe": {
       "category": "percussion",
       "aliases": [
@@ -1603,6 +1709,23 @@
         "follow"
       ]
     },
+    "Hammond Organ": {
+      "category": "keyboard",
+      "aliases": [
+        "Hammond Organ",
+        "Hammond B3"
+      ],
+      "techniques": [
+        "Leslie rotary swirl",
+        "drawbar swells",
+        "percussive click",
+        "gospel organ stabs",
+        "glissando smears",
+        "sustained chords",
+        "trap",
+        "follow"
+      ]
+    },
     "Bass Flute": {
       "category": "woodwind",
       "aliases": [
@@ -1611,6 +1734,79 @@
       "techniques": [
         "breath tones",
         "sparse breathy responses",
+        "trap",
+        "follow"
+      ]
+    },
+    "Saxophone": {
+      "category": "woodwind",
+      "aliases": [
+        "Saxophone",
+        "Sax"
+      ],
+      "techniques": [
+        "growl",
+        "subtone",
+        "altissimo",
+        "breathy low notes",
+        "smooth legato runs",
+        "honking riffs",
+        "bends and scoops",
+        "sax solo",
+        "trap",
+        "follow"
+      ]
+    },
+    "Alto Saxophone": {
+      "category": "woodwind",
+      "aliases": [
+        "Alto Saxophone",
+        "Alto Sax"
+      ],
+      "techniques": [
+        "growl",
+        "subtone",
+        "altissimo",
+        "breathy low notes",
+        "smooth legato runs",
+        "honking riffs",
+        "bends and scoops",
+        "sax solo",
+        "trap",
+        "follow"
+      ]
+    },
+    "Tenor Saxophone": {
+      "category": "woodwind",
+      "aliases": [
+        "Tenor Saxophone",
+        "Tenor Sax"
+      ],
+      "techniques": [
+        "growl",
+        "subtone",
+        "altissimo",
+        "breathy low notes",
+        "smooth legato runs",
+        "honking riffs",
+        "bends and scoops",
+        "sax solo",
+        "trap",
+        "follow"
+      ]
+    },
+    "Harmonica": {
+      "category": "woodwind",
+      "aliases": [
+        "Harmonica",
+        "Blues Harp"
+      ],
+      "techniques": [
+        "bends",
+        "train rhythm",
+        "warbles",
+        "wailing blues licks",
+        "chordal chugging",
         "trap",
         "follow"
       ]
@@ -1920,6 +2116,37 @@
       "techniques": [
         "soft plucks",
         "sparse rhythmic accompaniment",
+        "slap",
+        "trap",
+        "follow"
+      ]
+    },
+    "Banjo": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Banjo"
+      ],
+      "techniques": [
+        "three-finger rolls",
+        "clawhammer",
+        "bluegrass picking",
+        "bright rolling arpeggios",
+        "double-time picking",
+        "trap",
+        "follow"
+      ]
+    },
+    "Ukulele": {
+      "category": "guitar_plucked",
+      "aliases": [
+        "Ukulele"
+      ],
+      "techniques": [
+        "island strum",
+        "fingerpicking",
+        "chunking",
+        "bright rhythmic strumming",
+        "campanella picking",
         "trap",
         "follow"
       ]
@@ -2265,6 +2492,36 @@
         "follow"
       ]
     },
+    "Sitar": {
+      "category": "traditional_world",
+      "aliases": [
+        "Sitar"
+      ],
+      "techniques": [
+        "meend glides",
+        "sympathetic string drone",
+        "gamak ornaments",
+        "rapid jhala strokes",
+        "slow alap",
+        "trap",
+        "follow"
+      ]
+    },
+    "Tabla": {
+      "category": "traditional_world",
+      "aliases": [
+        "Tabla"
+      ],
+      "techniques": [
+        "bayan bass bends",
+        "rapid bols",
+        "tihai cadences",
+        "intricate rhythmic cycles",
+        "resonant na strokes",
+        "trap",
+        "follow"
+      ]
+    },
     "Barrel Drum": {
       "category": "percussion",
       "aliases": [
@@ -2476,6 +2733,14 @@
         "harmonics",
         "rolling bass movement",
         "alternating rhythmic support",
+        "slap",
+        "slap and pop",
+        "fingerstyle",
+        "picked bass",
+        "walking bass",
+        "fretless slides",
+        "octave bounce",
+        "ghost notes",
         "trap",
         "follow"
       ]
@@ -2494,6 +2759,7 @@
         "harmonics",
         "rolling bass movement",
         "alternating rhythmic support",
+        "slap",
         "trap",
         "follow"
       ]
