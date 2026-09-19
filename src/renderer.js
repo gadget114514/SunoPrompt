@@ -98,6 +98,7 @@ const normalizeSelections = (sel) => {
     if (!Array.isArray(normalized[category])) normalized[category] = [];
   });
   if (!normalized.positions || typeof normalized.positions !== 'object') normalized.positions = {};
+  if (generator) normalized.vocals = generator.normalizeVocals(normalized.vocals);
   // Genres such as "Synthwave / Retrowave" were split into separate items
   normalized.genres = [...new Set(normalized.genres.flatMap(g => g.split(' / ').map(x => x.trim())))];
   return normalized;

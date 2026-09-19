@@ -123,6 +123,13 @@ class PromptGenerator {
     return { instrument: owner || null, technique: item };
   }
 
+  // Older random selections stored bare mode names ("female"); turn them into
+  // the mode's main phrase so they have a checkbox, and drop duplicates.
+  normalizeVocals(vocals) {
+    const vocalModes = this.data.vocal?.vocal_modes || {};
+    return [...new Set(vocals.map(item => vocalModes[item]?.style_phrases?.[0] || item))];
+  }
+
   findVocalMode(phrase) {
     const vocalModes = this.data.vocal?.vocal_modes || {};
     return Object.keys(vocalModes).find(mode =>
@@ -181,27 +188,19 @@ class PromptGenerator {
       }
     }
 
-    // Random vocal (mode + 1-2 phrases)
+    // Random vocal: one main phrase from a mode, sometimes plus one more.
+    // Only phrases are picked (never the bare mode name), so every pick has
+    // its own checkbox and nothing is output twice.
     if (this.data.vocal?.vocal_modes) {
-      const vocalModes = Object.entries(this.data.vocal.vocal_modes);
+      const vocalModes = Object.values(this.data.vocal.vocal_modes).filter(m => m.style_phrases?.length > 0);
       if (vocalModes.length > 0) {
-        const [modeName, modeData] = vocalModes[Math.floor(Math.random() * vocalModes.length)];
+        const modeData = vocalModes[Math.floor(Math.random() * vocalModes.length)];
+        const main = modeData.style_phrases[Math.floor(Math.random() * modeData.style_phrases.length)];
+        selection.vocals.push(main);
 
-        // Add vocal mode
-        selection.vocals.push(modeName);
-
-        // Add 1-2 style phrases from this mode
-        const phrases = [];
-        if (modeData.style_phrases) phrases.push(...modeData.style_phrases);
-        if (modeData.style_modifiers) phrases.push(...modeData.style_modifiers);
-
-        if (phrases.length > 0) {
-          const phraseCount = Math.min(Math.random() > 0.6 ? 2 : 1, phrases.length);
-          for (let i = 0; i < phraseCount; i++) {
-            const idx = Math.floor(Math.random() * phrases.length);
-            selection.vocals.push(phrases[idx]);
-            phrases.splice(idx, 1);
-          }
+        const extras = [...modeData.style_phrases, ...(modeData.style_modifiers || [])].filter(p => p !== main);
+        if (extras.length > 0 && Math.random() > 0.6) {
+          selection.vocals.push(extras[Math.floor(Math.random() * extras.length)]);
         }
       }
     }
