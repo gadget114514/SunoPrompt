@@ -23,6 +23,35 @@
         "descending bass line progression"
       ]
     },
+    "Mood Progressions": {
+      "description": "Progressions by mood: J-pop / Royal Road, melancholic, uplifting, sophisticated (R&B / City Pop)",
+      "phrases": [
+        "emotional chord progression",
+        "Royal Road progression",
+        "J-pop chord progression",
+        "anime-style chord progression",
+        "dramatic chorus progression",
+        "nostalgic J-pop progression",
+        "minor chord progression",
+        "melancholic progression",
+        "sad progression",
+        "bittersweet chord progression",
+        "wistful minor progression",
+        "heartbreaking chord progression",
+        "uplifting progression",
+        "energetic chord progression",
+        "bright major progression",
+        "catchy chord progression",
+        "anthemic chord progression",
+        "feel-good chord progression",
+        "neo-soul chord progression",
+        "jazz chord progression",
+        "City Pop chord progression",
+        "smooth R&B chord progression",
+        "jazzy seventh-chord progression",
+        "sophisticated chord progression"
+      ]
+    },
     "Chord Colors": {
       "description": "Chord types and voicings",
       "phrases": [
