@@ -12,6 +12,8 @@ const translations = {
     random: '🎲 Random Generate',
     copy: '📋 Copy to Clipboard',
     save: '💾 Save to File',
+    clearAll: '🗑️ Clear All',
+    logCleared: 'All selections cleared',
     log: 'Log',
     clearLog: 'Clear',
     logDataLoaded: 'Data loaded successfully',
@@ -43,6 +45,8 @@ const translations = {
     random: '🎲 ランダム生成',
     copy: '📋 クリップボードにコピー',
     save: '💾 ファイルに保存',
+    clearAll: '🗑️ すべてクリア',
+    logCleared: 'すべての選択をクリアしました',
     log: 'ログ',
     clearLog: 'クリア',
     logDataLoaded: 'データの読み込み完了',
@@ -336,6 +340,24 @@ const setupButtons = () => {
 
     updatePreview();
     addLog(t('logRandomGenerated'), 'info');
+  });
+
+  // Clear all selections and preview
+  document.getElementById('clear-all-btn').addEventListener('click', () => {
+    selections = {
+      genres: [],
+      vocals: [],
+      instruments: [],
+      structures: [],
+      bpm: null
+    };
+
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.checked = false;
+    });
+
+    updatePreview();
+    addLog(t('logCleared'), 'info');
   });
 
   // Copy to clipboard

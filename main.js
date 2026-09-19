@@ -37,6 +37,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    icon: path.join(__dirname, 'images', 'application.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -46,7 +47,7 @@ const createWindow = () => {
   });
 
   mainWindow.loadFile(path.join(__dirname, 'src', 'index.html'));
-  mainWindow.webContents.openDevTools();
+  if (!app.isPackaged) mainWindow.webContents.openDevTools();
 
   // Send default folder path
   mainWindow.webContents.on('did-finish-load', () => {

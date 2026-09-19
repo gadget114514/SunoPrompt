@@ -600,6 +600,17 @@ header p {
   transform: translateY(-2px);
 }
 
+.btn-danger {
+  background: white;
+  color: #e5484d;
+  border: 2px solid #e5484d;
+}
+
+.btn-danger:hover {
+  background: #fff0f0;
+  transform: translateY(-2px);
+}
+
 .btn-block {
   width: 100%;
 }
