@@ -54,7 +54,9 @@
         "open chords",
         "gradually widening voicings",
         "soft final chord",
-        "quiet closing cadence"
+        "quiet closing cadence",
+        "trap",
+        "follow"
       ]
     },
     "Piano": {
@@ -92,7 +94,9 @@
         "open chords",
         "gradually widening voicings",
         "soft final chord",
-        "quiet closing cadence"
+        "quiet closing cadence",
+        "trap",
+        "follow"
       ]
     },
     "Acoustic Guitar": {
@@ -121,7 +125,9 @@
         "muted harmonics",
         "soft sustained patterns",
         "suspended chords",
-        "gentle closing chord"
+        "gentle closing chord",
+        "trap",
+        "follow"
       ]
     },
     "Electric Guitar": {
@@ -147,7 +153,9 @@
         "held feedback",
         "soft feedback sustain",
         "open sustained chords",
-        "low-register sustained phrases"
+        "low-register sustained phrases",
+        "trap",
+        "follow"
       ]
     },
     "Drum Kit": {
@@ -165,7 +173,9 @@
         "short fills",
         "gradual tom-led builds",
         "soft cymbal lift",
-        "abrupt coordinated stop"
+        "abrupt coordinated stop",
+        "trap",
+        "follow"
       ]
     },
     "Violin": {
@@ -191,7 +201,9 @@
         "bowed drone",
         "two violins in soft harmony",
         "interweaving lines",
-        "sustained thirds"
+        "sustained thirds",
+        "trap",
+        "follow"
       ]
     },
     "Electric Bass": {
@@ -206,7 +218,9 @@
         "bowed electric bass",
         "bass harmonics",
         "melodic bass lines",
-        "short accented hits"
+        "short accented hits",
+        "trap",
+        "follow"
       ]
     },
     "808 Bass": {
@@ -225,7 +239,9 @@
         "tuned 808 kick-bass",
         "rolling 808 patterns",
         "syncopated 808 bounce",
-        "808 drop after silence"
+        "808 drop after silence",
+        "trap",
+        "follow"
       ]
     },
     "Trumpet": {
@@ -243,7 +259,9 @@
         "alternating smooth sustained tones and restrained breath texture",
         "short high-register bursts",
         "muted punctuations",
-        "final sustained tone with natural decay"
+        "final sustained tone with natural decay",
+        "trap",
+        "follow"
       ]
     },
     "Flute": {
@@ -263,7 +281,9 @@
         "lyrical counterlines",
         "breathy tones",
         "soft single-breath echoes",
-        "gently descending phrases"
+        "gently descending phrases",
+        "trap",
+        "follow"
       ]
     },
     "Classical Guitar": {
@@ -286,7 +306,9 @@
         "stop the high-string repetition and return to widely spaced single notes",
         "harmonics",
         "muted harmonics",
-        "final single note allowed to decay naturally"
+        "final single note allowed to decay naturally",
+        "trap",
+        "follow"
       ]
     },
     "Nylon-string Guitar": {
@@ -309,7 +331,9 @@
         "stop the high-string repetition and return to widely spaced single notes",
         "harmonics",
         "muted harmonics",
-        "final single note allowed to decay naturally"
+        "final single note allowed to decay naturally",
+        "trap",
+        "follow"
       ]
     },
     "Tambourine": {
@@ -319,7 +343,9 @@
       ],
       "techniques": [
         "shaking",
-        "light rhythmic accents"
+        "light rhythmic accents",
+        "trap",
+        "follow"
       ]
     },
     "Cymbals": {
@@ -333,7 +359,9 @@
         "bowed cymbal",
         "bowed swells",
         "isolated crash",
-        "soft final brushed stroke"
+        "soft final brushed stroke",
+        "trap",
+        "follow"
       ]
     },
     "Taiko": {
@@ -344,7 +372,9 @@
       "techniques": [
         "booming low strikes",
         "broad heavy impacts",
-        "layered low-drum pulses"
+        "layered low-drum pulses",
+        "trap",
+        "follow"
       ]
     },
     "Taiko-like Low Drums": {
@@ -355,7 +385,9 @@
       "techniques": [
         "booming low strikes",
         "broad heavy impacts",
-        "layered low-drum pulses"
+        "layered low-drum pulses",
+        "trap",
+        "follow"
       ]
     },
     "Xylophone": {
@@ -366,7 +398,9 @@
       "techniques": [
         "muted isolated notes",
         "thin single-note figures",
-        "short repeated patterns with gradual variation"
+        "short repeated patterns with gradual variation",
+        "trap",
+        "follow"
       ]
     },
     "Accordion": {
@@ -379,7 +413,9 @@
         "answering phrases",
         "melodic countermelody",
         "brief flourishes",
-        "soft sustained phrases"
+        "soft sustained phrases",
+        "trap",
+        "follow"
       ]
     },
     "Clarinet": {
@@ -398,7 +434,9 @@
         "warm accents",
         "muted tone",
         "gentle counterpoint",
-        "detached phrase followed by a legato echo"
+        "detached phrase followed by a legato echo",
+        "trap",
+        "follow"
       ]
     },
     "Trombone": {
@@ -414,7 +452,9 @@
         "clearly articulated and settled",
         "sustained low tones",
         "short answering phrases",
-        "muted tone"
+        "muted tone",
+        "trap",
+        "follow"
       ]
     },
     "Cello": {
@@ -444,7 +484,9 @@
         "low drone",
         "soft sustained answers",
         "quiet bass-line support",
-        "fading final low tone"
+        "fading final low tone",
+        "trap",
+        "follow"
       ]
     },
     "Harp": {
@@ -462,7 +504,9 @@
         "continuous descending glissando from high to low",
         "sustained high-register resonance after a glissando",
         "sparse harmonics",
-        "soft low plucks"
+        "soft low plucks",
+        "trap",
+        "follow"
       ]
     },
     "Shamisen": {
@@ -471,7 +515,9 @@
         "Shamisen"
       ],
       "techniques": [
-        "crisp articulated phrases"
+        "crisp articulated phrases",
+        "trap",
+        "follow"
       ]
     },
     "Koto": {
@@ -482,7 +528,9 @@
       "techniques": [
         "thin isolated single notes",
         "gentle legato connections with short lingering resonance",
-        "soft harmonics"
+        "soft harmonics",
+        "trap",
+        "follow"
       ]
     },
     "Shakuhachi": {
@@ -493,7 +541,9 @@
       "techniques": [
         "long breath-supported tones",
         "low breathy phrases",
-        "slowly rising and falling sustained lines"
+        "slowly rising and falling sustained lines",
+        "trap",
+        "follow"
       ]
     },
     "Organ": {
@@ -504,7 +554,9 @@
       "techniques": [
         "sustained chords",
         "low drone",
-        "sustained pad"
+        "sustained pad",
+        "trap",
+        "follow"
       ]
     },
     "Pipe Organ": {
@@ -519,7 +571,9 @@
         "sustained pedal alone",
         "return to the same manual melody with unchanged registration",
         "soft flute-stop registration",
-        "release both manuals and pedal after the final vocal phrase"
+        "release both manuals and pedal after the final vocal phrase",
+        "trap",
+        "follow"
       ]
     },
     "Synthesizer": {
@@ -545,7 +599,9 @@
         "glides",
         "rising and falling sustained lines",
         "gradual swells",
-        "brief isolated high tones"
+        "brief isolated high tones",
+        "trap",
+        "follow"
       ]
     },
     "Synth Bass": {
@@ -570,7 +626,9 @@
         "glides",
         "rising and falling sustained lines",
         "gradual swells",
-        "brief isolated high tones"
+        "brief isolated high tones",
+        "trap",
+        "follow"
       ]
     },
     "Double Bass": {
@@ -599,7 +657,9 @@
         "soft sustained notes",
         "muted bass ostinato",
         "sparse pulses",
-        "rhythmic bass movement"
+        "rhythmic bass movement",
+        "trap",
+        "follow"
       ]
     },
     "Upright Bass": {
@@ -628,7 +688,9 @@
         "soft sustained notes",
         "muted bass ostinato",
         "sparse pulses",
-        "rhythmic bass movement"
+        "rhythmic bass movement",
+        "trap",
+        "follow"
       ]
     },
     "French Horn": {
@@ -648,7 +710,9 @@
         "gently undulating phrases",
         "low swells",
         "sparse pulses",
-        "soft resolution and natural decay"
+        "soft resolution and natural decay",
+        "trap",
+        "follow"
       ]
     },
     "Marimba": {
@@ -674,7 +738,9 @@
         "interlocking ostinatos",
         "two interlocking marimba parts",
         "repeating stepwise figures",
-        "gradually changing repeated patterns"
+        "gradually changing repeated patterns",
+        "trap",
+        "follow"
       ]
     },
     "Timpani": {
@@ -692,7 +758,9 @@
         "measured crescendo",
         "abrupt hand damping",
         "stop the resonance with the palm",
-        "muted low strokes"
+        "muted low strokes",
+        "trap",
+        "follow"
       ]
     },
     "Tuba": {
@@ -701,7 +769,9 @@
         "Tuba"
       ],
       "techniques": [
-        "low answering phrases following short high-register trumpet and clarinet bursts"
+        "low answering phrases following short high-register trumpet and clarinet bursts",
+        "trap",
+        "follow"
       ]
     },
     "Oboe": {
@@ -715,7 +785,9 @@
         "short ornamental answers",
         "lyrical countermelody",
         "repeat the melody with plainly sustained notes and no ornament",
-        "unison sustained note with the singer"
+        "unison sustained note with the singer",
+        "trap",
+        "follow"
       ]
     },
     "Viola": {
@@ -741,7 +813,9 @@
         "solo harmonics",
         "bowed swells",
         "sustained drones",
-        "restrained chords"
+        "restrained chords",
+        "trap",
+        "follow"
       ]
     },
     "Snare Drum": {
@@ -759,7 +833,9 @@
         "marching patterns",
         "marching rolls",
         "short fills",
-        "clipped attacks"
+        "clipped attacks",
+        "trap",
+        "follow"
       ]
     },
     "Kick": {
@@ -777,7 +853,9 @@
         "pounding repeated hits",
         "brushed kick",
         "bass-drum swells",
-        "abrupt stops"
+        "abrupt stops",
+        "trap",
+        "follow"
       ]
     },
     "Bass Drum": {
@@ -794,7 +872,9 @@
         "pounding repeated hits",
         "brushed kick",
         "bass-drum swells",
-        "abrupt stops"
+        "abrupt stops",
+        "trap",
+        "follow"
       ]
     },
     "Hi-hat": {
@@ -808,7 +888,9 @@
         "dry repeated ticks",
         "crisp subdivisions",
         "precise hi-hat rolls",
-        "brushed hi-hat"
+        "brushed hi-hat",
+        "trap",
+        "follow"
       ]
     },
     "Toms": {
@@ -827,7 +909,9 @@
         "half-time pulses",
         "soft swells",
         "dense synchronized low strokes",
-        "short low-register bursts"
+        "short low-register bursts",
+        "trap",
+        "follow"
       ]
     },
     "Floor Toms": {
@@ -846,7 +930,9 @@
         "half-time pulses",
         "soft swells",
         "dense synchronized low strokes",
-        "short low-register bursts"
+        "short low-register bursts",
+        "trap",
+        "follow"
       ]
     },
     "Bells": {
@@ -865,7 +951,9 @@
         "octave figures",
         "short flourishes",
         "descending cascades",
-        "single closing strike allowed to decay"
+        "single closing strike allowed to decay",
+        "trap",
+        "follow"
       ]
     },
     "Handbells": {
@@ -884,7 +972,9 @@
         "octave figures",
         "short flourishes",
         "descending cascades",
-        "single closing strike allowed to decay"
+        "single closing strike allowed to decay",
+        "trap",
+        "follow"
       ]
     },
     "Chimes": {
@@ -903,7 +993,9 @@
         "octave figures",
         "short flourishes",
         "descending cascades",
-        "single closing strike allowed to decay"
+        "single closing strike allowed to decay",
+        "trap",
+        "follow"
       ]
     },
     "Triangle": {
@@ -916,7 +1008,9 @@
         "the angle",
         "relax your wrist",
         "the roll",
-        "damping"
+        "damping",
+        "trap",
+        "follow"
       ]
     },
     "Glockenspiel": {
@@ -925,7 +1019,9 @@
         "Glockenspiel"
       ],
       "techniques": [
-        "delicate short accents"
+        "delicate short accents",
+        "trap",
+        "follow"
       ]
     },
     "Mokugyo": {
@@ -934,7 +1030,9 @@
         "Mokugyo"
       ],
       "techniques": [
-        "fine bouncing repeated strikes"
+        "fine bouncing repeated strikes",
+        "trap",
+        "follow"
       ]
     },
     "Gong": {
@@ -945,7 +1043,9 @@
       "techniques": [
         "soft low punctuation at structural boundaries",
         "isolated resonant strike",
-        "natural decay"
+        "natural decay",
+        "trap",
+        "follow"
       ]
     },
     "Electric Piano": {
@@ -961,7 +1061,9 @@
         "percussive attacks",
         "plucked tones",
         "isolated notes",
-        "softly fading sustained tones"
+        "softly fading sustained tones",
+        "trap",
+        "follow"
       ]
     },
     "Rhodes": {
@@ -977,7 +1079,9 @@
         "percussive attacks",
         "plucked tones",
         "isolated notes",
-        "softly fading sustained tones"
+        "softly fading sustained tones",
+        "trap",
+        "follow"
       ]
     },
     "Felt Piano": {
@@ -996,7 +1100,9 @@
         "dry accents",
         "irregular muted knocks",
         "sparse harmonics",
-        "isolated low-register notes"
+        "isolated low-register notes",
+        "trap",
+        "follow"
       ]
     },
     "Upright Piano": {
@@ -1015,7 +1121,9 @@
         "dry accents",
         "irregular muted knocks",
         "sparse harmonics",
-        "isolated low-register notes"
+        "isolated low-register notes",
+        "trap",
+        "follow"
       ]
     },
     "Bassoon": {
@@ -1033,7 +1141,9 @@
         "stop the repetition cleanly",
         "pause",
         "then return to one spaced low note",
-        "final isolated low note followed by silence"
+        "final isolated low note followed by silence",
+        "trap",
+        "follow"
       ]
     },
     "Mandolin": {
@@ -1043,7 +1153,9 @@
       ],
       "techniques": [
         "plucked nimble melodies",
-        "melodic doubling with oud"
+        "melodic doubling with oud",
+        "trap",
+        "follow"
       ]
     },
     "Vibraphone": {
@@ -1062,7 +1174,9 @@
         "slow gentle volume undulation",
         "slightly increase motor speed for faster volume undulation",
         "stop the motor and return to steady ringing",
-        "release the sustain pedal and damp the instrument completely"
+        "release the sustain pedal and damp the instrument completely",
+        "trap",
+        "follow"
       ]
     },
     "Shinobue": {
@@ -1073,7 +1187,9 @@
       "techniques": [
         "bright short answering phrases",
         "thin breathy phrases",
-        "long gently rising and falling lines"
+        "long gently rising and falling lines",
+        "trap",
+        "follow"
       ]
     },
     "Kalimba": {
@@ -1082,7 +1198,9 @@
         "Kalimba"
       ],
       "techniques": [
-        "gentle plucked motifs"
+        "gentle plucked motifs",
+        "trap",
+        "follow"
       ]
     },
     "Harpsichord": {
@@ -1094,7 +1212,9 @@
         "restrained sparse continuo",
         "quiet continuo cadence",
         "sparse accompaniment",
-        "soft closing cadence"
+        "soft closing cadence",
+        "trap",
+        "follow"
       ]
     },
     "Bandoneon": {
@@ -1108,7 +1228,9 @@
         "short answering sighs",
         "featured melodic solo",
         "long descending phrase",
-        "swelling and releasing sustained tones"
+        "swelling and releasing sustained tones",
+        "trap",
+        "follow"
       ]
     },
     "Electronic Drums": {
@@ -1123,7 +1245,9 @@
         "repeated hi-hat subdivisions",
         "stop-start figures",
         "clipped percussion",
-        "abrupt mutes"
+        "abrupt mutes",
+        "trap",
+        "follow"
       ]
     },
     "Drum Machine": {
@@ -1138,7 +1262,9 @@
         "repeated hi-hat subdivisions",
         "stop-start figures",
         "clipped percussion",
-        "abrupt mutes"
+        "abrupt mutes",
+        "trap",
+        "follow"
       ]
     },
     "Djembe": {
@@ -1147,7 +1273,9 @@
         "Djembe"
       ],
       "techniques": [
-        "deep rhythmic hand-drum tones"
+        "deep rhythmic hand-drum tones",
+        "trap",
+        "follow"
       ]
     },
     "Shakers": {
@@ -1159,7 +1287,9 @@
         "soft repeated shaking",
         "fine rhythmic subdivisions",
         "interlocking repeated patterns",
-        "delicate brushed-shaker textures"
+        "delicate brushed-shaker textures",
+        "trap",
+        "follow"
       ]
     },
     "Guasá": {
@@ -1171,7 +1301,9 @@
         "soft repeated shaking",
         "fine rhythmic subdivisions",
         "interlocking repeated patterns",
-        "delicate brushed-shaker textures"
+        "delicate brushed-shaker textures",
+        "trap",
+        "follow"
       ]
     },
     "Seed Shakers": {
@@ -1183,7 +1315,9 @@
         "soft repeated shaking",
         "fine rhythmic subdivisions",
         "interlocking repeated patterns",
-        "delicate brushed-shaker textures"
+        "delicate brushed-shaker textures",
+        "trap",
+        "follow"
       ]
     },
     "Woodblock": {
@@ -1202,7 +1336,9 @@
         "finger taps on wood",
         "wooden rim taps",
         "interlocking rhythmic figures",
-        "phrase-answering accents"
+        "phrase-answering accents",
+        "trap",
+        "follow"
       ]
     },
     "Wooden Percussion": {
@@ -1221,7 +1357,9 @@
         "finger taps on wood",
         "wooden rim taps",
         "interlocking rhythmic figures",
-        "phrase-answering accents"
+        "phrase-answering accents",
+        "trap",
+        "follow"
       ]
     },
     "Celesta": {
@@ -1231,7 +1369,9 @@
       ],
       "techniques": [
         "short chiming notes",
-        "sparse plucked-style figures"
+        "sparse plucked-style figures",
+        "trap",
+        "follow"
       ]
     },
     "Bass Clarinet": {
@@ -1243,7 +1383,9 @@
         "muted low-register staccato replies",
         "long undulating phrases",
         "sustained low drones",
-        "breath tones"
+        "breath tones",
+        "trap",
+        "follow"
       ]
     },
     "Piccolo Trumpet": {
@@ -1264,7 +1406,9 @@
         "one smooth breath-connected legato phrase without note-by-note rearticulation",
         "return to crisp separated notes",
         "final clear sustained tone",
-        "complete release before the voice returns"
+        "complete release before the voice returns",
+        "trap",
+        "follow"
       ]
     },
     "Slide Guitar": {
@@ -1274,7 +1418,9 @@
       ],
       "techniques": [
         "sliding sustained phrases",
-        "swelling slide-guitar tones"
+        "swelling slide-guitar tones",
+        "trap",
+        "follow"
       ]
     },
     "Orchestral Snare Drum": {
@@ -1290,7 +1436,9 @@
         "alternating center strokes and head-and-rim hits",
         "return to tiny centered strokes",
         "gradually widen the gaps and reduce stroke intensity",
-        "final soft center stroke followed by silence"
+        "final soft center stroke followed by silence",
+        "trap",
+        "follow"
       ]
     },
     "Clash Cymbals": {
@@ -1302,7 +1450,9 @@
         "one struck clash",
         "separate immediately and allow full metallic resonance",
         "second clash immediately damped against the performer's body",
-        "abrupt stop with no remaining cymbal sustain"
+        "abrupt stop with no remaining cymbal sustain",
+        "trap",
+        "follow"
       ]
     },
     "Suspended Cymbal": {
@@ -1312,7 +1462,9 @@
       ],
       "techniques": [
         "roll",
-        "sustained swelling resonance"
+        "sustained swelling resonance",
+        "trap",
+        "follow"
       ]
     },
     "Pipa": {
@@ -1326,7 +1478,9 @@
         "short dry plucks",
         "sparse isolated notes",
         "harmonics",
-        "solo harmonic figures"
+        "solo harmonic figures",
+        "trap",
+        "follow"
       ]
     },
     "Lute": {
@@ -1336,7 +1490,9 @@
       ],
       "techniques": [
         "plucked phrases",
-        "repeating plucked figures"
+        "repeating plucked figures",
+        "trap",
+        "follow"
       ]
     },
     "Lute-like Strings": {
@@ -1346,7 +1502,9 @@
       ],
       "techniques": [
         "plucked phrases",
-        "repeating plucked figures"
+        "repeating plucked figures",
+        "trap",
+        "follow"
       ]
     },
     "Oud": {
@@ -1358,7 +1516,9 @@
         "plucked phrases",
         "arpeggiated solo figures",
         "nimble melodic lines",
-        "melodic doubling with mandolin"
+        "melodic doubling with mandolin",
+        "trap",
+        "follow"
       ]
     },
     "Fiddle": {
@@ -1370,7 +1530,9 @@
         "open-string playing",
         "repeated open-string figures",
         "bowed sustained lines",
-        "quiet bowed drone"
+        "quiet bowed drone",
+        "trap",
+        "follow"
       ]
     },
     "Frame Drum": {
@@ -1388,7 +1550,9 @@
         "irregular pulses",
         "synchronized repeated strokes",
         "accelerating patterns",
-        "interlocking rhythmic figures"
+        "interlocking rhythmic figures",
+        "trap",
+        "follow"
       ]
     },
     "Hand Drums": {
@@ -1405,7 +1569,9 @@
         "interlocking patterns",
         "irregular syncopation",
         "call-and-response figures",
-        "alternating left-and-right drum responses"
+        "alternating left-and-right drum responses",
+        "trap",
+        "follow"
       ]
     },
     "Harmonium": {
@@ -1415,7 +1581,9 @@
       ],
       "techniques": [
         "long sustained drone",
-        "soft breath-like sustained tones"
+        "soft breath-like sustained tones",
+        "trap",
+        "follow"
       ]
     },
     "Prepared Piano": {
@@ -1430,7 +1598,9 @@
         "delicate ticks",
         "short percussive accents",
         "harmonics",
-        "clipped harmonic notes"
+        "clipped harmonic notes",
+        "trap",
+        "follow"
       ]
     },
     "Bass Flute": {
@@ -1440,7 +1610,9 @@
       ],
       "techniques": [
         "breath tones",
-        "sparse breathy responses"
+        "sparse breathy responses",
+        "trap",
+        "follow"
       ]
     },
     "Electric Cello": {
@@ -1449,7 +1621,9 @@
         "Electric Cello"
       ],
       "techniques": [
-        "bowed sustained phrases"
+        "bowed sustained phrases",
+        "trap",
+        "follow"
       ]
     },
     "Jaw Harp": {
@@ -1458,7 +1632,9 @@
         "Jaw Harp"
       ],
       "techniques": [
-        "sparse rhythmic accents"
+        "sparse rhythmic accents",
+        "trap",
+        "follow"
       ]
     },
     "Portuguese Guitar": {
@@ -1477,7 +1653,9 @@
         "suspended chords",
         "high harmonics",
         "expressive melodic solo",
-        "lingering string resonance"
+        "lingering string resonance",
+        "trap",
+        "follow"
       ]
     },
     "Cavaquinho": {
@@ -1489,7 +1667,9 @@
         "high rhythmic pulses",
         "sparse accents",
         "crisp strumming",
-        "delicate strumming"
+        "delicate strumming",
+        "trap",
+        "follow"
       ]
     },
     "Zither": {
@@ -1498,7 +1678,9 @@
         "Zither"
       ],
       "techniques": [
-        "sparse plucked phrases"
+        "sparse plucked phrases",
+        "trap",
+        "follow"
       ]
     },
     "Kannel-like Zither": {
@@ -1507,7 +1689,9 @@
         "Kannel-like Zither"
       ],
       "techniques": [
-        "sparse plucked phrases"
+        "sparse plucked phrases",
+        "trap",
+        "follow"
       ]
     },
     "Angklung": {
@@ -1522,7 +1706,9 @@
         "note-by-note melodic handoffs",
         "interlocking melody",
         "cascading overlapping resonances",
-        "single bamboo note with fading resonance"
+        "single bamboo note with fading resonance",
+        "trap",
+        "follow"
       ]
     },
     "Xiao": {
@@ -1536,7 +1722,9 @@
         "soft sustained lines",
         "sparse answering phrases",
         "fading breath tones",
-        "gentle melodic descent"
+        "gentle melodic descent",
+        "trap",
+        "follow"
       ]
     },
     "Bamboo Flute": {
@@ -1550,7 +1738,9 @@
         "soft sustained lines",
         "sparse answering phrases",
         "fading breath tones",
-        "gentle melodic descent"
+        "gentle melodic descent",
+        "trap",
+        "follow"
       ]
     },
     "Ney": {
@@ -1559,7 +1749,9 @@
         "Ney"
       ],
       "techniques": [
-        "sparse answering phrases between vocal lines"
+        "sparse answering phrases between vocal lines",
+        "trap",
+        "follow"
       ]
     },
     "Tanpura": {
@@ -1568,7 +1760,9 @@
         "Tanpura"
       ],
       "techniques": [
-        "sustained drone"
+        "sustained drone",
+        "trap",
+        "follow"
       ]
     },
     "Sarangi": {
@@ -1580,7 +1774,9 @@
         "bowed responses",
         "sustained drone",
         "slides",
-        "melodic flourishes and ornaments"
+        "melodic flourishes and ornaments",
+        "trap",
+        "follow"
       ]
     },
     "Kamancheh": {
@@ -1595,7 +1791,9 @@
         "bowed-string taksim",
         "sustained drone",
         "countermelody",
-        "call-and-response with tar and voice"
+        "call-and-response with tar and voice",
+        "trap",
+        "follow"
       ]
     },
     "Kamancha": {
@@ -1610,7 +1808,9 @@
         "bowed-string taksim",
         "sustained drone",
         "countermelody",
-        "call-and-response with tar and voice"
+        "call-and-response with tar and voice",
+        "trap",
+        "follow"
       ]
     },
     "Setar": {
@@ -1624,7 +1824,9 @@
         "sustained drone support",
         "solo phrases",
         "unison motifs with tar",
-        "answering phrases"
+        "answering phrases",
+        "trap",
+        "follow"
       ]
     },
     "Tar": {
@@ -1640,7 +1842,9 @@
         "extended improvisation",
         "call-and-response with bowed strings",
         "unison motifs with setar",
-        "isolated closing plucks"
+        "isolated closing plucks",
+        "trap",
+        "follow"
       ]
     },
     "Daf": {
@@ -1650,7 +1854,9 @@
       ],
       "techniques": [
         "sparse measured accents",
-        "restrained frame-drum pulse"
+        "restrained frame-drum pulse",
+        "trap",
+        "follow"
       ]
     },
     "Tombak": {
@@ -1661,7 +1867,9 @@
       "techniques": [
         "soft hand-drum punctuation",
         "sparse accents",
-        "solo rhythmic phrases"
+        "solo rhythmic phrases",
+        "trap",
+        "follow"
       ]
     },
     "Dholak": {
@@ -1673,7 +1881,9 @@
         "light theka",
         "rolling figures",
         "muted strokes",
-        "repeated fast rhythmic patterns"
+        "repeated fast rhythmic patterns",
+        "trap",
+        "follow"
       ]
     },
     "Kendang": {
@@ -1685,7 +1895,9 @@
         "light taps",
         "hand-played rhythmic patterns",
         "dynamic accents",
-        "layered drum patterns"
+        "layered drum patterns",
+        "trap",
+        "follow"
       ]
     },
     "Vihuela": {
@@ -1695,7 +1907,9 @@
       ],
       "techniques": [
         "arpeggios",
-        "sustained chords"
+        "sustained chords",
+        "trap",
+        "follow"
       ]
     },
     "Guitarra de Golpe": {
@@ -1705,7 +1919,9 @@
       ],
       "techniques": [
         "soft plucks",
-        "sparse rhythmic accompaniment"
+        "sparse rhythmic accompaniment",
+        "trap",
+        "follow"
       ]
     },
     "Guembri": {
@@ -1719,7 +1935,9 @@
         "call-and-response",
         "increasingly dense ostinato",
         "virtuosic solo phrases",
-        "gradually fading repetition"
+        "gradually fading repetition",
+        "trap",
+        "follow"
       ]
     },
     "Gimbri": {
@@ -1733,7 +1951,9 @@
         "call-and-response",
         "increasingly dense ostinato",
         "virtuosic solo phrases",
-        "gradually fading repetition"
+        "gradually fading repetition",
+        "trap",
+        "follow"
       ]
     },
     "Suling": {
@@ -1743,7 +1963,9 @@
       ],
       "techniques": [
         "improvised flute phrases",
-        "solo melodic responses"
+        "solo melodic responses",
+        "trap",
+        "follow"
       ]
     },
     "Algoza": {
@@ -1757,7 +1979,9 @@
         "melodic fills",
         "improvisation",
         "call-and-response with the singer",
-        "fading duet phrases"
+        "fading duet phrases",
+        "trap",
+        "follow"
       ]
     },
     "Been": {
@@ -1770,7 +1994,9 @@
         "sustained reed drone",
         "winding melodic responses",
         "rising improvised phrases",
-        "free solo passages"
+        "free solo passages",
+        "trap",
+        "follow"
       ]
     },
     "Pungi-like Reed": {
@@ -1782,7 +2008,9 @@
         "sustained reed drone",
         "winding melodic responses",
         "rising improvised phrases",
-        "free solo passages"
+        "free solo passages",
+        "trap",
+        "follow"
       ]
     },
     "Rubab-like Strings": {
@@ -1793,7 +2021,9 @@
       ],
       "techniques": [
         "low plucked support",
-        "isolated bass plucks"
+        "isolated bass plucks",
+        "trap",
+        "follow"
       ]
     },
     "Khanjari": {
@@ -1803,7 +2033,9 @@
       ],
       "techniques": [
         "soft taps",
-        "accelerating rhythmic figures"
+        "accelerating rhythmic figures",
+        "trap",
+        "follow"
       ]
     },
     "Bombo": {
@@ -1814,7 +2046,9 @@
       "techniques": [
         "phrase-ending strikes",
         "soft pulses",
-        "polyrhythmic interplay with cununo"
+        "polyrhythmic interplay with cununo",
+        "trap",
+        "follow"
       ]
     },
     "Cununo": {
@@ -1825,7 +2059,9 @@
       "techniques": [
         "interlocking drum parts",
         "call-and-response figures",
-        "polyrhythmic interplay with bombo"
+        "polyrhythmic interplay with bombo",
+        "trap",
+        "follow"
       ]
     },
     "Tbel": {
@@ -1838,7 +2074,9 @@
         "heavy rhythmic strikes",
         "driving repeated beat",
         "accelerating rhythmic pattern",
-        "soft final pulse"
+        "soft final pulse",
+        "trap",
+        "follow"
       ]
     },
     "Tbal": {
@@ -1851,7 +2089,9 @@
         "heavy rhythmic strikes",
         "driving repeated beat",
         "accelerating rhythmic pattern",
-        "soft final pulse"
+        "soft final pulse",
+        "trap",
+        "follow"
       ]
     },
     "Qraqeb": {
@@ -1863,7 +2103,9 @@
         "bright ringing metal-clapper patterns",
         "interlocking rhythms",
         "syncopated accents",
-        "accelerating and increasingly dense repeated figures"
+        "accelerating and increasingly dense repeated figures",
+        "trap",
+        "follow"
       ]
     },
     "Kartal": {
@@ -1873,7 +2115,9 @@
       ],
       "techniques": [
         "dry rhythmic clacks",
-        "scattered accents"
+        "scattered accents",
+        "trap",
+        "follow"
       ]
     },
     "Khartal": {
@@ -1883,7 +2127,9 @@
       ],
       "techniques": [
         "dry rhythmic clacks",
-        "scattered accents"
+        "scattered accents",
+        "trap",
+        "follow"
       ]
     },
     "Paiban": {
@@ -1895,7 +2141,9 @@
         "short dry claps marking phrase boundaries",
         "offbeat accents",
         "repeated rhythmic clacks",
-        "single soft closing strike"
+        "single soft closing strike",
+        "trap",
+        "follow"
       ]
     },
     "Wooden Clappers": {
@@ -1907,7 +2155,9 @@
         "short dry claps marking phrase boundaries",
         "offbeat accents",
         "repeated rhythmic clacks",
-        "single soft closing strike"
+        "single soft closing strike",
+        "trap",
+        "follow"
       ]
     },
     "Bamboo Clappers": {
@@ -1919,7 +2169,9 @@
         "short dry claps marking phrase boundaries",
         "offbeat accents",
         "repeated rhythmic clacks",
-        "single soft closing strike"
+        "single soft closing strike",
+        "trap",
+        "follow"
       ]
     },
     "Calung": {
@@ -1928,7 +2180,9 @@
         "Calung"
       ],
       "techniques": [
-        "light repeated wooden-tone support"
+        "light repeated wooden-tone support",
+        "trap",
+        "follow"
       ]
     },
     "Tidnit": {
@@ -1940,7 +2194,9 @@
         "lute picking",
         "intricate melodic phrasing",
         "syncopated rhythmic figures",
-        "resonant solo phrases"
+        "resonant solo phrases",
+        "trap",
+        "follow"
       ]
     },
     "Ardin": {
@@ -1951,7 +2207,9 @@
       "techniques": [
         "expressive harp runs",
         "syncopated rhythmic figures",
-        "soaring countermelody"
+        "soaring countermelody",
+        "trap",
+        "follow"
       ]
     },
     "Mouth Bow": {
@@ -1963,7 +2221,9 @@
         "short punctuations",
         "sustained drones",
         "answering tones",
-        "final isolated tone"
+        "final isolated tone",
+        "trap",
+        "follow"
       ]
     },
     "Bowed Monochord": {
@@ -1973,7 +2233,9 @@
       ],
       "techniques": [
         "sustained bowed drone",
-        "bowed harmonics"
+        "bowed harmonics",
+        "trap",
+        "follow"
       ]
     },
     "Gourd-bodied Lute": {
@@ -1986,7 +2248,9 @@
         "arpeggios",
         "alternating phrases with hand-drum responses",
         "improvised lead phrases",
-        "repeated melody"
+        "repeated melody",
+        "trap",
+        "follow"
       ]
     },
     "Gourd-bodied Bowed String Instrument": {
@@ -1996,7 +2260,9 @@
       ],
       "techniques": [
         "bowed melodic phrases",
-        "sparse repeated responses"
+        "sparse repeated responses",
+        "trap",
+        "follow"
       ]
     },
     "Barrel Drum": {
@@ -2006,7 +2272,9 @@
       ],
       "techniques": [
         "low repeated strokes supporting coordinated steps",
-        "interlocking patterns with hand drums"
+        "interlocking patterns with hand drums",
+        "trap",
+        "follow"
       ]
     },
     "Double-headed Drum": {
@@ -2016,7 +2284,9 @@
       ],
       "techniques": [
         "low repeated strokes supporting coordinated steps",
-        "interlocking patterns with hand drums"
+        "interlocking patterns with hand drums",
+        "trap",
+        "follow"
       ]
     },
     "Slit Drum": {
@@ -2029,7 +2299,9 @@
         "low repeated pulse",
         "phrase-answering strikes",
         "sparse wooden accents",
-        "slowing final strokes"
+        "slowing final strokes",
+        "trap",
+        "follow"
       ]
     },
     "Wooden Drum": {
@@ -2042,7 +2314,9 @@
         "low repeated pulse",
         "phrase-answering strikes",
         "sparse wooden accents",
-        "slowing final strokes"
+        "slowing final strokes",
+        "trap",
+        "follow"
       ]
     },
     "Rattles": {
@@ -2052,7 +2326,9 @@
       ],
       "techniques": [
         "repeated rattling accents",
-        "rhythmic articulation accompanying footwork"
+        "rhythmic articulation accompanying footwork",
+        "trap",
+        "follow"
       ]
     },
     "Ankle Rattles": {
@@ -2062,7 +2338,9 @@
       ],
       "techniques": [
         "repeated rattling accents",
-        "rhythmic articulation accompanying footwork"
+        "rhythmic articulation accompanying footwork",
+        "trap",
+        "follow"
       ]
     },
     "Ankle Bells": {
@@ -2072,7 +2350,9 @@
       ],
       "techniques": [
         "repeated rattling accents",
-        "rhythmic articulation accompanying footwork"
+        "rhythmic articulation accompanying footwork",
+        "trap",
+        "follow"
       ]
     },
     "Bowed Glass": {
@@ -2084,7 +2364,9 @@
         "long sustained bowed tones",
         "delicate bowed swells",
         "harmonic overtones",
-        "thin sustained lines with small bending gestures"
+        "thin sustained lines with small bending gestures",
+        "trap",
+        "follow"
       ]
     },
     "Bowed Bamboo": {
@@ -2096,7 +2378,9 @@
         "long sustained bowed tones",
         "delicate bowed swells",
         "harmonic overtones",
-        "thin sustained lines with small bending gestures"
+        "thin sustained lines with small bending gestures",
+        "trap",
+        "follow"
       ]
     },
     "String Ensemble": {
@@ -2124,7 +2408,9 @@
         "divided strings",
         "swells",
         "crescendo",
-        "swelling and releasing phrases"
+        "swelling and releasing phrases",
+        "trap",
+        "follow"
       ]
     },
     "Brass Ensemble": {
@@ -2139,7 +2425,9 @@
         "rhythmic pulses",
         "broad sustained chords",
         "low drones",
-        "swelling phrases"
+        "swelling phrases",
+        "trap",
+        "follow"
       ]
     },
     "Woodwinds": {
@@ -2153,7 +2441,9 @@
         "long sustained phrases",
         "rising and falling melodic lines",
         "brief high-register responses",
-        "gentle melodic flourishes"
+        "gentle melodic flourishes",
+        "trap",
+        "follow"
       ]
     },
     "Reed Ensemble": {
@@ -2167,7 +2457,9 @@
         "long sustained phrases",
         "rising and falling melodic lines",
         "brief high-register responses",
-        "gentle melodic flourishes"
+        "gentle melodic flourishes",
+        "trap",
+        "follow"
       ]
     },
     "Bass": {
@@ -2183,7 +2475,9 @@
         "bowed drones",
         "harmonics",
         "rolling bass movement",
-        "alternating rhythmic support"
+        "alternating rhythmic support",
+        "trap",
+        "follow"
       ]
     },
     "Acoustic Bass": {
@@ -2199,7 +2493,9 @@
         "bowed drones",
         "harmonics",
         "rolling bass movement",
-        "alternating rhythmic support"
+        "alternating rhythmic support",
+        "trap",
+        "follow"
       ]
     },
     "Mallet Instruments — Unspecified": {
@@ -2214,7 +2510,9 @@
         "irregular repeated figures",
         "brushed mallet accents",
         "harmonic tones",
-        "descending arpeggios"
+        "descending arpeggios",
+        "trap",
+        "follow"
       ]
     },
     "Metal Percussion": {
@@ -2237,7 +2535,9 @@
         "muted strikes",
         "ratchet-like figures",
         "irregular metallic clinks",
-        "sparse syncopated chain-like strikes"
+        "sparse syncopated chain-like strikes",
+        "trap",
+        "follow"
       ]
     },
     "Anvil": {
@@ -2260,7 +2560,9 @@
         "muted strikes",
         "ratchet-like figures",
         "irregular metallic clinks",
-        "sparse syncopated chain-like strikes"
+        "sparse syncopated chain-like strikes",
+        "trap",
+        "follow"
       ]
     },
     "Body Percussion": {
@@ -2281,7 +2583,9 @@
         "light heel taps",
         "alternating heavy stomps and light shoe taps",
         "call-and-response footwork",
-        "layered stepping patterns"
+        "layered stepping patterns",
+        "trap",
+        "follow"
       ]
     }
   }
