@@ -906,6 +906,19 @@
         "single closing strike allowed to decay"
       ]
     },
+    "Triangle": {
+      "category": "percussion",
+      "aliases": [
+        "Triangle"
+      ],
+      "techniques": [
+        "the striking spot",
+        "the angle",
+        "relax your wrist",
+        "the roll",
+        "damping"
+      ]
+    },
     "Glockenspiel": {
       "category": "percussion",
       "aliases": [
