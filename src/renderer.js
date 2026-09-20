@@ -75,7 +75,12 @@ const translations = {
     logParseLeftAsFree: 'left as free text',
     parseModeAmbiguous: 'Ambiguous match',
     parseModePrecise: 'Precise match',
-    parseModeCaseHint: 'Case is ignored when matching'
+    parseModeCaseHint: 'Case is ignored when matching',
+    logLangSwitched: 'Switched to English',
+    logLogCleared: 'Log cleared',
+    logProjectNameRequired: 'Please enter a project name',
+    projectsEmpty: 'No projects saved yet',
+    confirmDeleteProject: 'Delete this project?'
   },
   ja: {
     title: 'Suno スタイルジェネレーター',
@@ -153,7 +158,95 @@ const translations = {
     logParseLeftAsFree: '自由記述へ',
     parseModeAmbiguous: '曖昧一致',
     parseModePrecise: '完全一致',
-    parseModeCaseHint: '大文字・小文字は無視してマッチします'
+    parseModeCaseHint: '大文字・小文字は無視してマッチします',
+    logLangSwitched: '言語を日本語に切り替えました',
+    logLogCleared: 'ログをクリアしました',
+    logProjectNameRequired: 'プロジェクト名を入力してください',
+    projectsEmpty: '保存済みプロジェクトはありません',
+    confirmDeleteProject: 'このプロジェクトを削除しますか？'
+  },
+  es: {
+    title: 'Generador de Estilos Suno',
+    subtitle: 'Selecciona de 5 categorías para generar tu prompt',
+    genres: 'Géneros',
+    vocals: 'Voces',
+    instruments: 'Instrumentos',
+    chords: 'Acordes',
+    structures: 'Estructuras',
+    others: 'Otros',
+    othersPlaceholder: 'Texto libre...',
+    bpm: 'BPM (Tempo)',
+    preview: 'Vista previa',
+    previewPlaceholder: 'La vista previa aparecerá aquí',
+    stage: 'Escenario',
+    stageHint: 'Arrastra un punto para fijar su posición; pasa el cursor para ver su nombre',
+    stageEmpty: 'Elige una voz o un instrumento',
+    stageUnplaced: 'sin posición',
+    stageLeft: 'I',
+    stageRight: 'D',
+    chars: 'caracteres',
+    random: '🎲 Generar aleatorio',
+    randomGenres: 'Género aleatorio',
+    randomVocals: 'Voz aleatoria',
+    randomInstruments: 'Instrumentos aleatorios',
+    randomChords: 'Acordes aleatorios',
+    randomStructures: 'Estructuras aleatorias',
+    copy: 'Copiar al portapapeles',
+    save: 'Guardar en archivo',
+    clearAll: 'Borrar todo',
+    logCleared: 'Todas las selecciones borradas',
+    log: 'Registro',
+    clearLog: 'Borrar',
+    closeLog: 'Cerrar registro',
+    openLog: 'Abrir registro',
+    resizeLog: 'Arrastra para redimensionar el registro',
+    logDataLoaded: 'Datos cargados correctamente',
+    logRandomGenerated: 'Generación aleatoria ejecutada',
+    logRandomCategory: 'Aleatorio generado: ',
+    logRandomNoTarget: 'Marca al menos una categoría para aleatorizar',
+    logCopied: 'Copiado al portapapeles',
+    logFileSaved: 'Archivo guardado: ',
+    logErrorCopy: 'Error: nada que copiar',
+    logErrorSave: 'Error: nada que guardar',
+    projects: 'Proyectos',
+    settings: 'Ajustes',
+    saveProject: '💾 Guardar proyecto',
+    projectNamePlaceholder: 'Nombre del proyecto...',
+    browse: 'Examinar',
+    saveFolder: 'Carpeta de guardado',
+    logProjectSaved: 'Proyecto guardado: ',
+    logProjectLoaded: 'Proyecto cargado: ',
+    logProjectDeleted: 'Proyecto eliminado',
+    logProjectsError: 'No se pudo leer la carpeta de proyectos: ',
+    logProjectsSkipped: 'Se omitieron {n} archivos ilegibles en la carpeta de proyectos',
+    logFolderChanged: 'Carpeta de proyectos: ',
+    instrumentOnly: 'solo nombre del instrumento',
+    position: 'Posición',
+    panNone: 'Panorama: —',
+    depthNone: 'Distancia: —',
+    bpmTab: 'BPM',
+    showRandomTargets: 'Mostrar opciones aleatorias por categoría',
+    hideRandomTargets: 'Ocultar opciones aleatorias por categoría',
+    reorderTabs: 'Arrastra una pestaña (o Ctrl + ← / →) para cambiar el orden del estilo — BPM incluido',
+    logTabOrder: 'Orden del estilo: ',
+    parsePrompt: '📥 Analizar estilo',
+    parsePromptTitle: 'Analizar estilo',
+    parsePlaceholder: 'Pega un prompt de estilo para analizar...',
+    parseRun: 'Analizar',
+    parseCancel: 'Cancelar',
+    logParsed: 'Prompt analizado',
+    logParseEmpty: 'Nada que analizar',
+    logParseAmbiguous: 'Coincidencia ambigua',
+    logParseAlso: 'también coincide',
+    logParseLeftAsFree: 'se dejó como texto libre',
+    parseModeAmbiguous: 'Coincidencia ambigua',
+    parseModePrecise: 'Coincidencia precisa',
+    parseModeCaseHint: 'No se distingue entre mayúsculas y minúsculas',
+    logLangSwitched: 'Cambiado a español',
+    logLogCleared: 'Registro borrado',
+    logProjectNameRequired: 'Introduce un nombre de proyecto',
+    projectsEmpty: 'Aún no hay proyectos guardados',
+    confirmDeleteProject: '¿Eliminar este proyecto?'
   }
 };
 
@@ -203,6 +296,10 @@ const normalizeSelections = (sel) => {
 
 const t = (key) => translations[currentLang][key] || translations.en[key] || key;
 
+// Locale used for timestamps in the log and the project list
+const LOCALES = { en: 'en-US', ja: 'ja-JP', es: 'es-ES' };
+const localeFor = () => LOCALES[currentLang] || 'en-US';
+
 const updateLanguage = (lang) => {
   currentLang = lang;
   localStorage.setItem('suno-lang', lang);
@@ -225,7 +322,7 @@ const updateLanguage = (lang) => {
 
   // Update preview placeholder
   const preview = document.getElementById('preview');
-  if (preview.textContent === 'Preview will appear here' || preview.textContent === 'ここにプレビューが表示されます') {
+  if (Object.values(translations).some(tr => tr.previewPlaceholder === preview.textContent)) {
     preview.textContent = t('previewPlaceholder');
   }
   updateCharCount(generator ? generator.generatePrompt(selections).length : 0);
@@ -237,7 +334,7 @@ const updateLanguage = (lang) => {
   });
   document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add('active');
 
-  addLog(currentLang === 'ja' ? '言語を日本語に切り替えました' : 'Switched to English', 'info');
+  addLog(t('logLangSwitched'), 'info');
 };
 
 const addLog = (message, type = 'info') => {
@@ -245,7 +342,7 @@ const addLog = (message, type = 'info') => {
   const entry = document.createElement('div');
   entry.className = 'log-entry';
 
-  const time = new Date().toLocaleTimeString(currentLang === 'ja' ? 'ja-JP' : 'en-US');
+  const time = new Date().toLocaleTimeString(localeFor());
   const timeEl = document.createElement('span');
   timeEl.className = 'log-time';
   timeEl.textContent = time;
@@ -1270,7 +1367,7 @@ const setupButtons = () => {
   // Clear log
   document.getElementById('clear-log-btn').addEventListener('click', () => {
     document.getElementById('log-window').innerHTML = '';
-    addLog(currentLang === 'ja' ? 'ログをクリアしました' : 'Log cleared', 'info');
+    addLog(t('logLogCleared'), 'info');
   });
 
   // Language switcher
@@ -1330,7 +1427,7 @@ const setupButtons = () => {
     saveProjectBtn.addEventListener('click', async () => {
       const name = projectNameInput.value.trim();
       if (!name) {
-        addLog('Please enter a project name', 'error');
+        addLog(t('logProjectNameRequired'), 'error');
         return;
       }
       const result = await window.electronAPI.saveProject({ name, selections });
@@ -1386,7 +1483,7 @@ const loadProjectsList = async () => {
   if (result.projects.length === 0) {
     const empty = document.createElement('p');
     empty.className = 'projects-empty';
-    empty.textContent = 'No projects saved yet';
+    empty.textContent = t('projectsEmpty');
     projectsList.appendChild(empty);
     return;
   }
@@ -1404,7 +1501,7 @@ const loadProjectsList = async () => {
 
     const date = document.createElement('div');
     date.className = 'project-date';
-    date.textContent = new Date(project.timestamp).toLocaleString(currentLang === 'ja' ? 'ja-JP' : 'en-US');
+    date.textContent = new Date(project.timestamp).toLocaleString(localeFor());
 
     info.appendChild(title);
     info.appendChild(date);
@@ -1436,7 +1533,7 @@ const loadProjectsList = async () => {
     deleteBtn.className = 'btn-small-action delete';
     deleteBtn.textContent = '🗑️ Delete';
     deleteBtn.addEventListener('click', async () => {
-      if (confirm('Delete this project?')) {
+      if (confirm(t('confirmDeleteProject'))) {
         const deleteResult = await window.electronAPI.deleteProject(project.fileName);
         if (deleteResult.success) {
           addLog(t('logProjectDeleted') + ' - ' + project.name, 'success');
