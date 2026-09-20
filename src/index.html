@@ -65,12 +65,16 @@
 
       <!-- Center Panel: Tabs & Content -->
       <div class="center-panel">
-        <div class="tabs">
-          <button class="tab-button active" data-tab="genres" data-i18n="genres">Genres</button>
-          <button class="tab-button" data-tab="vocals" data-i18n="vocals">Vocals</button>
-          <button class="tab-button" data-tab="instruments" data-i18n="instruments">Instruments</button>
-          <button class="tab-button" data-tab="chords" data-i18n="chords">Chords</button>
-          <button class="tab-button" data-tab="structures" data-i18n="structures">Structures</button>
+        <!-- Drag a tab to move it; the tab order is the order of the style text.
+             BPM rides along with no content of its own — it only marks where the
+             tempo is written, and is still set from the top bar. -->
+        <div class="tabs" data-i18n-title="reorderTabs">
+          <button class="tab-button tab-button-marker" draggable="true" data-tab="bpm" data-i18n="bpmTab">BPM</button>
+          <button class="tab-button active" draggable="true" data-tab="genres" data-i18n="genres">Genres</button>
+          <button class="tab-button" draggable="true" data-tab="vocals" data-i18n="vocals">Vocals</button>
+          <button class="tab-button" draggable="true" data-tab="instruments" data-i18n="instruments">Instruments</button>
+          <button class="tab-button" draggable="true" data-tab="chords" data-i18n="chords">Chords</button>
+          <button class="tab-button" draggable="true" data-tab="structures" data-i18n="structures">Structures</button>
         </div>
 
         <div class="selections-container">
@@ -114,29 +118,32 @@
         </div>
 
         <div class="random-section">
-          <button id="random-btn" class="btn btn-primary btn-block" data-i18n="random">🎲 Random</button>
-          <div class="random-targets">
-            <div class="random-target">
+          <div class="random-header">
+            <button id="random-btn" class="btn btn-primary btn-block" data-i18n="random">🎲 Random</button>
+            <button type="button" id="toggle-random-targets-btn" class="icon-btn random-toggle-btn" aria-controls="random-targets" aria-expanded="false" data-i18n-title="showRandomTargets">▾</button>
+          </div>
+          <div class="random-targets" id="random-targets">
+            <div class="random-target" data-category="genres">
               <input type="checkbox" id="random-target-genres" class="random-target-check" data-random-category="genres" checked>
               <label for="random-target-genres" data-i18n="genres">Genres</label>
               <button type="button" class="icon-btn random-one-btn" data-random-category="genres" data-i18n-title="randomGenres">🎲</button>
             </div>
-            <div class="random-target">
+            <div class="random-target" data-category="vocals">
               <input type="checkbox" id="random-target-vocals" class="random-target-check" data-random-category="vocals" checked>
               <label for="random-target-vocals" data-i18n="vocals">Vocals</label>
               <button type="button" class="icon-btn random-one-btn" data-random-category="vocals" data-i18n-title="randomVocals">🎲</button>
             </div>
-            <div class="random-target">
+            <div class="random-target" data-category="instruments">
               <input type="checkbox" id="random-target-instruments" class="random-target-check" data-random-category="instruments" checked>
               <label for="random-target-instruments" data-i18n="instruments">Instruments</label>
               <button type="button" class="icon-btn random-one-btn" data-random-category="instruments" data-i18n-title="randomInstruments">🎲</button>
             </div>
-            <div class="random-target">
+            <div class="random-target" data-category="chords">
               <input type="checkbox" id="random-target-chords" class="random-target-check" data-random-category="chords" checked>
               <label for="random-target-chords" data-i18n="chords">Chords</label>
               <button type="button" class="icon-btn random-one-btn" data-random-category="chords" data-i18n-title="randomChords">🎲</button>
             </div>
-            <div class="random-target">
+            <div class="random-target" data-category="structures">
               <input type="checkbox" id="random-target-structures" class="random-target-check" data-random-category="structures" checked>
               <label for="random-target-structures" data-i18n="structures">Structures</label>
               <button type="button" class="icon-btn random-one-btn" data-random-category="structures" data-i18n-title="randomStructures">🎲</button>
@@ -145,6 +152,9 @@
         </div>
       </div>
     </div>
+
+    <!-- Drag to set how much room the log gets -->
+    <div id="log-resizer" class="log-resizer" role="separator" aria-orientation="horizontal" tabindex="0" data-i18n-title="resizeLog"></div>
 
     <!-- Bottom: Log Container -->
     <div class="log-container">

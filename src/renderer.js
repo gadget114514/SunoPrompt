@@ -31,6 +31,7 @@ const translations = {
     clearLog: 'Clear',
     closeLog: 'Close log',
     openLog: 'Open log',
+    resizeLog: 'Drag to resize the log',
     logDataLoaded: 'Data loaded successfully',
     logRandomGenerated: 'Random generation executed',
     logRandomCategory: 'Random generated: ',
@@ -51,7 +52,12 @@ const translations = {
     instrumentOnly: 'instrument name only',
     position: 'Position',
     panNone: 'Pan: —',
-    depthNone: 'Distance: —'
+    depthNone: 'Distance: —',
+    bpmTab: 'BPM',
+    showRandomTargets: 'Show per-category random options',
+    hideRandomTargets: 'Hide per-category random options',
+    reorderTabs: 'Drag a tab (or Ctrl + ← / →) to change the order the style is written in — BPM included',
+    logTabOrder: 'Style order: '
   },
   ja: {
     title: 'Suno スタイルジェネレーター',
@@ -85,6 +91,7 @@ const translations = {
     clearLog: 'クリア',
     closeLog: 'ログを閉じる',
     openLog: 'ログを開く',
+    resizeLog: 'ドラッグでログの高さを調節',
     logDataLoaded: 'データの読み込み完了',
     logRandomGenerated: 'ランダム生成を実行しました',
     logRandomCategory: 'ランダム生成: ',
@@ -105,12 +112,29 @@ const translations = {
     instrumentOnly: '楽器名のみ',
     position: '定位',
     panNone: '左右: —',
-    depthNone: '距離: —'
+    depthNone: '距離: —',
+    bpmTab: 'BPM',
+    showRandomTargets: 'カテゴリ別のランダム設定を開く',
+    hideRandomTargets: 'カテゴリ別のランダム設定を閉じる',
+    reorderTabs: 'タブをドラッグ（または Ctrl + ← / →）でスタイルの記述順を変更。BPM も含みます',
+    logTabOrder: 'スタイルの順序: '
   }
 };
 
 let currentLang = localStorage.getItem('suno-lang') || 'en';
 let generator = null;
+
+// The tab order, which is also the order the style parts are written in
+const CATEGORY_ORDER_KEY = 'suno-category-order';
+
+const readStoredCategoryOrder = () => {
+  try {
+    return PromptGenerator.categoryOrder(JSON.parse(localStorage.getItem(CATEGORY_ORDER_KEY)));
+  } catch (error) {
+    return PromptGenerator.categoryOrder(null);
+  }
+};
+
 let selections = {
   genres: [],
   vocals: [],
@@ -118,6 +142,7 @@ let selections = {
   chords: [],
   structures: [],
   positions: {},
+  categoryOrder: readStoredCategoryOrder(),
   bpm: 120
 };
 
@@ -130,6 +155,8 @@ const normalizeSelections = (sel) => {
     if (!Array.isArray(normalized[category])) normalized[category] = [];
   });
   if (!normalized.positions || typeof normalized.positions !== 'object') normalized.positions = {};
+  // Projects saved before tabs could be reordered keep the order in use
+  normalized.categoryOrder = PromptGenerator.categoryOrder(normalized.categoryOrder || selections.categoryOrder);
   if (generator) normalized.vocals = generator.normalizeVocals(normalized.vocals);
   // Genres such as "Synthwave / Retrowave" were split into separate items
   normalized.genres = [...new Set(normalized.genres.flatMap(g => g.split(' / ').map(x => x.trim())))];
@@ -197,6 +224,31 @@ const addLog = (message, type = 'info') => {
 
 // The log can be folded away to its header; the button toggles it back open
 const LOG_COLLAPSED_KEY = 'suno-log-collapsed';
+// ...and the bar above it drags to set how tall the log is
+const LOG_HEIGHT_KEY = 'suno-log-height';
+const LOG_MIN_HEIGHT = 60;
+
+let logHeight = 100;
+
+// Leave the log a usable minimum and never more than half the window
+const clampLogHeight = (height) => {
+  const max = Math.max(LOG_MIN_HEIGHT, Math.round(window.innerHeight * 0.5));
+  return Math.min(Math.max(Math.round(height), LOG_MIN_HEIGHT), max);
+};
+
+// A folded log is only its header, so it sizes itself
+const applyLogHeight = () => {
+  const container = document.querySelector('.log-container');
+  if (!container) return;
+  container.style.height = container.classList.contains('collapsed') ? '' : `${logHeight}px`;
+};
+
+const setLogHeight = (height) => {
+  logHeight = clampLogHeight(height);
+  applyLogHeight();
+};
+
+const storeLogHeight = () => localStorage.setItem(LOG_HEIGHT_KEY, String(logHeight));
 
 const setLogCollapsed = (collapsed) => {
   const container = document.querySelector('.log-container');
@@ -204,6 +256,8 @@ const setLogCollapsed = (collapsed) => {
   if (!container || !button) return;
 
   container.classList.toggle('collapsed', collapsed);
+  document.getElementById('log-resizer')?.classList.toggle('log-resizer-off', collapsed);
+  applyLogHeight();
   button.textContent = collapsed ? '▼' : '✕';
   const key = collapsed ? 'openLog' : 'closeLog';
   button.setAttribute('data-i18n-title', key);
@@ -662,18 +716,101 @@ const populateTabs = () => {
   addLog(t('logDataLoaded'), 'success');
 };
 
+// Put the tabs, and the Random rows that mirror them, in the chosen order
+const applyCategoryOrder = () => {
+  const tabs = document.querySelector('.tabs');
+  const targets = document.querySelector('.random-targets');
+  selections.categoryOrder.forEach(category => {
+    const button = tabs?.querySelector(`.tab-button[data-tab="${category}"]`);
+    if (button) tabs.appendChild(button);
+    const row = targets?.querySelector(`.random-target[data-category="${category}"]`);
+    if (row) targets.appendChild(row);
+  });
+};
+
+// Take the order from where the tabs now sit and rebuild the style around it
+const commitCategoryOrder = () => {
+  const order = PromptGenerator.categoryOrder(
+    [...document.querySelectorAll('.tabs .tab-button')].map(button => button.dataset.tab)
+  );
+  if (order.join() === selections.categoryOrder.join()) return;
+
+  selections.categoryOrder = order;
+  localStorage.setItem(CATEGORY_ORDER_KEY, JSON.stringify(order));
+  applyCategoryOrder();
+  updatePreview();
+  addLog(t('logTabOrder') + order.map(category => t(category === 'bpm' ? 'bpmTab' : category)).join(' → '), 'info');
+};
+
+// The tab the dragged one should be dropped in front of, from the pointer
+const tabBeforePoint = (tabs, x) =>
+  [...tabs.querySelectorAll('.tab-button:not(.dragging)')].find(button => {
+    const box = button.getBoundingClientRect();
+    return x < box.left + box.width / 2;
+  }) || null;
+
+// Tabs can be dragged into any order, and that order is the order the style
+// text is written in, so a drop rewrites the preview too.
+const setupTabReorder = () => {
+  const tabs = document.querySelector('.tabs');
+  if (!tabs) return;
+  let dragged = null;
+
+  tabs.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('dragstart', (event) => {
+      dragged = button;
+      button.classList.add('dragging');
+      event.dataTransfer.effectAllowed = 'move';
+      // Firefox only starts a drag once the transfer carries something
+      event.dataTransfer.setData('text/plain', button.dataset.tab);
+    });
+
+    button.addEventListener('dragend', () => {
+      button.classList.remove('dragging');
+      dragged = null;
+      commitCategoryOrder();
+    });
+
+    // Same move without a mouse
+    button.addEventListener('keydown', (event) => {
+      if (!event.ctrlKey || (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')) return;
+      const sibling = event.key === 'ArrowLeft' ? button.previousElementSibling : button.nextElementSibling;
+      if (!sibling) return;
+      event.preventDefault();
+      if (event.key === 'ArrowLeft') tabs.insertBefore(button, sibling);
+      else tabs.insertBefore(sibling, button);
+      commitCategoryOrder();
+      button.focus();
+    });
+  });
+
+  tabs.addEventListener('dragover', (event) => {
+    if (!dragged) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+    const before = tabBeforePoint(tabs, event.clientX);
+    if (before !== dragged) tabs.insertBefore(dragged, before);
+  });
+
+  tabs.addEventListener('drop', (event) => event.preventDefault());
+};
+
 const setupTabs = () => {
   const buttons = document.querySelectorAll('.tab-button');
   const contents = document.querySelectorAll('.tab-content');
 
   buttons.forEach(button => {
     button.addEventListener('click', () => {
+      const tabId = button.getAttribute('data-tab');
+      const content = document.getElementById(`${tabId}-tab`);
+      // The BPM tab has nothing to show, so clicking it leaves the open tab alone
+      if (!content) return;
+
       buttons.forEach(b => b.classList.remove('active'));
       contents.forEach(c => c.classList.remove('active'));
 
       button.classList.add('active');
-      const tabId = button.getAttribute('data-tab');
-      document.getElementById(`${tabId}-tab`).classList.add('active');
+      content.classList.add('active');
     });
   });
 
@@ -691,6 +828,9 @@ const setupTabs = () => {
       document.getElementById(`${panelTabId}-panel-tab`).classList.add('active');
     });
   });
+
+  applyCategoryOrder();
+  setupTabReorder();
 };
 
 // Categories ticked in the Random panel; the 🎲 Random button rerolls only those
@@ -745,8 +885,34 @@ const randomizeCategories = (categories, { bpm = false } = {}) => {
   updatePreview();
 };
 
+// The per-category rows sit behind a toggle so the Random panel stays compact;
+// they start folded away and reopen where the last session left them.
+const RANDOM_TARGETS_OPEN_KEY = 'suno-random-targets-open';
+
+const setRandomTargetsOpen = (open) => {
+  const targets = document.getElementById('random-targets');
+  const button = document.getElementById('toggle-random-targets-btn');
+  if (!targets || !button) return;
+
+  targets.classList.toggle('collapsed', !open);
+  button.textContent = open ? '▴' : '▾';
+  const key = open ? 'hideRandomTargets' : 'showRandomTargets';
+  button.setAttribute('data-i18n-title', key);
+  button.title = t(key);
+  button.setAttribute('aria-label', t(key));
+  button.setAttribute('aria-expanded', String(open));
+};
+
 const setupRandomButtons = () => {
   restoreRandomTargets();
+
+  // Closed unless the last session left it open
+  setRandomTargetsOpen(localStorage.getItem(RANDOM_TARGETS_OPEN_KEY) === 'true');
+  document.getElementById('toggle-random-targets-btn').addEventListener('click', () => {
+    const open = document.getElementById('random-targets').classList.contains('collapsed');
+    setRandomTargetsOpen(open);
+    localStorage.setItem(RANDOM_TARGETS_OPEN_KEY, String(open));
+  });
 
   // Random generation for every ticked category
   document.getElementById('random-btn').addEventListener('click', () => {
@@ -759,8 +925,8 @@ const setupRandomButtons = () => {
     addLog(t('logRandomGenerated'), 'info');
   });
 
-  // Reroll a single category
-  document.querySelectorAll('.random-one-btn').forEach(btn => {
+  // Reroll a single category — one button per row, so keep to those
+  document.querySelectorAll('.random-target .random-one-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const category = btn.dataset.randomCategory;
       randomizeCategories([category]);
@@ -828,6 +994,44 @@ const setupButtons = () => {
       addLog(`Error: ${error.message}`, 'error');
     }
   });
+
+  // Drag the bar above the log to give it more or less room
+  const resizer = document.getElementById('log-resizer');
+  const savedHeight = parseInt(localStorage.getItem(LOG_HEIGHT_KEY), 10);
+  if (Number.isFinite(savedHeight)) logHeight = clampLogHeight(savedHeight);
+
+  resizer.addEventListener('pointerdown', (event) => {
+    event.preventDefault();
+    const startY = event.clientY;
+    const startHeight = document.querySelector('.log-container').getBoundingClientRect().height;
+    document.body.classList.add('row-resizing');
+
+    // Dragging up grows the log, so the delta is inverted. The listeners go on
+    // the window because the pointer leaves the thin bar almost at once, and
+    // relying on pointer capture alone loses the drag partway through.
+    const onMove = (move) => setLogHeight(startHeight + startY - move.clientY);
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+      document.body.classList.remove('row-resizing');
+      storeLogHeight();
+    };
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
+  });
+
+  resizer.addEventListener('keydown', (event) => {
+    const step = { ArrowUp: 20, ArrowDown: -20 }[event.key];
+    if (!step) return;
+    event.preventDefault();
+    setLogHeight(logHeight + step);
+    storeLogHeight();
+  });
+
+  // A smaller window may no longer have room for the height that was saved
+  window.addEventListener('resize', () => setLogHeight(logHeight));
 
   // Close / open the log window
   const toggleLogBtn = document.getElementById('toggle-log-btn');
@@ -985,6 +1189,9 @@ const loadProjectsList = async () => {
         const loadResult = await window.electronAPI.loadProject(project.fileName);
         if (loadResult.success) {
           selections = normalizeSelections(loadResult.project.selections);
+          // A project carries its own tab order
+          localStorage.setItem(CATEGORY_ORDER_KEY, JSON.stringify(selections.categoryOrder));
+          applyCategoryOrder();
           updateAllCheckboxes();
           updatePreview();
           addLog(t('logProjectLoaded') + project.name, 'success');

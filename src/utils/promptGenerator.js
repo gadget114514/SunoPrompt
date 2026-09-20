@@ -3,26 +3,44 @@ class PromptGenerator {
     this.data = jsonData;
   }
 
+  // BPM and the five categories are written in the order of the tabs,
+  // which the user can rearrange by dragging them.
   generatePrompt(selections) {
     const parts = [];
 
-    // BPM (if specified)
-    if (selections.bpm) {
-      parts.push(`${selections.bpm} bpm`);
-    }
+    PromptGenerator.categoryOrder(selections.categoryOrder).forEach(category => {
+      parts.push(...this.categoryParts(category, selections));
+    });
 
-    // Genre, with any era (e.g. "1980s") placed first
-    if (selections.genres && selections.genres.length > 0) {
-      const eras = this.data.genre?.[PromptGenerator.ERA_GROUP] || [];
-      const genres = [
-        ...selections.genres.filter(g => eras.includes(g)),
-        ...selections.genres.filter(g => !eras.includes(g))
-      ];
-      parts.push(genres.join(', '));
-    }
+    return parts.join(', ');
+  }
 
-    // Vocal (can be mode names or phrases/modifiers). A mode's position is
-    // attached to its first selected phrase, e.g. "female vocal (panned left)"
+  categoryParts(category, selections) {
+    switch (category) {
+      case 'bpm': return selections.bpm ? [`${selections.bpm} bpm`] : [];
+      case 'genres': return this.genreParts(selections);
+      case 'vocals': return this.vocalParts(selections);
+      case 'instruments': return this.instrumentParts(selections);
+      case 'chords': return this.chordParts(selections);
+      case 'structures': return this.structureParts(selections);
+      default: return [];
+    }
+  }
+
+  // Genre, with any era (e.g. "1980s") placed first
+  genreParts(selections) {
+    if (!selections.genres || selections.genres.length === 0) return [];
+    const eras = this.data.genre?.[PromptGenerator.ERA_GROUP] || [];
+    const genres = [
+      ...selections.genres.filter(g => eras.includes(g)),
+      ...selections.genres.filter(g => !eras.includes(g))
+    ];
+    return [genres.join(', ')];
+  }
+
+  // Vocal (can be mode names or phrases/modifiers). A mode's position is
+  // attached to its first selected phrase, e.g. "female vocal (panned left)"
+  vocalParts(selections) {
     const vocalModes = this.data.vocal?.vocal_modes || {};
     const vocalParts = (selections.vocals || []).map(item => {
       if (vocalModes[item]) {
@@ -42,10 +60,13 @@ class PromptGenerator {
         vocalParts.push({ mode: modeName, text: `${modeData.style_phrases[0]} (${position.join(', ')})` });
       }
     }
-    parts.push(...vocalParts.map(part => part.text));
+    return vocalParts.map(part => part.text);
+  }
 
-    // Instruments: techniques and position are always attached to their
-    // instrument name, e.g. "Grand Piano (legato arpeggios, panned left)"
+  // Instruments: techniques and position are always attached to their
+  // instrument name, e.g. "Grand Piano (legato arpeggios, panned left)"
+  instrumentParts(selections) {
+    const parts = [];
     const groups = new Map();
     if (selections.instruments && selections.instruments.length > 0) {
       selections.instruments.forEach(item => {
@@ -68,24 +89,22 @@ class PromptGenerator {
       const details = [...techniques, ...this.getPositionPhrases(selections, 'instruments', instrument)];
       parts.push(details.length > 0 ? `${name} (${details.join(', ')})` : name);
     });
+    return parts;
+  }
 
-    // Chord / harmony phrases
-    if (selections.chords && selections.chords.length > 0) {
-      parts.push(...selections.chords);
-    }
+  // Chord / harmony phrases
+  chordParts(selections) {
+    return [...(selections.chords || [])];
+  }
 
-    // Structure phrases
-    if (selections.structures && selections.structures.length > 0) {
-      const structurePhrases = selections.structures.map(s => {
-        if (this.data.structure?.categories?.[s]?.phrases) {
-          return this.data.structure.categories[s].phrases[0];
-        }
-        return s;
-      });
-      parts.push(...structurePhrases);
-    }
-
-    return parts.join(', ');
+  // Structure phrases
+  structureParts(selections) {
+    return (selections.structures || []).map(s => {
+      if (this.data.structure?.categories?.[s]?.phrases) {
+        return this.data.structure.categories[s].phrases[0];
+      }
+      return s;
+    });
   }
 
   // Display name used in prompts: first alias, e.g. "Grand Piano / Piano" -> "Grand Piano"
@@ -190,6 +209,18 @@ class PromptGenerator {
       // Without a position the dot falls back to the middle of the stage
       placed: Boolean(position.pan || position.depth)
     };
+  }
+
+  // A usable order out of whatever was stored: known items only, no repeats.
+  // Anything the stored order never mentioned — BPM, in an order saved before
+  // it joined the tabs — goes back where it sits by default, so a prompt that
+  // used to lead with the tempo still does.
+  static categoryOrder(order) {
+    const known = [...new Set((order || []).filter(c => PromptGenerator.ORDER_ITEMS.includes(c)))];
+    PromptGenerator.ORDER_ITEMS.forEach((item, index) => {
+      if (!known.includes(item)) known.splice(Math.min(index, known.length), 0, item);
+    });
+    return known;
   }
 
   static positionKey(category, name) {
@@ -447,3 +478,7 @@ PromptGenerator.POSITIONS = {
 };
 // Selection categories, in the order they appear in the UI
 PromptGenerator.CATEGORIES = ['genres', 'vocals', 'instruments', 'chords', 'structures'];
+// Everything that has a place in the prompt, in its default order. BPM sits
+// among them but holds no selections of its own — its tab only marks where the
+// tempo is written, while the control for it stays in the top bar.
+PromptGenerator.ORDER_ITEMS = ['bpm', ...PromptGenerator.CATEGORIES];

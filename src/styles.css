@@ -275,7 +275,7 @@ header p {
   padding: 12px 16px;
   background: none;
   border: none;
-  cursor: pointer;
+  cursor: grab;
   font-size: 13px;
   font-weight: 500;
   color: #999;
@@ -291,6 +291,34 @@ header p {
 .tab-button.active {
   color: #667eea;
   border-bottom-color: #667eea;
+}
+
+/* BPM has no list behind it — its tab is only a handle for moving the tempo
+   around in the style text, so it reads as a chip rather than a real tab */
+.tab-button-marker {
+  align-self: center;
+  margin: 0 4px 0 10px;
+  padding: 4px 11px;
+  border: 1px dashed #c8ccec;
+  border-bottom: 1px dashed #c8ccec;
+  border-radius: 999px;
+  background: #f6f7fd;
+  color: #8a8fb4;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.tab-button-marker:hover {
+  color: #667eea;
+  border-color: #667eea;
+}
+
+/* The tab being dragged to a new place in the style order */
+.tab-button.dragging {
+  cursor: grabbing;
+  opacity: 0.45;
+  background: #f0f1fb;
+  transition: none;
 }
 
 .selections-container {
@@ -765,11 +793,32 @@ header p {
   border-left: 3px solid #764ba2;
 }
 
+/* The main reroll button, with the toggle for the per-category rows beside it */
+.random-header {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.random-header #random-btn {
+  flex: 1;
+}
+
+#toggle-random-targets-btn {
+  height: auto;
+  flex-shrink: 0;
+}
+
 /* One row per category: include-in-random checkbox + reroll button */
 .random-targets {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+/* Folded away by default; the ▾ button next to Random Generate opens it */
+.random-targets.collapsed {
+  display: none;
 }
 
 .random-target {
@@ -793,11 +842,13 @@ header p {
   cursor: pointer;
 }
 
-.random-one-btn {
+.random-one-btn,
+.random-toggle-btn {
   border-color: #d5c7f0;
 }
 
-.random-one-btn:hover {
+.random-one-btn:hover,
+.random-toggle-btn:hover {
   background: #ece3ff;
   border-color: #764ba2;
 }
@@ -842,14 +893,62 @@ header p {
   font-size: 12px;
 }
 
+/* The bar between the workspace and the log, dragged to resize the log */
+.log-resizer {
+  position: relative;
+  height: 8px;
+  flex-shrink: 0;
+  background: #f9f9f9;
+  cursor: row-resize;
+}
+
+.log-resizer::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 2px;
+  border-radius: 1px;
+  background: #ccc;
+  transition: background 0.15s ease;
+}
+
+.log-resizer:hover::after,
+.log-resizer:focus-visible::after {
+  background: #667eea;
+}
+
+.log-resizer:focus-visible {
+  outline: none;
+  background: #eef1ff;
+}
+
+/* Nothing to resize while the log is folded away */
+.log-resizer-off {
+  display: none;
+}
+
+/* Keep the cursor steady and stop text selecting mid-drag */
+body.row-resizing {
+  cursor: row-resize;
+  user-select: none;
+}
+
 /* Log Container */
 .log-container {
   border-top: 2px solid #ddd;
   background: #f9f9f9;
   display: flex;
   flex-direction: column;
-  max-height: 100px;
+  height: 100px;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.log-container.collapsed {
+  height: auto;
 }
 
 .log-header {
@@ -998,6 +1097,11 @@ body.is-web .left-panel {
   .left-panel {
     order: 3;
     max-height: 260px;
+  }
+
+  /* Stacked layout: rows size themselves, so there is nothing to drag */
+  .log-resizer {
+    display: none;
   }
 }
 
