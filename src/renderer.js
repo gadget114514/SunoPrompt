@@ -49,6 +49,9 @@ const translations = {
     logProjectSaved: 'Project saved: ',
     logProjectLoaded: 'Project loaded: ',
     logProjectDeleted: 'Project deleted',
+    logProjectsError: 'Could not read the projects folder: ',
+    logProjectsSkipped: 'Skipped {n} unreadable file(s) in the projects folder',
+    logFolderChanged: 'Projects folder: ',
     instrumentOnly: 'instrument name only',
     position: 'Position',
     panNone: 'Pan: —',
@@ -109,6 +112,9 @@ const translations = {
     logProjectSaved: 'プロジェクトを保存しました: ',
     logProjectLoaded: 'プロジェクトをロードしました: ',
     logProjectDeleted: 'プロジェクトを削除しました',
+    logProjectsError: 'プロジェクトフォルダを読み込めませんでした: ',
+    logProjectsSkipped: '読み込めないファイル {n} 件をスキップしました',
+    logFolderChanged: 'プロジェクトフォルダ: ',
     instrumentOnly: '楽器名のみ',
     position: '定位',
     panNone: '左右: —',
@@ -857,6 +863,18 @@ const restoreRandomTargets = () => {
   });
 };
 
+// The tempo lives in selections, so the top-bar controls have to follow it
+// whenever something other than the user sets it — a reroll, or a loaded
+// project. Without this the controls keep a stale number and overwrite the
+// real one the moment they are touched.
+const syncBpmControls = () => {
+  const slider = document.getElementById('bpm-slider');
+  const input = document.getElementById('bpm-input');
+  if (!slider || !input || !selections.bpm) return;
+  slider.value = selections.bpm;
+  input.value = selections.bpm;
+};
+
 // Reroll the given categories, keeping every other selection as it is
 const randomizeCategories = (categories, { bpm = false } = {}) => {
   if (!generator) return;
@@ -870,17 +888,10 @@ const randomizeCategories = (categories, { bpm = false } = {}) => {
     });
   });
 
-  if (bpm) {
-    next.bpm = generator.getRandomBPM();
-    const bpmSlider = document.getElementById('bpm-slider');
-    const bpmInput = document.getElementById('bpm-input');
-    if (bpmSlider && bpmInput) {
-      bpmSlider.value = next.bpm;
-      bpmInput.value = next.bpm;
-    }
-  }
+  if (bpm) next.bpm = generator.getRandomBPM();
 
   selections = normalizeSelections(next);
+  syncBpmControls();
   updateAllCheckboxes();
   updatePreview();
 };
@@ -1128,25 +1139,20 @@ const setupButtons = () => {
     selectFolderBtn.addEventListener('click', async () => {
       const result = await window.electronAPI.selectFolder();
       if (result.success) {
-        localStorage.setItem('suno-projects-folder', result.path);
         document.getElementById('current-folder').textContent = result.path;
-        addLog('Save folder updated', 'success');
+        // Projects now come from somewhere else, so show what is in there
+        loadProjectsList();
+        addLog(t('logFolderChanged') + result.path, 'success');
       } else {
         addLog(`Error: ${result.error}`, 'error');
       }
     });
   }
 
-  // Load saved folder path or default
-  const savedFolder = localStorage.getItem('suno-projects-folder');
-  if (savedFolder) {
-    document.getElementById('current-folder').textContent = savedFolder;
-  } else {
-    // Wait for default folder path from main process
-    window.electronAPI.onDefaultFolderPath((defaultPath) => {
-      document.getElementById('current-folder').textContent = defaultPath;
-    });
-  }
+  // The main process owns the folder; ask it which one is actually in use
+  window.electronAPI.getProjectsDir().then(currentPath => {
+    document.getElementById('current-folder').textContent = currentPath;
+  });
 };
 
 const loadProjectsList = async () => {
@@ -1154,73 +1160,80 @@ const loadProjectsList = async () => {
   if (!projectsList) return;
 
   const result = await window.electronAPI.loadProjects();
-  if (result.success) {
-    projectsList.innerHTML = '';
-    if (result.projects.length === 0) {
-      projectsList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No projects saved yet</p>';
-      return;
-    }
-
-    result.projects.forEach(project => {
-      const item = document.createElement('div');
-      item.className = 'project-item';
-
-      const info = document.createElement('div');
-      info.className = 'project-info';
-
-      const title = document.createElement('div');
-      title.className = 'project-title';
-      title.textContent = project.name;
-
-      const date = document.createElement('div');
-      date.className = 'project-date';
-      date.textContent = new Date(project.timestamp).toLocaleString(currentLang === 'ja' ? 'ja-JP' : 'en-US');
-
-      info.appendChild(title);
-      info.appendChild(date);
-
-      const actions = document.createElement('div');
-      actions.className = 'project-actions';
-
-      const loadBtn = document.createElement('button');
-      loadBtn.className = 'btn-small-action';
-      loadBtn.textContent = '📂 Load';
-      loadBtn.addEventListener('click', async () => {
-        const loadResult = await window.electronAPI.loadProject(project.fileName);
-        if (loadResult.success) {
-          selections = normalizeSelections(loadResult.project.selections);
-          // A project carries its own tab order
-          localStorage.setItem(CATEGORY_ORDER_KEY, JSON.stringify(selections.categoryOrder));
-          applyCategoryOrder();
-          updateAllCheckboxes();
-          updatePreview();
-          addLog(t('logProjectLoaded') + project.name, 'success');
-          // Switch to genres tab
-          document.querySelector('[data-tab="genres"]').click();
-        }
-      });
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'btn-small-action delete';
-      deleteBtn.textContent = '🗑️ Delete';
-      deleteBtn.addEventListener('click', async () => {
-        if (confirm('Delete this project?')) {
-          const deleteResult = await window.electronAPI.deleteProject(project.fileName);
-          if (deleteResult.success) {
-            addLog(t('logProjectDeleted') + ' - ' + project.name, 'success');
-            loadProjectsList();
-          }
-        }
-      });
-
-      actions.appendChild(loadBtn);
-      actions.appendChild(deleteBtn);
-
-      item.appendChild(info);
-      item.appendChild(actions);
-      projectsList.appendChild(item);
-    });
+  if (!result.success) {
+    // Say so rather than leaving an empty panel that looks like "no projects"
+    addLog(t('logProjectsError') + result.error, 'error');
+    return;
   }
+  if (result.skipped) {
+    addLog(t('logProjectsSkipped').replace('{n}', result.skipped), 'error');
+  }
+  projectsList.innerHTML = '';
+  if (result.projects.length === 0) {
+    projectsList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No projects saved yet</p>';
+    return;
+  }
+
+  result.projects.forEach(project => {
+    const item = document.createElement('div');
+    item.className = 'project-item';
+
+    const info = document.createElement('div');
+    info.className = 'project-info';
+
+    const title = document.createElement('div');
+    title.className = 'project-title';
+    title.textContent = project.name;
+
+    const date = document.createElement('div');
+    date.className = 'project-date';
+    date.textContent = new Date(project.timestamp).toLocaleString(currentLang === 'ja' ? 'ja-JP' : 'en-US');
+
+    info.appendChild(title);
+    info.appendChild(date);
+
+    const actions = document.createElement('div');
+    actions.className = 'project-actions';
+
+    const loadBtn = document.createElement('button');
+    loadBtn.className = 'btn-small-action';
+    loadBtn.textContent = '📂 Load';
+    loadBtn.addEventListener('click', async () => {
+      const loadResult = await window.electronAPI.loadProject(project.fileName);
+      if (loadResult.success) {
+        selections = normalizeSelections(loadResult.project.selections);
+        // A project carries its own tab order
+        localStorage.setItem(CATEGORY_ORDER_KEY, JSON.stringify(selections.categoryOrder));
+        applyCategoryOrder();
+        syncBpmControls();
+        updateAllCheckboxes();
+        updatePreview();
+        addLog(t('logProjectLoaded') + project.name, 'success');
+        // Switch to genres tab
+        document.querySelector('[data-tab="genres"]').click();
+      }
+    });
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn-small-action delete';
+    deleteBtn.textContent = '🗑️ Delete';
+    deleteBtn.addEventListener('click', async () => {
+      if (confirm('Delete this project?')) {
+        const deleteResult = await window.electronAPI.deleteProject(project.fileName);
+        if (deleteResult.success) {
+          addLog(t('logProjectDeleted') + ' - ' + project.name, 'success');
+          loadProjectsList();
+        }
+      }
+    });
+
+    actions.appendChild(loadBtn);
+    actions.appendChild(deleteBtn);
+
+    item.appendChild(info);
+    item.appendChild(actions);
+    projectsList.appendChild(item);
+  });
 };
 
 const updateAllCheckboxes = () => {
