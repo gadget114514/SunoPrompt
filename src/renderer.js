@@ -10,16 +10,29 @@ const translations = {
     bpm: 'BPM (Tempo)',
     preview: 'Preview',
     previewPlaceholder: 'Preview will appear here',
+    stage: 'Stage',
+    stageHint: 'Hover a dot for its name',
+    stageEmpty: 'Pick a vocal or an instrument',
+    stageUnplaced: 'no position set',
+    stageLeft: 'L',
+    stageRight: 'R',
     chars: 'chars',
     random: '🎲 Random Generate',
-    copy: '📋 Copy to Clipboard',
-    save: '💾 Save to File',
-    clearAll: '🗑️ Clear All',
+    randomGenres: 'Random genre',
+    randomVocals: 'Random vocal',
+    randomInstruments: 'Random instruments',
+    randomChords: 'Random chords',
+    randomStructures: 'Random structures',
+    copy: 'Copy to Clipboard',
+    save: 'Save to File',
+    clearAll: 'Clear All',
     logCleared: 'All selections cleared',
     log: 'Log',
     clearLog: 'Clear',
     logDataLoaded: 'Data loaded successfully',
     logRandomGenerated: 'Random generation executed',
+    logRandomCategory: 'Random generated: ',
+    logRandomNoTarget: 'Tick at least one category to randomize',
     logCopied: 'Copied to clipboard',
     logFileSaved: 'File saved: ',
     logErrorCopy: 'Error: Nothing to copy',
@@ -49,16 +62,29 @@ const translations = {
     bpm: 'BPM (テンポ)',
     preview: 'プレビュー',
     previewPlaceholder: 'ここにプレビューが表示されます',
+    stage: '定位図',
+    stageHint: 'ドットにカーソルを合わせると名前を表示',
+    stageEmpty: 'ボーカルか楽器を選んでください',
+    stageUnplaced: '定位未設定',
+    stageLeft: 'L',
+    stageRight: 'R',
     chars: '文字',
     random: '🎲 ランダム生成',
-    copy: '📋 クリップボードにコピー',
-    save: '💾 ファイルに保存',
-    clearAll: '🗑️ すべてクリア',
+    randomGenres: 'ジャンルをランダム生成',
+    randomVocals: 'ボーカルをランダム生成',
+    randomInstruments: '楽器をランダム生成',
+    randomChords: 'コードをランダム生成',
+    randomStructures: '構造をランダム生成',
+    copy: 'クリップボードにコピー',
+    save: 'ファイルに保存',
+    clearAll: 'すべてクリア',
     logCleared: 'すべての選択をクリアしました',
     log: 'ログ',
     clearLog: 'クリア',
     logDataLoaded: 'データの読み込み完了',
     logRandomGenerated: 'ランダム生成を実行しました',
+    logRandomCategory: 'ランダム生成: ',
+    logRandomNoTarget: 'ランダム生成するカテゴリを 1 つ以上選んでください',
     logCopied: 'クリップボードにコピーしました',
     logFileSaved: 'ファイルに保存しました: ',
     logErrorCopy: 'エラー: コピーするプロンプトがありません',
@@ -91,7 +117,7 @@ let selections = {
   bpm: 120
 };
 
-const CATEGORIES = ['genres', 'vocals', 'instruments', 'chords', 'structures'];
+const CATEGORIES = PromptGenerator.CATEGORIES;
 
 // Bring older saved projects up to the current data format
 const normalizeSelections = (sel) => {
@@ -118,12 +144,23 @@ const updateLanguage = (lang) => {
     el.textContent = t(key);
   });
 
+  // Icon buttons and inputs carry their label in an attribute instead
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const text = t(el.getAttribute('data-i18n-title'));
+    el.title = text;
+    el.setAttribute('aria-label', text);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    if ('placeholder' in el) el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+  });
+
   // Update preview placeholder
   const preview = document.getElementById('preview');
   if (preview.textContent === 'Preview will appear here' || preview.textContent === 'ここにプレビューが表示されます') {
     preview.textContent = t('previewPlaceholder');
   }
   updateCharCount(generator ? generator.generatePrompt(selections).length : 0);
+  updateStageDiagram();
 
   // Update lang buttons
   document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -184,6 +221,7 @@ const updatePreview = () => {
   updateCharCount(prompt ? prompt.length : 0);
 
   updateFolderHighlights();
+  updateStageDiagram();
 
   // Trigger animation
   setTimeout(() => {
@@ -194,6 +232,157 @@ const updatePreview = () => {
   setTimeout(() => {
     previewEl.classList.remove('updated');
   }, 300);
+};
+
+// Fan-shaped stage seen from the listener, who sits at the bottom centre.
+// Pan sets the angle, distance sets the radius.
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const STAGE = { cx: 130, cy: 128, spread: 76, maxR: 106 };
+const STAGE_PAN_ANGLE = {
+  'panned hard left': -70,
+  'panned left': -38,
+  'centered': 0,
+  'wide stereo': 0,
+  'auto-panned': 0,
+  'panned right': 38,
+  'panned hard right': 70
+};
+// How far an auto-panned part swings either side of centre
+const STAGE_SWEEP_SPAN = 60;
+// Rings from nearest to farthest; anything without a distance sits in between
+const STAGE_DEPTH_RADIUS = {
+  'close-miked': 32,
+  'upfront': 53,
+  'in the background': 77,
+  'distant': 97
+};
+const STAGE_DEFAULT_RADIUS = 65;
+
+const stagePoint = (angle, radius) => {
+  const rad = (angle * Math.PI) / 180;
+  return [STAGE.cx + radius * Math.sin(rad), STAGE.cy - radius * Math.cos(rad)];
+};
+
+const svgEl = (name, attrs) => {
+  const el = document.createElementNS(SVG_NS, name);
+  Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+  return el;
+};
+
+// The fan outline, the distance rings and the L/R markers
+const drawStageBackground = (svg) => {
+  const [leftX, leftY] = stagePoint(-STAGE.spread, STAGE.maxR);
+  const [rightX, rightY] = stagePoint(STAGE.spread, STAGE.maxR);
+  svg.appendChild(svgEl('path', {
+    class: 'stage-field',
+    d: `M ${STAGE.cx} ${STAGE.cy} L ${leftX} ${leftY} A ${STAGE.maxR} ${STAGE.maxR} 0 0 1 ${rightX} ${rightY} Z`
+  }));
+
+  Object.values(STAGE_DEPTH_RADIUS).forEach(radius => {
+    const [x1, y1] = stagePoint(-STAGE.spread, radius);
+    const [x2, y2] = stagePoint(STAGE.spread, radius);
+    svg.appendChild(svgEl('path', {
+      class: 'stage-ring',
+      d: `M ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2}`
+    }));
+  });
+
+  const [centreX, centreY] = stagePoint(0, STAGE.maxR);
+  svg.appendChild(svgEl('line', { class: 'stage-axis', x1: STAGE.cx, y1: STAGE.cy, x2: centreX, y2: centreY }));
+  svg.appendChild(svgEl('circle', { class: 'stage-listener', cx: STAGE.cx, cy: STAGE.cy, r: 4 }));
+
+  [[-STAGE.spread, 'stageLeft'], [STAGE.spread, 'stageRight']].forEach(([angle, key]) => {
+    const [x, y] = stagePoint(angle, STAGE.maxR - 10);
+    const label = svgEl('text', { class: 'stage-side', x, y: y + 4 });
+    label.textContent = t(key);
+    svg.appendChild(label);
+  });
+};
+
+// The arc an auto-panned part sweeps along, at its own distance from the listener
+const sweepPath = (radius) => {
+  const [x1, y1] = stagePoint(-STAGE_SWEEP_SPAN, radius);
+  const [x2, y2] = stagePoint(STAGE_SWEEP_SPAN, radius);
+  return `M ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2}`;
+};
+
+// A marker that runs the sweep back and forth, so the motion is visible
+const sweepRider = (radius) => {
+  const rider = svgEl('circle', { class: 'stage-rider', r: 4 });
+  rider.appendChild(svgEl('animateMotion', {
+    dur: '5s',
+    repeatCount: 'indefinite',
+    calcMode: 'linear',
+    keyPoints: '0;1;0',
+    keyTimes: '0;0.5;1',
+    path: sweepPath(radius)
+  }));
+  return rider;
+};
+
+// Dots sharing a pan/distance cell are fanned out so none of them hide
+const spreadOverlaps = (placements) => {
+  const cells = new Map();
+  placements.forEach(placement => {
+    const key = `${placement.pan}|${placement.depth}`;
+    if (!cells.has(key)) cells.set(key, []);
+    cells.get(key).push(placement);
+  });
+
+  const spread = [];
+  cells.forEach(group => {
+    const step = Math.min(13, 46 / group.length);
+    group.forEach((placement, index) => {
+      const offset = index - (group.length - 1) / 2;
+      const sweeps = placement.pan === 'auto-panned';
+      spread.push({
+        ...placement,
+        angle: (STAGE_PAN_ANGLE[placement.pan] ?? 0) + (sweeps ? 0 : offset * step),
+        radius: (STAGE_DEPTH_RADIUS[placement.depth] ?? STAGE_DEFAULT_RADIUS) + (sweeps ? offset * 7 : 0)
+      });
+    });
+  });
+  return spread;
+};
+
+const updateStageDiagram = () => {
+  const svg = document.getElementById('stage-diagram');
+  const caption = document.getElementById('stage-caption');
+  if (!svg || !generator) return;
+
+  svg.textContent = '';
+  drawStageBackground(svg);
+
+  const placements = generator.getStagePlacements(selections);
+  caption.textContent = t(placements.length === 0 ? 'stageEmpty' : 'stageHint');
+
+  spreadOverlaps(placements).forEach(placement => {
+    const [x, y] = stagePoint(placement.angle, placement.radius);
+    const dot = svgEl('g', {
+      class: `stage-dot stage-dot-${placement.category}${placement.placed ? '' : ' stage-dot-unplaced'}`
+    });
+
+    // Neither "wide stereo" nor "auto-panned" is a single point: the first
+    // gets a bar, the second the arc it travels along plus a marker riding it
+    if (placement.pan === 'auto-panned') {
+      dot.appendChild(svgEl('path', { class: 'stage-sweep', d: sweepPath(placement.radius) }));
+      dot.appendChild(sweepRider(placement.radius));
+    } else if (placement.pan === 'wide stereo') {
+      dot.appendChild(svgEl('ellipse', { cx: x, cy: y, rx: 11, ry: 4.5 }));
+    } else {
+      dot.appendChild(svgEl('circle', { cx: x, cy: y, r: 5 }));
+    }
+
+    const detail = [placement.pan, placement.depth].filter(Boolean).join(', ') || t('stageUnplaced');
+    const text = `${placement.label} — ${detail}`;
+    const title = svgEl('title', {});
+    title.textContent = text;
+    dot.appendChild(title);
+
+    dot.addEventListener('mouseenter', () => { caption.textContent = text; });
+    dot.addEventListener('mouseleave', () => { caption.textContent = t('stageHint'); });
+    svg.appendChild(dot);
+  });
 };
 
 // Color folders that contain a checked item or a position setting
@@ -455,29 +644,94 @@ const setupTabs = () => {
   });
 };
 
-const setupButtons = () => {
-  // Random generation
-  document.getElementById('random-btn').addEventListener('click', () => {
-    selections = normalizeSelections(generator.getRandomSelection());
+// Categories ticked in the Random panel; the 🎲 Random button rerolls only those
+const RANDOM_TARGETS_KEY = 'suno-random-targets';
 
-    // Update BPM
+const getRandomTargets = () =>
+  [...document.querySelectorAll('.random-target-check:checked')].map(cb => cb.dataset.randomCategory);
+
+const saveRandomTargets = () => {
+  localStorage.setItem(RANDOM_TARGETS_KEY, JSON.stringify(getRandomTargets()));
+};
+
+// Restore the ticks from a previous session; everything is on by default
+const restoreRandomTargets = () => {
+  let saved = null;
+  try {
+    saved = JSON.parse(localStorage.getItem(RANDOM_TARGETS_KEY));
+  } catch (error) {
+    saved = null;
+  }
+  if (!Array.isArray(saved)) return;
+  document.querySelectorAll('.random-target-check').forEach(cb => {
+    cb.checked = saved.includes(cb.dataset.randomCategory);
+  });
+};
+
+// Reroll the given categories, keeping every other selection as it is
+const randomizeCategories = (categories, { bpm = false } = {}) => {
+  if (!generator) return;
+
+  const next = { ...selections, positions: { ...selections.positions } };
+  categories.forEach(category => {
+    next[category] = generator.randomCategory(category);
+    // The rerolled items are gone, so drop the positions that went with them
+    Object.keys(next.positions).forEach(key => {
+      if (PromptGenerator.splitPositionKey(key)[0] === category) delete next.positions[key];
+    });
+  });
+
+  if (bpm) {
+    next.bpm = generator.getRandomBPM();
     const bpmSlider = document.getElementById('bpm-slider');
     const bpmInput = document.getElementById('bpm-input');
     if (bpmSlider && bpmInput) {
-      bpmSlider.value = selections.bpm;
-      bpmInput.value = selections.bpm;
+      bpmSlider.value = next.bpm;
+      bpmInput.value = next.bpm;
     }
+  }
 
-    updateAllCheckboxes();
-    updatePreview();
+  selections = normalizeSelections(next);
+  updateAllCheckboxes();
+  updatePreview();
+};
+
+const setupRandomButtons = () => {
+  restoreRandomTargets();
+
+  // Random generation for every ticked category
+  document.getElementById('random-btn').addEventListener('click', () => {
+    const targets = getRandomTargets();
+    if (targets.length === 0) {
+      addLog(t('logRandomNoTarget'), 'error');
+      return;
+    }
+    randomizeCategories(targets, { bpm: true });
     addLog(t('logRandomGenerated'), 'info');
   });
+
+  // Reroll a single category
+  document.querySelectorAll('.random-one-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const category = btn.dataset.randomCategory;
+      randomizeCategories([category]);
+      addLog(t('logRandomCategory') + t(category), 'info');
+    });
+  });
+
+  document.querySelectorAll('.random-target-check').forEach(cb => {
+    cb.addEventListener('change', saveRandomTargets);
+  });
+};
+
+const setupButtons = () => {
+  setupRandomButtons();
 
   // Clear all selections and preview
   document.getElementById('clear-all-btn').addEventListener('click', () => {
     selections = normalizeSelections({ bpm: null });
 
-    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    document.querySelectorAll('.selections-container input[type="checkbox"]').forEach(cb => {
       cb.checked = false;
     });
     syncPositionControls();

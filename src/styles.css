@@ -44,6 +44,14 @@ header p {
   align-items: center;
 }
 
+.header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+}
+
 .language-switcher {
   display: flex;
   gap: 5px;
@@ -449,18 +457,19 @@ header p {
 }
 
 .bpm-section {
-  padding: 12px;
-  background: #fff8f0;
-  border-radius: 6px;
-  border-left: 3px solid #f59e0b;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
 }
 
 .bpm-section label {
-  display: block;
   font-size: 12px;
   font-weight: 600;
-  color: #f59e0b;
-  margin-bottom: 8px;
+  color: white;
+  white-space: nowrap;
 }
 
 .bpm-input-group {
@@ -470,10 +479,10 @@ header p {
 }
 
 .bpm-slider {
-  flex: 1;
+  width: 120px;
   height: 6px;
   border-radius: 3px;
-  background: linear-gradient(to right, #f59e0b, #ec4899);
+  background: linear-gradient(to right, #f9d38a, white);
   outline: none;
   cursor: pointer;
   -webkit-appearance: none;
@@ -486,7 +495,7 @@ header p {
   height: 16px;
   border-radius: 50%;
   background: white;
-  border: 2px solid #f59e0b;
+  border: 2px solid #764ba2;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -496,32 +505,144 @@ header p {
   height: 16px;
   border-radius: 50%;
   background: white;
-  border: 2px solid #f59e0b;
+  border: 2px solid #764ba2;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .bpm-number {
-  width: 60px;
-  padding: 6px 8px;
-  border: 1px solid #f59e0b;
+  width: 58px;
+  padding: 5px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 4px;
+  background: rgba(255, 255, 255, 0.92);
   font-size: 12px;
   font-weight: 600;
   text-align: center;
-  color: #f59e0b;
+  color: #764ba2;
 }
 
 .bpm-number:focus {
   outline: none;
-  border-color: #ec4899;
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+  border-color: white;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
 }
 
-.bpm-label {
-  font-size: 11px;
+/* Stage: where the vocals and instruments sit, seen from the listener */
+.stage-section {
+  padding: 10px 12px 8px;
+  background: #f0f4ff;
+  border-radius: 6px;
+  border-left: 3px solid #667eea;
+}
+
+.stage-section h3 {
+  font-size: 12px;
+  color: #667eea;
   font-weight: 600;
-  color: #f59e0b;
+  margin-bottom: 4px;
+}
+
+.stage-diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.stage-field {
+  fill: white;
+  stroke: #c7d0f5;
+  stroke-width: 1;
+}
+
+.stage-ring {
+  fill: none;
+  stroke: #dfe5fb;
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.stage-axis {
+  stroke: #dfe5fb;
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.stage-listener {
+  fill: #b9c2ea;
+}
+
+.stage-side {
+  fill: #a9b2d8;
+  font-size: 9px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+.stage-dot {
+  cursor: default;
+}
+
+.stage-dot > circle,
+.stage-dot > ellipse {
+  fill: #667eea;
+  stroke: white;
+  stroke-width: 1.5;
+  transition: all 0.15s ease;
+}
+
+.stage-dot-vocals > circle,
+.stage-dot-vocals > ellipse {
+  fill: #ec4899;
+}
+
+/* The arc an auto-panned part travels along */
+.stage-sweep {
+  fill: none;
+  stroke: #667eea;
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0.4;
+}
+
+.stage-dot-vocals .stage-sweep {
+  stroke: #ec4899;
+}
+
+.stage-dot:hover > .stage-sweep {
+  opacity: 0.75;
+}
+
+/* Nothing chosen yet, so the dot is only showing the default spot */
+.stage-dot-unplaced > circle,
+.stage-dot-unplaced > ellipse {
+  fill: white;
+  stroke: #b9c2ea;
+}
+
+.stage-dot-unplaced.stage-dot-vocals > circle,
+.stage-dot-unplaced.stage-dot-vocals > ellipse {
+  stroke: #f3b6d5;
+}
+
+.stage-dot:hover > circle:not(.stage-rider) {
+  r: 7;
+}
+
+.stage-dot:hover > ellipse {
+  rx: 13;
+  ry: 6;
+}
+
+.stage-caption {
+  margin-top: 2px;
+  font-size: 11px;
+  color: #667eea;
+  text-align: center;
+  min-height: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .preview-section {
@@ -532,14 +653,58 @@ header p {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 270px;
+  min-height: 200px;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .preview-section h3 {
   font-size: 12px;
   color: #667eea;
-  margin-bottom: 8px;
   font-weight: 600;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 4px;
+}
+
+/* Small square action buttons; the label shows on hover as a tooltip */
+.icon-btn {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid #c7d0f5;
+  border-radius: 4px;
+  background: white;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: #e8ecff;
+  border-color: #667eea;
+  transform: translateY(-1px);
+}
+
+.icon-btn-danger {
+  border-color: #f2bfc1;
+}
+
+.icon-btn-danger:hover {
+  background: #fff0f0;
+  border-color: #e5484d;
 }
 
 .preview-box {
@@ -547,7 +712,7 @@ header p {
   background: white;
   border: 2px solid #ddd;
   border-radius: 4px;
-  min-height: 150px;
+  min-height: 120px;
   max-height: 300px;
   overflow-y: auto;
   word-wrap: break-word;
@@ -575,10 +740,51 @@ header p {
   box-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
 }
 
-.button-group {
+.random-section {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 12px;
+  background: #f6f2ff;
+  border-radius: 6px;
+  border-left: 3px solid #764ba2;
+}
+
+/* One row per category: include-in-random checkbox + reroll button */
+.random-targets {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.random-target {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 4px;
+}
+
+.random-target input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: #764ba2;
+}
+
+.random-target label {
+  flex: 1;
+  font-size: 12px;
+  color: #555;
+  cursor: pointer;
+}
+
+.random-one-btn {
+  border-color: #d5c7f0;
+}
+
+.random-one-btn:hover {
+  background: #ece3ff;
+  border-color: #764ba2;
 }
 
 .btn {
@@ -609,17 +815,6 @@ header p {
 
 .btn-secondary:hover {
   background: #f0f4ff;
-  transform: translateY(-2px);
-}
-
-.btn-danger {
-  background: white;
-  color: #e5484d;
-  border: 2px solid #e5484d;
-}
-
-.btn-danger:hover {
-  background: #fff0f0;
   transform: translateY(-2px);
 }
 

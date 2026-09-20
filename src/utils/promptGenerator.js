@@ -143,6 +143,51 @@ class PromptGenerator {
     return position ? [position.pan, position.depth].filter(Boolean) : [];
   }
 
+  // Everything that ends up on the stage diagram: the vocal modes and
+  // instruments that reach the prompt, each with its chosen placement.
+  // Same inclusion rules as generatePrompt, so the diagram matches the text.
+  getStagePlacements(selections) {
+    const positions = selections.positions || {};
+    const named = (category) => Object.keys(positions)
+      .map(key => PromptGenerator.splitPositionKey(key))
+      .filter(([keyCategory]) => keyCategory === category)
+      .map(([, name]) => name);
+
+    const vocalModes = this.data.vocal?.vocal_modes || {};
+    const modes = new Set();
+    (selections.vocals || []).forEach(item => {
+      const mode = vocalModes[item] ? item : this.findVocalMode(item);
+      if (mode) modes.add(mode);
+    });
+    named('vocals').forEach(name => {
+      if (vocalModes[name]) modes.add(name);
+    });
+
+    const instruments = new Set();
+    (selections.instruments || []).forEach(item => {
+      const { instrument } = this.parseInstrumentItem(item);
+      if (instrument) instruments.add(instrument);
+    });
+    named('instruments').forEach(name => instruments.add(name));
+
+    return [
+      ...[...modes].map(mode => this.stagePlacement(selections, 'vocals', mode, mode)),
+      ...[...instruments].map(key => this.stagePlacement(selections, 'instruments', key, this.getInstrumentName(key)))
+    ];
+  }
+
+  stagePlacement(selections, category, key, label) {
+    const position = selections.positions?.[PromptGenerator.positionKey(category, key)] || {};
+    return {
+      category,
+      label,
+      pan: position.pan || '',
+      depth: position.depth || '',
+      // Without a position the dot falls back to the middle of the stage
+      placed: Boolean(position.pan || position.depth)
+    };
+  }
+
   static positionKey(category, name) {
     return `${category}:${name}`;
   }
@@ -156,7 +201,132 @@ class PromptGenerator {
     return `${instrumentKey}${PromptGenerator.TECHNIQUE_SEPARATOR}${technique}`;
   }
 
-  getRandomSelection() {
+  // Random pick for a single category, used by the per-category 🎲 buttons
+  randomCategory(category) {
+    switch (category) {
+      case 'genres': return this.randomGenres();
+      case 'vocals': return this.randomVocals();
+      case 'instruments': return this.randomInstruments();
+      case 'chords': return this.randomChords();
+      case 'structures': return this.randomStructures();
+      default: return [];
+    }
+  }
+
+  // Random genres (1-2), plus an era some of the time
+  randomGenres() {
+    if (!this.data.genre) return [];
+
+    const genres = [];
+    const allGenres = [];
+    for (const [groupName, genreList] of Object.entries(this.data.genre)) {
+      if (Array.isArray(genreList) && groupName !== PromptGenerator.ERA_GROUP) {
+        allGenres.push(...genreList);
+      }
+    }
+
+    const eras = this.data.genre[PromptGenerator.ERA_GROUP];
+    if (Array.isArray(eras) && eras.length > 0 && Math.random() < 0.3) {
+      genres.push(eras[Math.floor(Math.random() * eras.length)]);
+    }
+
+    const count = Math.random() > 0.5 ? 2 : 1;
+    for (let i = 0; i < count && allGenres.length > 0; i++) {
+      const idx = Math.floor(Math.random() * allGenres.length);
+      genres.push(allGenres[idx]);
+      allGenres.splice(idx, 1);
+    }
+    return genres;
+  }
+
+  // Random vocal: one main phrase from a mode, sometimes plus one more.
+  // Only phrases are picked (never the bare mode name), so every pick has
+  // its own checkbox and nothing is output twice.
+  randomVocals() {
+    const vocalModes = Object.values(this.data.vocal?.vocal_modes || {})
+      .filter(m => m.style_phrases?.length > 0);
+    if (vocalModes.length === 0) return [];
+
+    const modeData = vocalModes[Math.floor(Math.random() * vocalModes.length)];
+    const main = modeData.style_phrases[Math.floor(Math.random() * modeData.style_phrases.length)];
+    const vocals = [main];
+
+    const extras = [...modeData.style_phrases, ...(modeData.style_modifiers || [])].filter(p => p !== main);
+    if (extras.length > 0 && Math.random() > 0.6) {
+      vocals.push(extras[Math.floor(Math.random() * extras.length)]);
+    }
+    return vocals;
+  }
+
+  // Random instruments (2-4 with more techniques each)
+  randomInstruments() {
+    const instruments = Object.entries(this.data.instruments?.instruments || {});
+    if (instruments.length === 0) return [];
+
+    // Weighted selection: more instruments used
+    const weights = [2, 2, 3, 4];
+    const instrumentCount = weights[Math.floor(Math.random() * weights.length)];
+    const selected = [];
+
+    for (let i = 0; i < instrumentCount && instruments.length > 0; i++) {
+      const idx = Math.floor(Math.random() * instruments.length);
+      const [instName, instData] = instruments[idx];
+
+      // Add instrument
+      selected.push(instName);
+
+      // Add 2-3 techniques from this instrument
+      if (instData.techniques && instData.techniques.length > 0) {
+        const techniques = [...instData.techniques];
+        const techCount = Math.min(Math.floor(Math.random() * 2) + 2, techniques.length);
+        for (let j = 0; j < techCount; j++) {
+          const tidx = Math.floor(Math.random() * techniques.length);
+          selected.push(PromptGenerator.techniqueValue(instName, techniques[tidx]));
+          techniques.splice(tidx, 1);
+        }
+      }
+
+      instruments.splice(idx, 1);
+    }
+    return selected;
+  }
+
+  // Random chords: sometimes one progression, sometimes one chord color
+  randomChords() {
+    if (!this.data.chord?.categories) return [];
+
+    const chords = [];
+    for (const categoryName of ['Progressions', 'Chord Colors']) {
+      const phrases = this.data.chord.categories[categoryName]?.phrases;
+      if (phrases && phrases.length > 0 && Math.random() < 0.5) {
+        chords.push(phrases[Math.floor(Math.random() * phrases.length)]);
+      }
+    }
+    return chords;
+  }
+
+  // Random structures (2-3 phrases)
+  randomStructures() {
+    const allStructures = [];
+    for (const categoryData of Object.values(this.data.structure?.categories || {})) {
+      if (categoryData.phrases) {
+        allStructures.push(...categoryData.phrases);
+      }
+    }
+    if (allStructures.length === 0) return [];
+
+    const structures = [];
+    const count = Math.min(Math.floor(Math.random() * 3) + 2, allStructures.length);
+    for (let i = 0; i < count; i++) {
+      const idx = Math.floor(Math.random() * allStructures.length);
+      structures.push(allStructures[idx]);
+      allStructures.splice(idx, 1);
+    }
+    return structures;
+  }
+
+  // Random selection for the given categories; the others come back empty
+  getRandomSelection(categories = PromptGenerator.CATEGORIES) {
     const selection = {
       genres: [],
       vocals: [],
@@ -166,108 +336,13 @@ class PromptGenerator {
       bpm: this.getRandomBPM()
     };
 
-    // Random genres (1-2), plus an era some of the time
-    if (this.data.genre) {
-      const allGenres = [];
-      for (const [groupName, genreList] of Object.entries(this.data.genre)) {
-        if (Array.isArray(genreList) && groupName !== PromptGenerator.ERA_GROUP) {
-          allGenres.push(...genreList);
-        }
-      }
-      const eras = this.data.genre[PromptGenerator.ERA_GROUP];
-      if (Array.isArray(eras) && eras.length > 0 && Math.random() < 0.3) {
-        selection.genres.push(eras[Math.floor(Math.random() * eras.length)]);
-      }
-      if (allGenres.length > 0) {
-        const count = Math.random() > 0.5 ? 2 : 1;
-        for (let i = 0; i < count && allGenres.length > 0; i++) {
-          const idx = Math.floor(Math.random() * allGenres.length);
-          selection.genres.push(allGenres[idx]);
-          allGenres.splice(idx, 1);
-        }
-      }
-    }
-
-    // Random vocal: one main phrase from a mode, sometimes plus one more.
-    // Only phrases are picked (never the bare mode name), so every pick has
-    // its own checkbox and nothing is output twice.
-    if (this.data.vocal?.vocal_modes) {
-      const vocalModes = Object.values(this.data.vocal.vocal_modes).filter(m => m.style_phrases?.length > 0);
-      if (vocalModes.length > 0) {
-        const modeData = vocalModes[Math.floor(Math.random() * vocalModes.length)];
-        const main = modeData.style_phrases[Math.floor(Math.random() * modeData.style_phrases.length)];
-        selection.vocals.push(main);
-
-        const extras = [...modeData.style_phrases, ...(modeData.style_modifiers || [])].filter(p => p !== main);
-        if (extras.length > 0 && Math.random() > 0.6) {
-          selection.vocals.push(extras[Math.floor(Math.random() * extras.length)]);
-        }
-      }
-    }
-
-    // Random instruments (2-4 with more techniques each)
-    if (this.data.instruments?.instruments) {
-      const instruments = Object.entries(this.data.instruments.instruments);
-      if (instruments.length > 0) {
-        // Weighted selection: more instruments used
-        const weights = [2, 2, 3, 4];
-        const instrumentCount = weights[Math.floor(Math.random() * weights.length)];
-        const selectedInstruments = [];
-
-        for (let i = 0; i < instrumentCount && instruments.length > 0; i++) {
-          const idx = Math.floor(Math.random() * instruments.length);
-          const [instName, instData] = instruments[idx];
-
-          // Add instrument
-          selectedInstruments.push(instName);
-
-          // Add 2-3 techniques from this instrument
-          if (instData.techniques && instData.techniques.length > 0) {
-            const techniques = [...instData.techniques];
-            const techCount = Math.min(Math.floor(Math.random() * 2) + 2, techniques.length);
-            for (let j = 0; j < techCount; j++) {
-              const tidx = Math.floor(Math.random() * techniques.length);
-              selectedInstruments.push(PromptGenerator.techniqueValue(instName, techniques[tidx]));
-              techniques.splice(tidx, 1);
-            }
-          }
-
-          instruments.splice(idx, 1);
-        }
-        selection.instruments = selectedInstruments;
-      }
-    }
-
-    // Random chords: sometimes one progression, sometimes one chord color
-    if (this.data.chord?.categories) {
-      for (const categoryName of ['Progressions', 'Chord Colors']) {
-        const phrases = this.data.chord.categories[categoryName]?.phrases;
-        if (phrases && phrases.length > 0 && Math.random() < 0.5) {
-          selection.chords.push(phrases[Math.floor(Math.random() * phrases.length)]);
-        }
-      }
-    }
-
-    // Random structures (2-3 phrases)
-    if (this.data.structure?.categories) {
-      const allStructures = [];
-      for (const categoryData of Object.values(this.data.structure.categories)) {
-        if (categoryData.phrases) {
-          allStructures.push(...categoryData.phrases);
-        }
-      }
-      if (allStructures.length > 0) {
-        const count = Math.min(Math.floor(Math.random() * 3) + 2, allStructures.length);
-        for (let i = 0; i < count; i++) {
-          const idx = Math.floor(Math.random() * allStructures.length);
-          selection.structures.push(allStructures[idx]);
-          allStructures.splice(idx, 1);
-        }
-      }
-    }
+    categories.forEach(category => {
+      selection[category] = this.randomCategory(category);
+    });
 
     return selection;
   }
+
 
   getRandomBPM() {
     // Weighted random BPM distribution
@@ -363,6 +438,8 @@ class PromptGenerator {
 PromptGenerator.TECHNIQUE_SEPARATOR = '::';
 PromptGenerator.ERA_GROUP = 'Era';
 PromptGenerator.POSITIONS = {
-  pan: ['centered', 'panned left', 'panned right', 'panned hard left', 'panned hard right', 'wide stereo'],
+  pan: ['centered', 'panned left', 'panned right', 'panned hard left', 'panned hard right', 'wide stereo', 'auto-panned'],
   depth: ['upfront', 'close-miked', 'in the background', 'distant']
 };
+// Selection categories, in the order they appear in the UI
+PromptGenerator.CATEGORIES = ['genres', 'vocals', 'instruments', 'chords', 'structures'];

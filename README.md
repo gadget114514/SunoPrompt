@@ -11,9 +11,11 @@ A desktop app for building [Suno AI](https://suno.com/) style prompts by simply 
 ## Features
 
 - **Pick from 5 categories** — combine genres, vocals, instruments, chords and structures into a prompt
-- **BPM control** — set the tempo with a slider or by typing a number
+- **BPM control** — set the tempo in the top bar with a slider or by typing a number
 - **Live preview** — the prompt updates instantly as you select
-- **Random generate** — create a random combination with one click
+- **Stage diagram** — a fan-shaped view of where each vocal and instrument sits; hover a dot for its name and placement
+- **Random generate** — create a random combination with one click, limited to the categories you tick
+- **Per-category reroll** — the 🎲 next to each category rerolls only that one and leaves the rest untouched
 - **Clear all** — reset all selections and the preview at once
 - **Copy / Save** — copy to the clipboard or save as a text file
 - **Projects** — save, load and delete named sets of selections
@@ -36,9 +38,18 @@ No installation needed, and no Node.js or npm required (Windows x64).
 ## Usage
 
 1. Tick items in the center tabs (Genres / Vocals / Instruments / Chords / Structures)
-2. Adjust the BPM with the slider at the top right
-3. Click **Copy to Clipboard** to copy the prompt shown in Preview
+2. Adjust the BPM with the slider in the top bar
+3. Click 📋 next to the Preview title to copy the prompt (💾 saves it to a file, 🗑️ clears everything)
 4. Paste it into Suno's Style of Music field
+
+Use **🎲 Random Generate** to reroll every ticked category at once, or the 🎲 on a single row
+to reroll just that category. All categories are ticked by default.
+
+The **Stage** panel draws the listener at the bottom and the fan of the soundstage above: the angle
+of a dot is its pan, the distance from the listener is its depth. Give an instrument or a vocal mode
+a position inside its folder and its dot moves; anything without one stays hollow in the middle.
+A part with no single spot is drawn as what it is: `wide stereo` becomes a bar, `auto-panned` becomes
+the arc it travels along, with a marker riding it.
 
 Save combinations you like with **Save Project** in the left panel.
 

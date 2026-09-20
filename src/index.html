@@ -16,9 +16,18 @@
           <h1>🎵 <span data-i18n="title">Suno Style Generator</span></h1>
           <p data-i18n="subtitle">5つのカテゴリから選択してプロンプトを生成</p>
         </div>
-        <div class="language-switcher">
-          <button class="lang-btn active" data-lang="en">English</button>
-          <button class="lang-btn" data-lang="ja">日本語</button>
+        <div class="header-controls">
+          <div class="bpm-section">
+            <label for="bpm-input" data-i18n="bpm">BPM</label>
+            <div class="bpm-input-group">
+              <input type="range" id="bpm-slider" min="40" max="200" value="120" class="bpm-slider">
+              <input type="number" id="bpm-input" min="40" max="200" value="120" class="bpm-number">
+            </div>
+          </div>
+          <div class="language-switcher">
+            <button class="lang-btn active" data-lang="en">English</button>
+            <button class="lang-btn" data-lang="ja">日本語</button>
+          </div>
         </div>
       </div>
     </header>
@@ -83,28 +92,56 @@
         </div>
       </div>
 
-      <!-- Right Panel: BPM + Preview + Buttons -->
+      <!-- Right Panel: Stage + Preview + Random -->
       <div class="right-panel">
-        <div class="bpm-section">
-          <label data-i18n="bpm">BPM</label>
-          <div class="bpm-input-group">
-            <input type="range" id="bpm-slider" min="40" max="200" value="120" class="bpm-slider">
-            <input type="number" id="bpm-input" min="40" max="200" value="120" class="bpm-number">
-            <span class="bpm-label">BPM</span>
-          </div>
+        <div class="stage-section">
+          <h3 data-i18n="stage">Stage</h3>
+          <svg id="stage-diagram" class="stage-diagram" viewBox="0 0 260 138" role="img"></svg>
+          <div id="stage-caption" class="stage-caption" data-i18n="stageHint">Hover a dot for its name</div>
         </div>
 
         <div class="preview-section">
-          <h3 data-i18n="preview">Preview</h3>
+          <div class="preview-header">
+            <h3 data-i18n="preview">Preview</h3>
+            <div class="preview-actions">
+              <button type="button" id="copy-btn" class="icon-btn" data-i18n-title="copy">📋</button>
+              <button type="button" id="save-btn" class="icon-btn" data-i18n-title="save">💾</button>
+              <button type="button" id="clear-all-btn" class="icon-btn icon-btn-danger" data-i18n-title="clearAll">🗑️</button>
+            </div>
+          </div>
           <div id="preview" class="preview-box" data-i18n-placeholder="previewPlaceholder">Preview will appear here</div>
           <div id="char-count" class="char-count"></div>
         </div>
 
-        <div class="button-group">
+        <div class="random-section">
           <button id="random-btn" class="btn btn-primary btn-block" data-i18n="random">🎲 Random</button>
-          <button id="copy-btn" class="btn btn-secondary btn-block" data-i18n="copy">📋 Copy</button>
-          <button id="save-btn" class="btn btn-secondary btn-block" data-i18n="save">💾 Save</button>
-          <button id="clear-all-btn" class="btn btn-danger btn-block" data-i18n="clearAll">🗑️ Clear All</button>
+          <div class="random-targets">
+            <div class="random-target">
+              <input type="checkbox" id="random-target-genres" class="random-target-check" data-random-category="genres" checked>
+              <label for="random-target-genres" data-i18n="genres">Genres</label>
+              <button type="button" class="icon-btn random-one-btn" data-random-category="genres" data-i18n-title="randomGenres">🎲</button>
+            </div>
+            <div class="random-target">
+              <input type="checkbox" id="random-target-vocals" class="random-target-check" data-random-category="vocals" checked>
+              <label for="random-target-vocals" data-i18n="vocals">Vocals</label>
+              <button type="button" class="icon-btn random-one-btn" data-random-category="vocals" data-i18n-title="randomVocals">🎲</button>
+            </div>
+            <div class="random-target">
+              <input type="checkbox" id="random-target-instruments" class="random-target-check" data-random-category="instruments" checked>
+              <label for="random-target-instruments" data-i18n="instruments">Instruments</label>
+              <button type="button" class="icon-btn random-one-btn" data-random-category="instruments" data-i18n-title="randomInstruments">🎲</button>
+            </div>
+            <div class="random-target">
+              <input type="checkbox" id="random-target-chords" class="random-target-check" data-random-category="chords" checked>
+              <label for="random-target-chords" data-i18n="chords">Chords</label>
+              <button type="button" class="icon-btn random-one-btn" data-random-category="chords" data-i18n-title="randomChords">🎲</button>
+            </div>
+            <div class="random-target">
+              <input type="checkbox" id="random-target-structures" class="random-target-check" data-random-category="structures" checked>
+              <label for="random-target-structures" data-i18n="structures">Structures</label>
+              <button type="button" class="icon-btn random-one-btn" data-random-category="structures" data-i18n-title="randomStructures">🎲</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
