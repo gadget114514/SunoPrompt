@@ -1211,6 +1211,59 @@ body.is-web .left-panel {
   display: none;
 }
 
+/* Per-tab search box, pinned above its list while the list scrolls */
+.list-search {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+}
+
+.list-search-icon {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+.list-search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+/* Chromium adds its own clear button; ours carries the tooltip and the label */
+.list-search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.list-search-clear {
+  flex: none;
+  font-size: 11px;
+}
+
+.list-search-empty {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin: 8px 0 0;
+  color: #999;
+  font-size: 13px;
+}
+
+.search-hidden {
+  display: none;
+}
+
 .projects-empty {
   padding: 20px;
   color: #999;

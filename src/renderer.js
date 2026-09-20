@@ -480,6 +480,97 @@ const updateFolderHighlights = () => {
   });
 };
 
+// Per-tab search. Matching an item shows it; matching a folder name shows the
+// whole folder. Folders are opened to reveal their hits and snap back to the
+// state the user left them in once the box is emptied.
+const setFolderOpen = (folder, open) => {
+  const content = folder.querySelector('.folder-content');
+  const toggle = folder.querySelector('.folder-toggle');
+  if (!content) return;
+  content.classList.toggle('hidden', !open);
+  if (toggle) toggle.textContent = open ? '▼ ' : '▶ ';
+};
+
+const filterList = (list, query) => {
+  if (!list) return;
+  const q = query.trim().toLowerCase();
+  const hit = (text) => text.toLowerCase().includes(q);
+  let visible = 0;
+
+  list.querySelectorAll('.folder-item').forEach(folder => {
+    const name = folder.querySelector('.folder-name');
+    const folderHit = !!name && hit(name.textContent);
+    let childHits = 0;
+
+    folder.querySelectorAll('.checkbox-item').forEach(item => {
+      const label = item.querySelector('label');
+      const shown = !q || folderHit || (!!label && hit(label.textContent));
+      item.classList.toggle('search-hidden', !shown);
+      if (shown) childHits += 1;
+    });
+
+    const show = !q || folderHit || childHits > 0;
+    folder.classList.toggle('search-hidden', !show);
+    if (show) visible += 1;
+
+    if (q) {
+      // Remember how it was left, the first time a search hides the arrow's meaning
+      if (folder.dataset.collapsedBeforeSearch === undefined) {
+        folder.dataset.collapsedBeforeSearch =
+          folder.querySelector('.folder-content')?.classList.contains('hidden') ? '1' : '0';
+      }
+      if (show) setFolderOpen(folder, true);
+    } else if (folder.dataset.collapsedBeforeSearch !== undefined) {
+      setFolderOpen(folder, folder.dataset.collapsedBeforeSearch === '0');
+      delete folder.dataset.collapsedBeforeSearch;
+    }
+  });
+
+  // Flat lists have their checkboxes straight in the container
+  [...list.children].filter(el => el.classList.contains('checkbox-item')).forEach(item => {
+    const label = item.querySelector('label');
+    const shown = !q || (!!label && hit(label.textContent));
+    item.classList.toggle('search-hidden', !shown);
+    if (shown) visible += 1;
+  });
+
+  const box = list.parentElement?.querySelector('.list-search');
+  const empty = box?.querySelector('.list-search-empty');
+  if (empty) empty.hidden = !q || visible > 0;
+  const clear = box?.querySelector('.list-search-clear');
+  if (clear) clear.hidden = !q;
+};
+
+// Re-run every box, e.g. after the lists have been rebuilt
+const applySearchFilters = () => {
+  document.querySelectorAll('.list-search-input').forEach(input => {
+    if (input.value) filterList(document.getElementById(input.dataset.searchList), input.value);
+  });
+};
+
+const setupSearch = () => {
+  document.querySelectorAll('.list-search-input').forEach(input => {
+    const list = document.getElementById(input.dataset.searchList);
+    const clear = input.parentElement.querySelector('.list-search-clear');
+
+    input.addEventListener('input', () => filterList(list, input.value));
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && input.value) {
+        event.stopPropagation();
+        input.value = '';
+        filterList(list, '');
+      }
+    });
+    if (clear) {
+      clear.addEventListener('click', () => {
+        input.value = '';
+        filterList(list, '');
+        input.focus();
+      });
+    }
+  });
+};
+
 const renderCheckboxList = (containerId, items, category) => {
   const container = document.getElementById(containerId);
   container.innerHTML = '';
@@ -699,6 +790,9 @@ const populateTabs = () => {
   renderCheckboxList('instruments-list', items.instruments, 'instruments');
   renderCheckboxList('chords-list', items.chords, 'chords');
   renderCheckboxList('structures-list', items.structures, 'structures');
+
+  // The lists were just rebuilt; a search that is still typed in must survive that
+  applySearchFilters();
 
   addLog(t('logDataLoaded'), 'success');
 };
@@ -1320,6 +1414,7 @@ document.addEventListener('DOMContentLoaded', () => {
     populateTabs();
     setupTabs();
     setupButtons();
+    setupSearch();
     updatePreview();
   });
 });
