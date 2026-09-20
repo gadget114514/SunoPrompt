@@ -27,6 +27,7 @@
               <input type="number" id="bpm-input" min="40" max="200" value="120" class="bpm-number">
             </div>
           </div>
+          <button id="parse-prompt-btn" class="btn btn-parse" data-i18n="parsePrompt">📥 Parse Prompt</button>
           <div class="language-switcher">
             <button class="lang-btn active" data-lang="en">English</button>
             <button class="lang-btn" data-lang="ja">日本語</button>
@@ -78,6 +79,7 @@
           <button class="tab-button" draggable="true" data-tab="instruments" data-i18n="instruments">Instruments</button>
           <button class="tab-button" draggable="true" data-tab="chords" data-i18n="chords">Chords</button>
           <button class="tab-button" draggable="true" data-tab="structures" data-i18n="structures">Structures</button>
+          <button class="tab-button" draggable="true" data-tab="others" data-i18n="others">Others</button>
         </div>
 
         <div class="selections-container">
@@ -95,6 +97,9 @@
           </div>
           <div class="tab-content" id="structures-tab">
             <div id="structures-list" class="items-list"></div>
+          </div>
+          <div class="tab-content" id="others-tab">
+            <textarea id="others-input" class="others-textarea" data-i18n-placeholder="othersPlaceholder" placeholder="Free text..."></textarea>
           </div>
         </div>
       </div>
@@ -175,5 +180,31 @@
   <script src="webApi.js"></script>
   <script src="utils/promptGenerator.js"></script>
   <script src="renderer.js"></script>
+
+  <!-- Paste a full prompt and let the parser tick what it recognises -->
+  <div id="parse-modal" class="modal-overlay hidden">
+    <div class="modal parse-modal" role="dialog" aria-modal="true" aria-labelledby="parse-modal-title">
+      <div class="modal-header">
+        <h3 id="parse-modal-title" data-i18n="parsePromptTitle">Parse Prompt</h3>
+        <button type="button" id="parse-close-btn" class="icon-btn" aria-label="Close">✕</button>
+      </div>
+      <textarea id="parse-input" class="parse-textarea" data-i18n-placeholder="parsePlaceholder" placeholder="Paste a Style prompt to parse..."></textarea>
+      <div class="parse-mode" role="radiogroup" aria-label="Parse mode">
+        <label class="parse-mode-option">
+          <input type="radio" name="parse-mode" value="ambiguous" checked>
+          <span data-i18n="parseModeAmbiguous">Ambiguous match</span>
+        </label>
+        <label class="parse-mode-option">
+          <input type="radio" name="parse-mode" value="precise">
+          <span data-i18n="parseModePrecise">Precise match</span>
+        </label>
+      </div>
+      <p class="parse-mode-hint" data-i18n="parseModeCaseHint">Case is ignored when matching</p>
+      <div class="modal-actions">
+        <button type="button" id="parse-cancel-btn" class="btn btn-secondary" data-i18n="parseCancel">Cancel</button>
+        <button type="button" id="parse-run-btn" class="btn btn-primary" data-i18n="parseRun">Parse</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

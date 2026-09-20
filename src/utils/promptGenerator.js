@@ -23,6 +23,7 @@ class PromptGenerator {
       case 'instruments': return this.instrumentParts(selections);
       case 'chords': return this.chordParts(selections);
       case 'structures': return this.structureParts(selections);
+      case 'others': return selections.others?.trim() ? [selections.others.trim()] : [];
       default: return [];
     }
   }
@@ -199,6 +200,9 @@ class PromptGenerator {
     const position = selections.positions?.[PromptGenerator.positionKey(category, key)] || {};
     return {
       category,
+      // The raw name/mode used to build the position key, so a dragged pin
+      // knows which entry in selections.positions it is moving.
+      key,
       // Instrument family ("keyboard", "brass", ...), which picks the icon
       kind: category === 'instruments'
         ? (this.data.instruments?.instruments?.[key]?.category || 'other')
@@ -400,6 +404,281 @@ class PromptGenerator {
     return 120; // Default
   }
 
+  // Split a Style text on a separator, but leave anything inside parentheses
+  // (instrument/vocal details) in one piece.
+  static splitTopLevel(text, sep) {
+    const parts = [];
+    let depth = 0;
+    let current = '';
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (ch === '(') depth++;
+      else if (ch === ')') depth = Math.max(0, depth - 1);
+      if (ch === sep && depth === 0) {
+        parts.push(current);
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+    parts.push(current);
+    return parts;
+  }
+
+  // The key a phrase is looked up by. Both modes ignore letter case; precise
+  // mode also drops hyphens and spaces, so "Synth-Pop", "synth pop" and
+  // "synthpop" all meet the same entry.
+  static matchKey(value, precise) {
+    const lower = value.toLowerCase();
+    return precise ? lower.replace(/[\s\-–—−]+/g, '') : lower;
+  }
+
+  // Lowercase (or, in precise mode, normalized) lookups, built once each.
+  genreIndex(precise) {
+    const cache = precise ? '_genreIndexPrecise' : '_genreIndex';
+    if (!this[cache]) {
+      const map = new Map();
+      Object.values(this.data.genre || {}).forEach(list => {
+        if (!Array.isArray(list)) return;
+        list.forEach(name => {
+          const key = PromptGenerator.matchKey(name, precise);
+          if (!map.has(key)) map.set(key, name);
+        });
+      });
+      this[cache] = map;
+    }
+    return this[cache];
+  }
+
+  vocalIndex(precise) {
+    const cache = precise ? '_vocalIndexPrecise' : '_vocalIndex';
+    if (!this[cache]) {
+      const map = new Map();
+      Object.entries(this.data.vocal?.vocal_modes || {}).forEach(([mode, data]) => {
+        [...(data.style_phrases || []), ...(data.style_modifiers || [])].forEach(phrase => {
+          const key = PromptGenerator.matchKey(phrase, precise);
+          if (!map.has(key)) map.set(key, { phrase, mode });
+        });
+      });
+      this[cache] = map;
+    }
+    return this[cache];
+  }
+
+  chordIndex(precise) {
+    const cache = precise ? '_chordIndexPrecise' : '_chordIndex';
+    if (!this[cache]) {
+      const map = new Map();
+      Object.values(this.data.chord?.categories || {}).forEach(cat => {
+        (cat.phrases || []).forEach(p => {
+          const key = PromptGenerator.matchKey(p, precise);
+          if (!map.has(key)) map.set(key, p);
+        });
+      });
+      this[cache] = map;
+    }
+    return this[cache];
+  }
+
+  structureIndex(precise) {
+    const cache = precise ? '_structureIndexPrecise' : '_structureIndex';
+    if (!this[cache]) {
+      const map = new Map();
+      Object.values(this.data.structure?.categories || {}).forEach(cat => {
+        (cat.phrases || []).forEach(p => {
+          const key = PromptGenerator.matchKey(p, precise);
+          if (!map.has(key)) map.set(key, p);
+        });
+      });
+      this[cache] = map;
+    }
+    return this[cache];
+  }
+
+  instrumentIndex(precise) {
+    const cache = precise ? '_instrumentIndexPrecise' : '_instrumentIndex';
+    if (!this[cache]) {
+      const map = new Map();
+      Object.entries(this.data.instruments?.instruments || {}).forEach(([key, data]) => {
+        map.set(PromptGenerator.matchKey(key, precise), key);
+        (data.aliases || []).forEach(alias => {
+          const aliasKey = PromptGenerator.matchKey(alias, precise);
+          if (!map.has(aliasKey)) map.set(aliasKey, key);
+        });
+      });
+      this[cache] = map;
+    }
+    return this[cache];
+  }
+
+  // "Grand Piano" or "Grand Piano (legato arpeggios, panned left)" -> the
+  // instrument key plus whatever sits inside the parentheses.
+  matchInstrument(value, precise) {
+    let name = value;
+    let details = '';
+    const paren = value.indexOf('(');
+    if (paren >= 0 && value.endsWith(')')) {
+      name = value.slice(0, paren).trim();
+      details = value.slice(paren + 1, -1).trim();
+    }
+    const key = this.instrumentIndex(precise).get(PromptGenerator.matchKey(name, precise));
+    return key ? { key, details } : null;
+  }
+
+  // A vocal phrase, optionally carrying a position in parentheses
+  matchVocal(value, precise) {
+    let phrase = value;
+    let details = '';
+    const paren = value.indexOf('(');
+    if (paren >= 0 && value.endsWith(')')) {
+      phrase = value.slice(0, paren).trim();
+      details = value.slice(paren + 1, -1).trim();
+    }
+    const entry = this.vocalIndex(precise).get(PromptGenerator.matchKey(phrase, precise));
+    return entry ? { ...entry, details } : null;
+  }
+
+  // Tick the instrument, its techniques and its position; return anything
+  // inside the parentheses that matched nothing, to become free text.
+  applyInstrumentParse(sel, { key, details }, precise) {
+    const leftovers = [];
+    if (!sel.instruments.includes(key)) sel.instruments.push(key);
+
+    const instrument = this.data.instruments?.instruments?.[key] || {};
+    const mk = (s) => PromptGenerator.matchKey(s, precise);
+    const techniques = new Map((instrument.techniques || []).map(t => [mk(t), t]));
+    const panMap = new Map(PromptGenerator.POSITIONS.pan.map(p => [mk(p), p]));
+    const depthMap = new Map(PromptGenerator.POSITIONS.depth.map(p => [mk(p), p]));
+
+    let position = {};
+    PromptGenerator.splitTopLevel(details, ',').forEach(part => {
+      const p = part.trim();
+      if (!p) return;
+      const keyPart = mk(p);
+      if (panMap.has(keyPart)) { position.pan = panMap.get(keyPart); return; }
+      if (depthMap.has(keyPart)) { position.depth = depthMap.get(keyPart); return; }
+      const tech = techniques.get(keyPart);
+      if (tech) {
+        const value = PromptGenerator.techniqueValue(key, tech);
+        if (!sel.instruments.includes(value)) sel.instruments.push(value);
+        return;
+      }
+      leftovers.push(p);
+    });
+    if (position.pan || position.depth) {
+      sel.positions[PromptGenerator.positionKey('instruments', key)] = position;
+    }
+    return leftovers;
+  }
+
+  applyVocalParse(sel, { phrase, mode, details }, precise) {
+    const leftovers = [];
+    if (!sel.vocals.includes(phrase)) sel.vocals.push(phrase);
+
+    const mk = (s) => PromptGenerator.matchKey(s, precise);
+    const panMap = new Map(PromptGenerator.POSITIONS.pan.map(p => [mk(p), p]));
+    const depthMap = new Map(PromptGenerator.POSITIONS.depth.map(p => [mk(p), p]));
+
+    let position = {};
+    PromptGenerator.splitTopLevel(details, ',').forEach(part => {
+      const p = part.trim();
+      if (!p) return;
+      const keyPart = mk(p);
+      if (panMap.has(keyPart)) { position.pan = panMap.get(keyPart); return; }
+      if (depthMap.has(keyPart)) { position.depth = depthMap.get(keyPart); return; }
+      leftovers.push(p);
+    });
+    if (position.pan || position.depth) {
+      sel.positions[PromptGenerator.positionKey('vocals', mode)] = position;
+    }
+    return leftovers;
+  }
+
+  // A token can match several flat categories at once — "lo-fi" is both a
+  // genre and a production phrase. Collect every match so the caller can
+  // resolve the clash rather than silently picking one.
+  collectFlatMatches(value, precise) {
+    const key = PromptGenerator.matchKey(value, precise);
+    const matches = [];
+    if (this.genreIndex(precise).has(key)) matches.push({ category: 'genres', value: this.genreIndex(precise).get(key) });
+    if (this.chordIndex(precise).has(key)) matches.push({ category: 'chords', value: this.chordIndex(precise).get(key) });
+    if (this.structureIndex(precise).has(key)) matches.push({ category: 'structures', value: this.structureIndex(precise).get(key) });
+    return matches;
+  }
+
+  // Which category wins when a token matches more than one. The tab order
+  // decides: the category whose tab sits earliest wins, because that is where
+  // the phrase would have been written in the prompt. Categories the order
+  // never mentions go last.
+  resolveFlatMatch(matches, categoryOrder) {
+    const order = categoryOrder || [];
+    const rank = (category) => {
+      const index = order.indexOf(category);
+      return index === -1 ? order.length + 1 : index;
+    };
+    return matches.slice().sort((a, b) => rank(a.category) - rank(b.category))[0];
+  }
+
+  // Turn a flat Style text back into selections: tick every phrase the text
+  // can be matched to, set BPM, and put whatever is left into "others".
+  // Returns { selections, ambiguous } — ambiguous lists tokens that matched
+  // more than one category, so the caller can show which reading won.
+  // options.precise leaves ambiguous tokens untouched (they become free text).
+  // options.categoryOrder is the tab order used to break ties.
+  parsePrompt(text, { precise = false, categoryOrder = [] } = {}) {
+    const sel = {
+      genres: [], vocals: [], instruments: [], chords: [], structures: [],
+      others: '', positions: {}, bpm: null
+    };
+    const ambiguous = [];
+    if (!text) return { selections: sel, ambiguous };
+
+    const leftovers = [];
+    PromptGenerator.splitTopLevel(text, ',').forEach(token => {
+      const value = token.trim();
+      if (!value) return;
+
+      const bpm = value.match(/\b(\d{2,3})\s*bpm\b/i);
+      if (bpm) { sel.bpm = parseInt(bpm[1], 10); return; }
+
+      const instrument = this.matchInstrument(value, precise);
+      if (instrument) {
+        leftovers.push(...this.applyInstrumentParse(sel, instrument, precise));
+        return;
+      }
+
+      const vocal = this.matchVocal(value, precise);
+      if (vocal) {
+        leftovers.push(...this.applyVocalParse(sel, vocal, precise));
+        return;
+      }
+
+      const flat = this.collectFlatMatches(value, precise);
+      if (flat.length === 0) {
+        leftovers.push(value);
+        return;
+      }
+      if (flat.length > 1 && precise) {
+        // Strict mode: never guess, leave the token for the user to resolve.
+        leftovers.push(value);
+        ambiguous.push({ text: value, chosen: null, alternatives: flat });
+        return;
+      }
+      const chosen = this.resolveFlatMatch(flat, categoryOrder);
+      sel[chosen.category].push(chosen.value);
+      if (flat.length > 1) {
+        ambiguous.push({
+          text: value,
+          chosen,
+          alternatives: flat.filter(match => match !== chosen)
+        });
+      }
+    });
+
+    sel.others = leftovers.join(', ');
+    return { selections: sel, ambiguous };
+  }
+
   flattenAllItems() {
     const items = {
       genres: { byCategory: {}, allGenres: [] },
@@ -481,4 +760,4 @@ PromptGenerator.CATEGORIES = ['genres', 'vocals', 'instruments', 'chords', 'stru
 // Everything that has a place in the prompt, in its default order. BPM sits
 // among them but holds no selections of its own — its tab only marks where the
 // tempo is written, while the control for it stays in the top bar.
-PromptGenerator.ORDER_ITEMS = ['bpm', ...PromptGenerator.CATEGORIES];
+PromptGenerator.ORDER_ITEMS = ['bpm', ...PromptGenerator.CATEGORIES, 'others'];

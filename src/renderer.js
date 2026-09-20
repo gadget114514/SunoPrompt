@@ -7,11 +7,13 @@ const translations = {
     instruments: 'Instruments',
     chords: 'Chords',
     structures: 'Structures',
+    others: 'Others',
+    othersPlaceholder: 'Free text...',
     bpm: 'BPM (Tempo)',
     preview: 'Preview',
     previewPlaceholder: 'Preview will appear here',
     stage: 'Stage',
-    stageHint: 'Hover a dot for its name',
+    stageHint: 'Drag a dot to set its position; hover for its name',
     stageEmpty: 'Pick a vocal or an instrument',
     stageUnplaced: 'no position set',
     stageLeft: 'L',
@@ -60,7 +62,20 @@ const translations = {
     showRandomTargets: 'Show per-category random options',
     hideRandomTargets: 'Hide per-category random options',
     reorderTabs: 'Drag a tab (or Ctrl + ← / →) to change the order the style is written in — BPM included',
-    logTabOrder: 'Style order: '
+    logTabOrder: 'Style order: ',
+    parsePrompt: '📥 Parse Prompt',
+    parsePromptTitle: 'Parse Prompt',
+    parsePlaceholder: 'Paste a Style prompt to parse...',
+    parseRun: 'Parse',
+    parseCancel: 'Cancel',
+    logParsed: 'Prompt parsed',
+    logParseEmpty: 'Nothing to parse',
+    logParseAmbiguous: 'Ambiguous match',
+    logParseAlso: 'also matched',
+    logParseLeftAsFree: 'left as free text',
+    parseModeAmbiguous: 'Ambiguous match',
+    parseModePrecise: 'Precise match',
+    parseModeCaseHint: 'Case is ignored when matching'
   },
   ja: {
     title: 'Suno スタイルジェネレーター',
@@ -70,11 +85,13 @@ const translations = {
     instruments: '楽器',
     chords: 'コード',
     structures: '構造',
+    others: 'その他',
+    othersPlaceholder: '自由記述...',
     bpm: 'BPM (テンポ)',
     preview: 'プレビュー',
     previewPlaceholder: 'ここにプレビューが表示されます',
     stage: '定位図',
-    stageHint: 'ドットにカーソルを合わせると名前を表示',
+    stageHint: 'ドットをドラッグして定位を設定。ホバーで名前を表示',
     stageEmpty: 'ボーカルか楽器を選んでください',
     stageUnplaced: '定位未設定',
     stageLeft: 'L',
@@ -123,7 +140,20 @@ const translations = {
     showRandomTargets: 'カテゴリ別のランダム設定を開く',
     hideRandomTargets: 'カテゴリ別のランダム設定を閉じる',
     reorderTabs: 'タブをドラッグ（または Ctrl + ← / →）でスタイルの記述順を変更。BPM も含みます',
-    logTabOrder: 'スタイルの順序: '
+    logTabOrder: 'スタイルの順序: ',
+    parsePrompt: '📥 プロンプトを解析',
+    parsePromptTitle: 'プロンプトを解析',
+    parsePlaceholder: '解析するスタイルプロンプトを貼り付け...',
+    parseRun: '解析',
+    parseCancel: 'キャンセル',
+    logParsed: 'プロンプトを解析しました',
+    logParseEmpty: '解析する内容がありません',
+    logParseAmbiguous: '曖昧な一致',
+    logParseAlso: '他に一致',
+    logParseLeftAsFree: '自由記述へ',
+    parseModeAmbiguous: '曖昧一致',
+    parseModePrecise: '完全一致',
+    parseModeCaseHint: '大文字・小文字は無視してマッチします'
   }
 };
 
@@ -147,6 +177,7 @@ let selections = {
   instruments: [],
   chords: [],
   structures: [],
+  others: '',
   positions: {},
   categoryOrder: readStoredCategoryOrder(),
   bpm: 120
@@ -161,6 +192,7 @@ const normalizeSelections = (sel) => {
     if (!Array.isArray(normalized[category])) normalized[category] = [];
   });
   if (!normalized.positions || typeof normalized.positions !== 'object') normalized.positions = {};
+  if (typeof normalized.others !== 'string') normalized.others = '';
   // Projects saved before tabs could be reordered keep the order in use
   normalized.categoryOrder = PromptGenerator.categoryOrder(normalized.categoryOrder || selections.categoryOrder);
   if (generator) normalized.vocals = generator.normalizeVocals(normalized.vocals);
@@ -355,6 +387,26 @@ const STAGE_DEPTH_RADIUS = {
 };
 const STAGE_DEFAULT_RADIUS = 65;
 
+// The pan values a drag can land on, mapped to their angles. "wide stereo"
+// and "auto-panned" sit at the same angle as "centered" but are drawn
+// differently, so dragging one of those turns it into a plain pan.
+const DRAG_PAN_ANGLES = [
+  ['panned hard left', -70],
+  ['panned left', -38],
+  ['centered', 0],
+  ['panned right', 38],
+  ['panned hard right', 70]
+];
+// The depth values a drag can land on, mapped to their radii. The '' entry is
+// the default ring and means "no distance set".
+const DRAG_DEPTH_RADII = [
+  ['close-miked', 32],
+  ['upfront', 53],
+  ['', STAGE_DEFAULT_RADIUS],
+  ['in the background', 77],
+  ['distant', 97]
+];
+
 const stagePoint = (angle, radius) => {
   const rad = (angle * Math.PI) / 180;
   return [STAGE.cx + radius * Math.sin(rad), STAGE.cy - radius * Math.cos(rad)];
@@ -364,6 +416,42 @@ const svgEl = (name, attrs) => {
   const el = document.createElementNS(SVG_NS, name);
   Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
   return el;
+};
+
+// A pointer position in screen pixels, turned into viewBox coordinates
+const stageClientPoint = (svg, clientX, clientY) => {
+  const ctm = svg.getScreenCTM();
+  if (!ctm) return null;
+  const point = svg.createSVGPoint();
+  point.x = clientX;
+  point.y = clientY;
+  const p = point.matrixTransform(ctm.inverse());
+  return [p.x, p.y];
+};
+
+const snapNearest = (value, entries) => {
+  let best = entries[0];
+  let bestDistance = Infinity;
+  entries.forEach(entry => {
+    const distance = Math.abs(value - entry[1]);
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      best = entry;
+    }
+  });
+  return best[0];
+};
+
+// Turn a drop point on the stage into the closest pan / depth choices
+const snapStagePosition = (x, y) => {
+  const dx = x - STAGE.cx;
+  const dy = STAGE.cy - y;
+  const angle = (Math.atan2(dx, dy) * 180) / Math.PI;
+  const radius = Math.hypot(dx, dy);
+  return {
+    pan: snapNearest(angle, DRAG_PAN_ANGLES),
+    depth: snapNearest(radius, DRAG_DEPTH_RADII)
+  };
 };
 
 // The fan outline, the distance rings and the L/R markers
@@ -453,11 +541,52 @@ const spreadOverlaps = (placements) => {
   return spread;
 };
 
+// A pin being dragged: which entry it belongs to, and the pointer that moves it
+let stageDrag = null;
+
+const startStageDrag = (svg, placement, event) => {
+  if (event.button !== 0) return;
+  event.preventDefault();
+  stageDrag = {
+    svg,
+    positionKey: PromptGenerator.positionKey(placement.category, placement.key),
+    pointerId: event.pointerId
+  };
+  svg.setPointerCapture?.(event.pointerId);
+  document.body.classList.add('stage-dragging');
+
+  const onMove = (move) => {
+    if (!stageDrag || move.pointerId !== stageDrag.pointerId) return;
+    const point = stageClientPoint(svg, move.clientX, move.clientY);
+    if (!point) return;
+    const { pan, depth } = snapStagePosition(point[0], point[1]);
+    const position = { pan, depth: depth || '' };
+    if (position.pan || position.depth) {
+      selections.positions[stageDrag.positionKey] = position;
+    } else {
+      delete selections.positions[stageDrag.positionKey];
+    }
+    syncPositionControls();
+    updatePreview();
+  };
+
+  const onUp = () => {
+    document.body.classList.remove('stage-dragging');
+    svg.removeEventListener('pointermove', onMove);
+    svg.removeEventListener('pointerup', onUp);
+    svg.removeEventListener('pointercancel', onUp);
+    stageDrag = null;
+  };
+
+  svg.addEventListener('pointermove', onMove);
+  svg.addEventListener('pointerup', onUp);
+  svg.addEventListener('pointercancel', onUp);
+};
+
 const updateStageDiagram = () => {
   const svg = document.getElementById('stage-diagram');
   const caption = document.getElementById('stage-caption');
   if (!svg || !generator) return;
-
   svg.textContent = '';
   drawStageBackground(svg);
 
@@ -490,6 +619,7 @@ const updateStageDiagram = () => {
 
     dot.addEventListener('mouseenter', () => { caption.textContent = text; });
     dot.addEventListener('mouseleave', () => { caption.textContent = t('stageHint'); });
+    dot.addEventListener('pointerdown', (event) => startStageDrag(svg, placement, event));
     svg.appendChild(dot);
   });
 };
@@ -707,6 +837,12 @@ const syncPositionControls = () => {
     const position = selections.positions[badge.dataset.positionKey];
     badge.textContent = position ? `📍 ${[position.pan, position.depth].filter(Boolean).join(', ')}` : '';
   });
+};
+
+// Reflect selections.others in the free-text box
+const syncOthersInput = () => {
+  const input = document.getElementById('others-input');
+  if (input) input.value = selections.others || '';
 };
 
 const populateTabs = () => {
@@ -950,8 +1086,76 @@ const setupRandomButtons = () => {
   });
 };
 
+// Paste a full prompt into a dialog and let the parser tick what it knows
+const setupParsePrompt = () => {
+  const modal = document.getElementById('parse-modal');
+  const input = document.getElementById('parse-input');
+  const openBtn = document.getElementById('parse-prompt-btn');
+  const closeBtn = document.getElementById('parse-close-btn');
+  const cancelBtn = document.getElementById('parse-cancel-btn');
+  const runBtn = document.getElementById('parse-run-btn');
+  if (!modal || !input || !openBtn || !closeBtn || !cancelBtn || !runBtn) return;
+
+  const open = () => {
+    modal.classList.remove('hidden');
+    input.value = '';
+    const ambiguousRadio = modal.querySelector('input[name="parse-mode"][value="ambiguous"]');
+    if (ambiguousRadio) ambiguousRadio.checked = true;
+    input.focus();
+  };
+
+  const close = () => modal.classList.add('hidden');
+
+  openBtn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  cancelBtn.addEventListener('click', close);
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) close();
+  });
+
+  const run = () => {
+    const text = input.value.trim();
+    if (!text) {
+      addLog(t('logParseEmpty'), 'error');
+      return;
+    }
+    if (!generator) return;
+
+    const precise = modal.querySelector('input[name="parse-mode"][value="precise"]')?.checked === true;
+    const parsed = generator.parsePrompt(text, {
+      precise,
+      categoryOrder: selections.categoryOrder
+    });
+    selections = normalizeSelections(parsed.selections);
+    syncBpmControls();
+    syncOthersInput();
+    updateAllCheckboxes();
+    updatePreview();
+    parsed.ambiguous.forEach(a => {
+      const alternatives = a.alternatives.map(m => t(m.category)).join(', ');
+      if (a.chosen) {
+        addLog(`${t('logParseAmbiguous')}: "${a.text}" → ${t(a.chosen.category)} (${t('logParseAlso')}: ${alternatives})`, 'info');
+      } else {
+        addLog(`${t('logParseAmbiguous')}: "${a.text}" (${alternatives}) → ${t('logParseLeftAsFree')}`, 'info');
+      }
+    });
+    addLog(t('logParsed'), 'success');
+    close();
+  };
+
+  runBtn.addEventListener('click', run);
+  input.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') close();
+    if (event.key === 'Enter' && event.ctrlKey) run();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !modal.classList.contains('hidden')) close();
+  });
+};
+
 const setupButtons = () => {
   setupRandomButtons();
+  setupParsePrompt();
 
   // Clear all selections and preview
   document.getElementById('clear-all-btn').addEventListener('click', () => {
@@ -961,10 +1165,20 @@ const setupButtons = () => {
       cb.checked = false;
     });
     syncPositionControls();
+    syncOthersInput();
 
     updatePreview();
     addLog(t('logCleared'), 'info');
   });
+
+  // Free text rides along as a single value, written wherever its tab sits
+  const othersInput = document.getElementById('others-input');
+  if (othersInput) {
+    othersInput.addEventListener('input', () => {
+      selections.others = othersInput.value;
+      updatePreview();
+    });
+  }
 
   // Copy to clipboard
   document.getElementById('copy-btn').addEventListener('click', async () => {
@@ -1209,6 +1423,7 @@ const loadProjectsList = async () => {
         localStorage.setItem(CATEGORY_ORDER_KEY, JSON.stringify(selections.categoryOrder));
         applyCategoryOrder();
         syncBpmControls();
+        syncOthersInput();
         updateAllCheckboxes();
         updatePreview();
         addLog(t('logProjectLoaded') + project.name, 'success');
