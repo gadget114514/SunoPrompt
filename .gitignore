@@ -1,8 +1,10 @@
 dist/
 *.zip
+*.exe
 sunoprompt-releases/
 2ne44/
 .claude/
+internaldoc/
 
 # Logs
 logs

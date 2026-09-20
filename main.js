@@ -43,6 +43,10 @@ const getProjectsDir = () => {
 // A project file sits directly in the projects folder; a name that climbs out
 // of it is not ours to read or delete.
 const projectPath = (fileName) => {
+  // A name carrying a separator is not a file in this folder whatever it
+  // normalizes to, and a renderer that sends something other than a string
+  // must not take the endsWith call down with it.
+  if (typeof fileName !== 'string' || path.basename(fileName) !== fileName) return null;
   const dir = getProjectsDir();
   const filePath = path.join(dir, fileName);
   return path.dirname(filePath) === dir && fileName.endsWith('.json') ? filePath : null;
@@ -174,7 +178,15 @@ ipcMain.handle('get-projects-dir', async () => getProjectsDir());
 // Save project
 ipcMain.handle('save-project', async (event, projectData) => {
   try {
-    const fileName = `${projectData.name.replace(/[^\w\s]/g, '_')}_${Date.now()}.json`;
+    // \w is ASCII-only, so the old sanitizer turned a Japanese name into a row
+    // of underscores. Strip what the filesystem actually refuses, and no more.
+    const sanitized = (projectData.name || 'Untitled')
+      .trim()
+      .replace(/[\\/:*?"<>|\x00-\x1F]/g, '_')
+      .replace(/\s+/g, ' ')
+      .slice(0, 64)
+      .trim() || 'Untitled';
+    const fileName = `${sanitized}_${Date.now()}.json`;
     const filePath = path.join(getProjectsDir(), fileName);
 
     const project = {

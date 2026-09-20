@@ -6,7 +6,7 @@ English | [日本語](README.ja.md)
 
 A desktop app for building [Suno AI](https://suno.com/) style prompts by simply ticking checkboxes.
 
-![Suno Style Generator](snapshot/application-main.jpg)
+![Suno Style Generator](snapshot/crowd-main.jpg)
 
 ## Features
 

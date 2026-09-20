@@ -1170,7 +1170,10 @@ const loadProjectsList = async () => {
   }
   projectsList.innerHTML = '';
   if (result.projects.length === 0) {
-    projectsList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No projects saved yet</p>';
+    const empty = document.createElement('p');
+    empty.className = 'projects-empty';
+    empty.textContent = 'No projects saved yet';
+    projectsList.appendChild(empty);
     return;
   }
 

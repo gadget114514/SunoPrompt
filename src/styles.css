@@ -1179,3 +1179,9 @@ body.is-web .left-panel {
 .selection-count:empty {
   display: none;
 }
+
+.projects-empty {
+  padding: 20px;
+  color: #999;
+  text-align: center;
+}

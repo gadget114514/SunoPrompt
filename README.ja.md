@@ -6,7 +6,7 @@
 
 [Suno AI](https://suno.com/) 用のスタイルプロンプトを、チェックボックスを選ぶだけで組み立てられるデスクトップアプリです。
 
-![Suno Style Generator](snapshot/application-main.jpg)
+![Suno Style Generator](snapshot/crowd-main.jpg)
 
 ## 特徴
 
