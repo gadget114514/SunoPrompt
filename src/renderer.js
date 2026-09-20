@@ -29,6 +29,8 @@ const translations = {
     logCleared: 'All selections cleared',
     log: 'Log',
     clearLog: 'Clear',
+    closeLog: 'Close log',
+    openLog: 'Open log',
     logDataLoaded: 'Data loaded successfully',
     logRandomGenerated: 'Random generation executed',
     logRandomCategory: 'Random generated: ',
@@ -81,6 +83,8 @@ const translations = {
     logCleared: 'すべての選択をクリアしました',
     log: 'ログ',
     clearLog: 'クリア',
+    closeLog: 'ログを閉じる',
+    openLog: 'ログを開く',
     logDataLoaded: 'データの読み込み完了',
     logRandomGenerated: 'ランダム生成を実行しました',
     logRandomCategory: 'ランダム生成: ',
@@ -191,6 +195,23 @@ const addLog = (message, type = 'info') => {
   logWindow.scrollTop = logWindow.scrollHeight;
 };
 
+// The log can be folded away to its header; the button toggles it back open
+const LOG_COLLAPSED_KEY = 'suno-log-collapsed';
+
+const setLogCollapsed = (collapsed) => {
+  const container = document.querySelector('.log-container');
+  const button = document.getElementById('toggle-log-btn');
+  if (!container || !button) return;
+
+  container.classList.toggle('collapsed', collapsed);
+  button.textContent = collapsed ? '▼' : '✕';
+  const key = collapsed ? 'openLog' : 'closeLog';
+  button.setAttribute('data-i18n-title', key);
+  button.title = t(key);
+  button.setAttribute('aria-label', t(key));
+  button.setAttribute('aria-expanded', String(!collapsed));
+};
+
 // Suno's Style field accepts up to 1000 characters
 const STYLE_CHAR_LIMIT = 1000;
 
@@ -237,7 +258,7 @@ const updatePreview = () => {
 // Fan-shaped stage seen from the listener, who sits at the bottom centre.
 // Pan sets the angle, distance sets the radius.
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const STAGE = { cx: 130, cy: 128, spread: 76, maxR: 106 };
+const STAGE = { cx: 108, cy: 112, spread: 76, maxR: 106 };
 const STAGE_PAN_ANGLE = {
   'panned hard left': -70,
   'panned left': -38,
@@ -249,6 +270,22 @@ const STAGE_PAN_ANGLE = {
 };
 // How far an auto-panned part swings either side of centre
 const STAGE_SWEEP_SPAN = 60;
+// One icon per instrument family, keyed by the category in the instrument data
+const STAGE_ICONS = {
+  keyboard: '🎹',
+  free_reed: '🪗',
+  guitar_plucked: '🎸',
+  bass: '🔊',
+  bowed_strings: '🎻',
+  brass: '🎺',
+  woodwind: '🎷',
+  percussion: '🥁',
+  traditional_world: '🪕',
+  electronic: '🎛️',
+  ensemble: '🎼',
+  vocals: '🎤',
+  other: '🎵'
+};
 // Rings from nearest to farthest; anything without a distance sits in between
 const STAGE_DEPTH_RADIUS = {
   'close-miked': 32,
@@ -299,6 +336,16 @@ const drawStageBackground = (svg) => {
   });
 };
 
+// A part on the stage: a tinted disc with its family icon on it
+const stagePin = (placement, x, y) => {
+  const pin = svgEl('g', { class: 'stage-pin', transform: `translate(${x} ${y})` });
+  pin.appendChild(svgEl('circle', { class: 'stage-pin-disc', r: 9 }));
+  const icon = svgEl('text', { class: 'stage-pin-icon' });
+  icon.textContent = STAGE_ICONS[placement.kind] || STAGE_ICONS.other;
+  pin.appendChild(icon);
+  return pin;
+};
+
 // The arc an auto-panned part sweeps along, at its own distance from the listener
 const sweepPath = (radius) => {
   const [x1, y1] = stagePoint(-STAGE_SWEEP_SPAN, radius);
@@ -307,8 +354,9 @@ const sweepPath = (radius) => {
 };
 
 // A marker that runs the sweep back and forth, so the motion is visible
-const sweepRider = (radius) => {
-  const rider = svgEl('circle', { class: 'stage-rider', r: 4 });
+const sweepRider = (placement, radius) => {
+  const rider = svgEl('g', { class: 'stage-rider' });
+  rider.appendChild(stagePin(placement, 0, 0));
   rider.appendChild(svgEl('animateMotion', {
     dur: '5s',
     repeatCount: 'indefinite',
@@ -331,7 +379,7 @@ const spreadOverlaps = (placements) => {
 
   const spread = [];
   cells.forEach(group => {
-    const step = Math.min(13, 46 / group.length);
+    const step = Math.min(17, 60 / group.length);
     group.forEach((placement, index) => {
       const offset = index - (group.length - 1) / 2;
       const sweeps = placement.pan === 'auto-panned';
@@ -362,15 +410,16 @@ const updateStageDiagram = () => {
       class: `stage-dot stage-dot-${placement.category}${placement.placed ? '' : ' stage-dot-unplaced'}`
     });
 
-    // Neither "wide stereo" nor "auto-panned" is a single point: the first
-    // gets a bar, the second the arc it travels along plus a marker riding it
+    // Neither "wide stereo" nor "auto-panned" sits at a single point: the
+    // first spreads along a bar, the second rides the arc it travels
     if (placement.pan === 'auto-panned') {
       dot.appendChild(svgEl('path', { class: 'stage-sweep', d: sweepPath(placement.radius) }));
-      dot.appendChild(sweepRider(placement.radius));
-    } else if (placement.pan === 'wide stereo') {
-      dot.appendChild(svgEl('ellipse', { cx: x, cy: y, rx: 11, ry: 4.5 }));
+      dot.appendChild(sweepRider(placement, placement.radius));
     } else {
-      dot.appendChild(svgEl('circle', { cx: x, cy: y, r: 5 }));
+      if (placement.pan === 'wide stereo') {
+        dot.appendChild(svgEl('rect', { class: 'stage-spread', x: x - 21, y: y - 2, width: 42, height: 4, rx: 2 }));
+      }
+      dot.appendChild(stagePin(placement, x, y));
     }
 
     const detail = [placement.pan, placement.depth].filter(Boolean).join(', ') || t('stageUnplaced');
@@ -778,6 +827,15 @@ const setupButtons = () => {
     } catch (error) {
       addLog(`Error: ${error.message}`, 'error');
     }
+  });
+
+  // Close / open the log window
+  const toggleLogBtn = document.getElementById('toggle-log-btn');
+  setLogCollapsed(localStorage.getItem(LOG_COLLAPSED_KEY) === 'true');
+  toggleLogBtn.addEventListener('click', () => {
+    const collapsed = !document.querySelector('.log-container').classList.contains('collapsed');
+    setLogCollapsed(collapsed);
+    localStorage.setItem(LOG_COLLAPSED_KEY, String(collapsed));
   });
 
   // Clear log

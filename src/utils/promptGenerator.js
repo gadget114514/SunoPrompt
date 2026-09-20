@@ -180,6 +180,10 @@ class PromptGenerator {
     const position = selections.positions?.[PromptGenerator.positionKey(category, key)] || {};
     return {
       category,
+      // Instrument family ("keyboard", "brass", ...), which picks the icon
+      kind: category === 'instruments'
+        ? (this.data.instruments?.instruments?.[key]?.category || 'other')
+        : category,
       label,
       pan: position.pan || '',
       depth: position.depth || '',

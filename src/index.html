@@ -96,7 +96,7 @@
       <div class="right-panel">
         <div class="stage-section">
           <h3 data-i18n="stage">Stage</h3>
-          <svg id="stage-diagram" class="stage-diagram" viewBox="0 0 260 138" role="img"></svg>
+          <svg id="stage-diagram" class="stage-diagram" viewBox="0 0 216 120" role="img"></svg>
           <div id="stage-caption" class="stage-caption" data-i18n="stageHint">Hover a dot for its name</div>
         </div>
 
@@ -150,7 +150,10 @@
     <div class="log-container">
       <div class="log-header">
         <h4 data-i18n="log">Log</h4>
-        <button id="clear-log-btn" class="btn-small" data-i18n="clearLog">Clear</button>
+        <div class="log-actions">
+          <button id="clear-log-btn" class="btn-small" data-i18n="clearLog">Clear</button>
+          <button type="button" id="toggle-log-btn" class="btn-small log-toggle" data-i18n-title="closeLog">✕</button>
+        </div>
       </div>
       <div id="log-window" class="log-window"></div>
     </div>

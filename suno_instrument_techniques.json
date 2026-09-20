@@ -6,6 +6,7 @@
     "format": "dictionary keyed by instrument name; techniques split into individual phrases",
     "categories": [
       "keyboard",
+      "free_reed",
       "guitar_plucked",
       "bowed_strings",
       "bass",
@@ -511,7 +512,7 @@
       ]
     },
     "Accordion": {
-      "category": "keyboard",
+      "category": "free_reed",
       "aliases": [
         "Accordion"
       ],
@@ -1407,7 +1408,7 @@
       ]
     },
     "Bandoneon": {
-      "category": "keyboard",
+      "category": "free_reed",
       "aliases": [
         "Bandoneon"
       ],
