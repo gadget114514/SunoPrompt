@@ -27,7 +27,7 @@ jobs:
         run: |
           mkdir -p _site
           cp -r src/. _site/
-          cp genre.json suno_style_vocal_spec.json suno_instrument_techniques.json suno_chord_phrases.json suno_style_structure_phrases.json _site/
+          cp genre.json suno_style_vocal_spec.json suno_instrument_techniques.json suno_chord_phrases.json suno_mood_phrases.json suno_style_structure_phrases.json _site/
           cp images/application.ico _site/favicon.ico
           touch _site/.nojekyll
 

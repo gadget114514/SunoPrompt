@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "title": "Suno Style-field mood and texture phrases",
+    "note": "Natural-language mood, emotion and sound-texture cues for the Style box. They bias feel and production character rather than any specific arrangement.",
+    "language": "en",
+    "usage": "Append after chord terms in the Style field."
+  },
+  "categories": {
+    "Positive & Bright": {
+      "description": "Bright, cheerful and forward-looking moods",
+      "phrases": [
+        "upbeat",
+        "energetic",
+        "cheerful",
+        "bright",
+        "optimistic",
+        "uplifting"
+      ]
+    },
+    "Cool & Stylish": {
+      "description": "Relaxed, urbane and atmospheric moods",
+      "phrases": [
+        "chill",
+        "groovy",
+        "sophisticated",
+        "atmospheric",
+        "smooth"
+      ]
+    },
+    "Dark & Emotional": {
+      "description": "Dark, serious and emotionally charged moods",
+      "phrases": [
+        "melancholic",
+        "dark",
+        "dramatic",
+        "emotional",
+        "nostalgic",
+        "epic"
+      ]
+    },
+    "Sound Texture": {
+      "description": "The character of the sound itself rather than the mood",
+      "phrases": [
+        "acoustic",
+        "electronic",
+        "heavy",
+        "lo-fi",
+        "cinematic",
+        "futuristic",
+        "vintage"
+      ]
+    }
+  }
+}

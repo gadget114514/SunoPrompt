@@ -22,6 +22,7 @@ class PromptGenerator {
       case 'vocals': return this.vocalParts(selections);
       case 'instruments': return this.instrumentParts(selections);
       case 'chords': return this.chordParts(selections);
+      case 'moods': return this.moodParts(selections);
       case 'structures': return this.structureParts(selections);
       case 'others': return selections.others?.trim() ? [selections.others.trim()] : [];
       default: return [];
@@ -96,6 +97,11 @@ class PromptGenerator {
   // Chord / harmony phrases
   chordParts(selections) {
     return [...(selections.chords || [])];
+  }
+
+  // Mood / emotion and sound-texture phrases
+  moodParts(selections) {
+    return [...(selections.moods || [])];
   }
 
   // Structure phrases
@@ -247,6 +253,7 @@ class PromptGenerator {
       case 'vocals': return this.randomVocals();
       case 'instruments': return this.randomInstruments();
       case 'chords': return this.randomChords();
+      case 'moods': return this.randomMoods();
       case 'structures': return this.randomStructures();
       default: return [];
     }
@@ -344,6 +351,28 @@ class PromptGenerator {
     return chords;
   }
 
+  // Random mood: one phrase from one of the mood groups, and a sound texture
+  // some of the time — the texture is a different kind of word, so it is picked
+  // separately rather than competing with the moods.
+  randomMoods() {
+    const categories = this.data.mood?.categories || {};
+    const moodGroups = Object.entries(categories)
+      .filter(([name, data]) => name !== PromptGenerator.MOOD_TEXTURE_GROUP && data.phrases?.length > 0)
+      .map(([, data]) => data.phrases);
+    const pick = (phrases) => phrases[Math.floor(Math.random() * phrases.length)];
+
+    const moods = [];
+    if (moodGroups.length > 0) {
+      moods.push(pick(moodGroups[Math.floor(Math.random() * moodGroups.length)]));
+    }
+
+    const textures = categories[PromptGenerator.MOOD_TEXTURE_GROUP]?.phrases;
+    if (textures?.length > 0 && Math.random() < 0.4) {
+      moods.push(pick(textures));
+    }
+    return moods;
+  }
+
   // Random structures (2-3 phrases)
   randomStructures() {
     const allStructures = [];
@@ -371,6 +400,7 @@ class PromptGenerator {
       vocals: [],
       instruments: [],
       chords: [],
+      moods: [],
       structures: [],
       bpm: this.getRandomBPM()
     };
@@ -470,6 +500,21 @@ class PromptGenerator {
     if (!this[cache]) {
       const map = new Map();
       Object.values(this.data.chord?.categories || {}).forEach(cat => {
+        (cat.phrases || []).forEach(p => {
+          const key = PromptGenerator.matchKey(p, precise);
+          if (!map.has(key)) map.set(key, p);
+        });
+      });
+      this[cache] = map;
+    }
+    return this[cache];
+  }
+
+  moodIndex(precise) {
+    const cache = precise ? '_moodIndexPrecise' : '_moodIndex';
+    if (!this[cache]) {
+      const map = new Map();
+      Object.values(this.data.mood?.categories || {}).forEach(cat => {
         (cat.phrases || []).forEach(p => {
           const key = PromptGenerator.matchKey(p, precise);
           if (!map.has(key)) map.set(key, p);
@@ -602,6 +647,7 @@ class PromptGenerator {
     const matches = [];
     if (this.genreIndex(precise).has(key)) matches.push({ category: 'genres', value: this.genreIndex(precise).get(key) });
     if (this.chordIndex(precise).has(key)) matches.push({ category: 'chords', value: this.chordIndex(precise).get(key) });
+    if (this.moodIndex(precise).has(key)) matches.push({ category: 'moods', value: this.moodIndex(precise).get(key) });
     if (this.structureIndex(precise).has(key)) matches.push({ category: 'structures', value: this.structureIndex(precise).get(key) });
     return matches;
   }
@@ -627,7 +673,7 @@ class PromptGenerator {
   // options.categoryOrder is the tab order used to break ties.
   parsePrompt(text, { precise = false, categoryOrder = [] } = {}) {
     const sel = {
-      genres: [], vocals: [], instruments: [], chords: [], structures: [],
+      genres: [], vocals: [], instruments: [], chords: [], moods: [], structures: [],
       others: '', positions: {}, bpm: null
     };
     const ambiguous = [];
@@ -685,6 +731,7 @@ class PromptGenerator {
       vocals: [],
       instruments: { byInstrument: {}, allTechniques: [] },
       chords: { byCategory: {}, allPhrases: [] },
+      moods: { byCategory: {}, allPhrases: [] },
       structures: { byCategory: {}, allPhrases: [] }
     };
 
@@ -735,6 +782,16 @@ class PromptGenerator {
       }
     }
 
+    // Moods and sound textures by group with phrases
+    if (this.data.mood?.categories) {
+      for (const [categoryName, categoryData] of Object.entries(this.data.mood.categories)) {
+        if (categoryData.phrases) {
+          items.moods.byCategory[categoryName] = categoryData.phrases;
+          items.moods.allPhrases.push(...categoryData.phrases);
+        }
+      }
+    }
+
     // Structure by category with phrases
     if (this.data.structure?.categories) {
       for (const [categoryName, categoryData] of Object.entries(this.data.structure.categories)) {
@@ -751,12 +808,14 @@ class PromptGenerator {
 
 PromptGenerator.TECHNIQUE_SEPARATOR = '::';
 PromptGenerator.ERA_GROUP = 'Era';
+// The mood group holding sound-texture words rather than moods
+PromptGenerator.MOOD_TEXTURE_GROUP = 'Sound Texture';
 PromptGenerator.POSITIONS = {
   pan: ['centered', 'panned left', 'panned right', 'panned hard left', 'panned hard right', 'wide stereo', 'auto-panned'],
   depth: ['upfront', 'close-miked', 'in the background', 'distant']
 };
 // Selection categories, in the order they appear in the UI
-PromptGenerator.CATEGORIES = ['genres', 'vocals', 'instruments', 'chords', 'structures'];
+PromptGenerator.CATEGORIES = ['genres', 'vocals', 'instruments', 'chords', 'moods', 'structures'];
 // Everything that has a place in the prompt, in its default order. BPM sits
 // among them but holds no selections of its own — its tab only marks where the
 // tempo is written, while the control for it stays in the top bar.

@@ -17,7 +17,7 @@
       <div class="header-top">
         <div>
           <h1>🎵 <span data-i18n="title">Suno Style Generator</span></h1>
-          <p data-i18n="subtitle">5つのカテゴリから選択してプロンプトを生成</p>
+          <p data-i18n="subtitle">6つのカテゴリから選択してプロンプトを生成</p>
         </div>
         <div class="header-controls">
           <div class="bpm-section">
@@ -79,6 +79,7 @@
           <button class="tab-button" draggable="true" data-tab="vocals" data-i18n="vocals">Vocals</button>
           <button class="tab-button" draggable="true" data-tab="instruments" data-i18n="instruments">Instruments</button>
           <button class="tab-button" draggable="true" data-tab="chords" data-i18n="chords">Chords</button>
+          <button class="tab-button" draggable="true" data-tab="moods" data-i18n="moods">Mood &amp; Emotion</button>
           <button class="tab-button" draggable="true" data-tab="structures" data-i18n="structures">Structures</button>
           <button class="tab-button" draggable="true" data-tab="others" data-i18n="others">Others</button>
         </div>
@@ -123,6 +124,16 @@
               <p class="list-search-empty" data-i18n="searchNoMatch" hidden>No matches</p>
             </div>
             <div id="chords-list" class="items-list"></div>
+          </div>
+          <div class="tab-content" id="moods-tab">
+            <div class="list-search">
+              <span class="list-search-icon" aria-hidden="true">🔍</span>
+              <input type="search" class="list-search-input" id="moods-search" data-search-list="moods-list"
+                     data-i18n-placeholder="searchPlaceholder" placeholder="Search...">
+              <button type="button" class="icon-btn list-search-clear" data-i18n-title="clearSearch" hidden>✕</button>
+              <p class="list-search-empty" data-i18n="searchNoMatch" hidden>No matches</p>
+            </div>
+            <div id="moods-list" class="items-list"></div>
           </div>
           <div class="tab-content" id="structures-tab">
             <div class="list-search">
@@ -186,6 +197,11 @@
               <input type="checkbox" id="random-target-chords" class="random-target-check" data-random-category="chords" checked>
               <label for="random-target-chords" data-i18n="chords">Chords</label>
               <button type="button" class="icon-btn random-one-btn" data-random-category="chords" data-i18n-title="randomChords">🎲</button>
+            </div>
+            <div class="random-target" data-category="moods">
+              <input type="checkbox" id="random-target-moods" class="random-target-check" data-random-category="moods" checked>
+              <label for="random-target-moods" data-i18n="moods">Mood &amp; Emotion</label>
+              <button type="button" class="icon-btn random-one-btn" data-random-category="moods" data-i18n-title="randomMoods">🎲</button>
             </div>
             <div class="random-target" data-category="structures">
               <input type="checkbox" id="random-target-structures" class="random-target-check" data-random-category="structures" checked>

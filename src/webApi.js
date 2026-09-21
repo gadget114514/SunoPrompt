@@ -8,6 +8,7 @@
     vocal: 'suno_style_vocal_spec.json',
     instruments: 'suno_instrument_techniques.json',
     chord: 'suno_chord_phrases.json',
+    mood: 'suno_mood_phrases.json',
     structure: 'suno_style_structure_phrases.json'
   };
   // The deployed site keeps the JSON next to index.html; in the repo it is one level up.

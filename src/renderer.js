@@ -17,6 +17,7 @@ let selections = {
   vocals: [],
   instruments: [],
   chords: [],
+  moods: [],
   structures: [],
   others: '',
   positions: {},
@@ -789,6 +790,7 @@ const populateTabs = () => {
   renderCheckboxList('vocals-list', items.vocals, 'vocals');
   renderCheckboxList('instruments-list', items.instruments, 'instruments');
   renderCheckboxList('chords-list', items.chords, 'chords');
+  renderCheckboxList('moods-list', items.moods, 'moods');
   renderCheckboxList('structures-list', items.structures, 'structures');
 
   // The lists were just rebuilt; a search that is still typed in must survive that

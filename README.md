@@ -10,7 +10,7 @@ A desktop app for building [Suno AI](https://suno.com/) style prompts by simply 
 
 ## Features
 
-- **Pick from 5 categories** — combine genres, vocals, instruments, chords and structures into a prompt
+- **Pick from 6 categories** — combine genres, vocals, instruments, chords, mood and structures into a prompt
 - **BPM control** — set the tempo in the top bar with a slider or by typing a number
 - **Live preview** — the prompt updates instantly as you select
 - **Stage diagram** — a fan-shaped view of where each vocal and instrument sits, marked with its instrument-family icon; hover one for its name and placement
@@ -100,6 +100,7 @@ Prompt options are loaded from the following JSON files. Edit them to customize 
 | `suno_style_vocal_spec.json` | Vocal modes and expressions |
 | `suno_instrument_techniques.json` | Instruments and playing techniques |
 | `suno_chord_phrases.json` | Chord progressions, harmony and keys |
+| `suno_mood_phrases.json` | Mood, emotion and sound texture |
 | `suno_style_structure_phrases.json` | Song structure phrases |
 
 ## License
