@@ -31,11 +31,32 @@
           <button id="help-btn" class="btn btn-parse" data-i18n="help">❓ Help</button>
           <button id="about-btn" class="btn btn-parse" data-i18n="about">ℹ️ About</button>
           <a id="suno-link" class="header-link" href="https://suno.com/create"
-             target="_blank" rel="noopener noreferrer" data-i18n-title="openSuno">🎵</a>
+             target="_blank" rel="noopener noreferrer" data-i18n-title="openSuno">♪</a>
+          <!-- Flags are inline SVG, not emoji: Windows renders 🇬🇧 as the letters
+               "GB" rather than a flag. Each label stays in its own language, so
+               it is readable whatever the UI is currently set to. -->
           <div class="language-switcher">
-            <button class="lang-btn active" data-lang="en">English</button>
-            <button class="lang-btn" data-lang="ja">日本語</button>
-            <button class="lang-btn" data-lang="es">Español</button>
+            <button class="lang-btn active" data-lang="en" title="English" aria-label="English">
+              <svg class="flag" viewBox="0 0 60 40" aria-hidden="true">
+                <rect width="60" height="40" fill="#012169"/>
+                <path d="M0,0 L60,40 M60,0 L0,40" stroke="#fff" stroke-width="8"/>
+                <path d="M0,0 L60,40 M60,0 L0,40" stroke="#c8102e" stroke-width="4"/>
+                <path d="M30,0 V40 M0,20 H60" stroke="#fff" stroke-width="13"/>
+                <path d="M30,0 V40 M0,20 H60" stroke="#c8102e" stroke-width="8"/>
+              </svg>
+            </button>
+            <button class="lang-btn" data-lang="ja" title="日本語" aria-label="日本語">
+              <svg class="flag" viewBox="0 0 60 40" aria-hidden="true">
+                <rect width="60" height="40" fill="#fff"/>
+                <circle cx="30" cy="20" r="12" fill="#bc002d"/>
+              </svg>
+            </button>
+            <button class="lang-btn" data-lang="es" title="Español" aria-label="Español">
+              <svg class="flag" viewBox="0 0 60 40" aria-hidden="true">
+                <rect width="60" height="40" fill="#c60b1e"/>
+                <rect y="10" width="60" height="20" fill="#ffc400"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>

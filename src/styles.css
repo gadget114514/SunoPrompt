@@ -61,7 +61,9 @@ header p {
 }
 
 .lang-btn {
-  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 6px;
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -70,6 +72,23 @@ header p {
   font-size: 12px;
   font-weight: 500;
   transition: all 0.3s ease;
+}
+
+/* The ring keeps the flag's edge visible even when the white of the Japanese
+   flag sits on the white background of the active button. */
+.flag {
+  display: block;
+  width: 24px;
+  height: 16px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.lang-btn:hover .flag,
+.lang-btn.active .flag {
+  opacity: 1;
 }
 
 .lang-btn:hover {
@@ -1285,7 +1304,9 @@ body.is-web .left-panel {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
 }
 
-/* Compact icon link in the top bar, so it costs less width than a button */
+/* Compact icon link in the top bar, so it costs less width than a button.
+   The note is the text character rather than the 🎵 emoji: a colour emoji
+   carries its own palette and ignores `color`, so it could not be orange. */
 .header-link {
   display: inline-flex;
   align-items: center;
@@ -1295,8 +1316,8 @@ body.is-web .left-panel {
   flex-shrink: 0;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.92);
-  color: #764ba2;
-  font-size: 15px;
+  color: #e8590c;
+  font-size: 24px;
   line-height: 1;
   text-decoration: none;
 }
