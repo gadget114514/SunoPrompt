@@ -33,7 +33,8 @@
     "J-Rock",
     "Slacker Rock",
     "Neo-Psychedelia",
-    "Indie Alternative"
+    "Indie Alternative",
+    "Classic Rock"
   ],
   "Punk": [
     "Punk Rock",
@@ -42,7 +43,10 @@
     "Post-Punk",
     "Screamo",
     "Post-Hardcore",
-    "Emo"
+    "Emo",
+    "Anarcho Punk",
+    "Hardcore Punk",
+    "Skate Punk"
   ],
   "Metal": [
     "Heavy Metal",
@@ -52,7 +56,11 @@
     "Symphonic Metal",
     "Kawaii Metal",
     "Progressive Metal",
-    "Pop Metal"
+    "Pop Metal",
+    "Black Metal",
+    "Death Metal",
+    "Industrial Metal",
+    "Power Metal"
   ],
   "Pop": [
     "Dance Pop",
@@ -121,7 +129,9 @@
     "Cloud Wave",
     "Uncanny Electronica",
     "Plunderphonics",
-    "Electro Horror"
+    "Electro Horror",
+    "Dub",
+    "Electro"
   ],
   "Dance": [
     "House",
@@ -175,7 +185,9 @@
     "Afroswing",
     "Samba-Drill",
     "Hyphy",
-    "Turntablism"
+    "Turntablism",
+    "Alternative Hip Hop",
+    "Gangsta Rap"
   ],
   "R&B": [
     "R&B",
@@ -191,7 +203,9 @@
     "Trap Soul",
     "UK Street Soul",
     "A Cappella",
-    "Barbershop"
+    "Barbershop",
+    "Contemporary R&B",
+    "Quiet Storm"
   ],
   "Jazz": [
     "Jazz",
@@ -203,17 +217,27 @@
     "Jazz Fusion",
     "Dark Jazz",
     "Jazz Ballad",
-    "Jazz Hop"
+    "Jazz Hop",
+    "Big Band",
+    "Cool Jazz"
   ],
   "Blues": [
     "Blues",
-    "Blues Rock"
+    "Blues Rock",
+    "Chicago Blues",
+    "Delta Blues",
+    "Electric Blues",
+    "Gospel Blues",
+    "Rhythm and Blues"
   ],
   "Country": [
     "Country",
     "Country Pop",
     "Bluegrass",
-    "Americana"
+    "Americana",
+    "Country Blues",
+    "Country Rock",
+    "Nashville Sound"
   ],
   "Folk": [
     "Folk",
@@ -224,7 +248,8 @@
     "Industrial Folk",
     "Celtic Folk",
     "Acoustic Folk",
-    "Balkan Folk"
+    "Balkan Folk",
+    "Folk Rock"
   ],
   "Latin": [
     "Reggaeton",
@@ -319,5 +344,17 @@
     "Chill Out",
     "Lo-Fi",
     "Soundscape"
+  ],
+  "Easy Listening": [
+    "Adult Contemporary",
+    "Elevator Music",
+    "Lounge Music",
+    "Soft Rock"
+  ],
+  "Avant-Garde": [
+    "Electroacoustic",
+    "Noise",
+    "Progressive",
+    "Psychedelic"
   ]
 }
