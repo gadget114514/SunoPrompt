@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -9,6 +9,19 @@ const settingsFile = path.join(app.getPath('userData'), 'settings.json');
 // Shape of a saved project file. Bump this when the shape changes in a way a
 // reader has to handle; saves written before this existed carry no version.
 const PROJECT_FORMAT_VERSION = '1.0.0';
+
+// The only external site the app links to. shell.openExternal must never be
+// handed an arbitrary URL, so the scheme and host are checked first.
+const EXTERNAL_HOSTS = new Set(['suno.com', 'www.suno.com']);
+
+const isAllowedExternal = (url) => {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' && EXTERNAL_HOSTS.has(parsed.hostname);
+  } catch (error) {
+    return false;
+  }
+};
 
 const readSettings = () => {
   try {
@@ -123,6 +136,21 @@ const createWindow = () => {
   mainWindow.on('close', () => {
     if (!mainWindow || mainWindow.isDestroyed() || mainWindow.isMinimized()) return;
     writeSettings({ windowBounds: mainWindow.getNormalBounds(), windowMaximized: mainWindow.isMaximized() });
+  });
+
+  // target="_blank" would otherwise open a second Electron window inheriting
+  // this one's preload, handing window.electronAPI to the remote page.
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (isAllowedExternal(url)) shell.openExternal(url);
+    return { action: 'deny' };
+  });
+
+  // A link without target="_blank" would replace the app with the website, and
+  // there is no way back from there.
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    if (url.startsWith('file://')) return;
+    event.preventDefault();
+    if (isAllowedExternal(url)) shell.openExternal(url);
   });
 
   mainWindow.loadFile(path.join(__dirname, 'src', 'index.html'));

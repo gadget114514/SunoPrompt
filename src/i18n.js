@@ -206,7 +206,8 @@ const translations = {
     aboutVersionCol: 'Version',
     aboutUpdatedCol: 'Updated',
     aboutUnknown: 'unknown',
-    aboutPending: 'Loading data…'
+    aboutPending: 'Loading data…',
+    openSuno: 'Open Suno in your browser'
   },
   ja: {
     title: 'Suno スタイルジェネレーター',
@@ -411,7 +412,8 @@ const translations = {
     aboutVersionCol: 'バージョン',
     aboutUpdatedCol: '更新日',
     aboutUnknown: '不明',
-    aboutPending: 'データを読み込んでいます…'
+    aboutPending: 'データを読み込んでいます…',
+    openSuno: 'Suno をブラウザで開く'
   },
   es: {
     title: 'Generador de Estilos Suno',
@@ -616,6 +618,7 @@ const translations = {
     aboutVersionCol: 'Versión',
     aboutUpdatedCol: 'Actualizado',
     aboutUnknown: 'desconocida',
-    aboutPending: 'Cargando datos…'
+    aboutPending: 'Cargando datos…',
+    openSuno: 'Abrir Suno en tu navegador'
   }
 };
