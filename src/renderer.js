@@ -1,5 +1,8 @@
 let currentLang = localStorage.getItem('suno-lang') || 'en';
 let generator = null;
+// Reported by the About dialog; both arrive with the JSON payload
+let appVersion = null;
+let dataFiles = null;
 
 // The tab order, which is also the order the style parts are written in
 const CATEGORY_ORDER_KEY = 'suno-category-order';
@@ -76,6 +79,8 @@ const updateLanguage = (lang) => {
   }
   updateCharCount(generator ? generator.generatePrompt(selections).length : 0);
   updateStageDiagram();
+  renderHelp();
+  renderAbout();
 
   // Update lang buttons
   document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -1027,6 +1032,160 @@ const setupRandomButtons = () => {
   });
 };
 
+// The help text is structured rather than one string per element, so it is
+// built here instead of through data-i18n, and rebuilt on every language switch.
+const renderHelp = () => {
+  const body = document.getElementById('help-body');
+  if (!body) return;
+
+  body.textContent = '';
+  const intro = document.createElement('p');
+  intro.className = 'help-intro';
+  intro.textContent = t('helpIntro');
+  body.appendChild(intro);
+
+  const sections = t('helpSections');
+  if (!Array.isArray(sections)) return;
+  sections.forEach(section => {
+    const heading = document.createElement('h4');
+    heading.textContent = section.heading;
+    body.appendChild(heading);
+
+    const list = document.createElement('ul');
+    section.items.forEach(item => {
+      const entry = document.createElement('li');
+      entry.textContent = item;
+      list.appendChild(entry);
+    });
+    body.appendChild(list);
+  });
+};
+
+// In-app feature reference, opened from the top bar
+const setupHelp = () => {
+  const modal = document.getElementById('help-modal');
+  const body = document.getElementById('help-body');
+  const openBtn = document.getElementById('help-btn');
+  const closeBtn = document.getElementById('help-close-btn');
+  const okBtn = document.getElementById('help-ok-btn');
+  if (!modal || !body || !openBtn || !closeBtn || !okBtn) return;
+
+  const open = () => {
+    modal.classList.remove('hidden');
+    body.scrollTop = 0;
+    body.focus();
+  };
+
+  const close = () => modal.classList.add('hidden');
+
+  openBtn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  okBtn.addEventListener('click', close);
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) close();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !modal.classList.contains('hidden')) close();
+  });
+};
+
+// App and data-file versions. The data arrives after the first paint, so this
+// is drawn again once it lands, and on every language switch.
+const renderAbout = () => {
+  const body = document.getElementById('about-body');
+  if (!body) return;
+  body.textContent = '';
+
+  const appHeading = document.createElement('h4');
+  appHeading.textContent = t('aboutApp');
+  body.appendChild(appHeading);
+
+  const appLine = document.createElement('p');
+  appLine.className = 'about-app';
+  const appName = document.createElement('span');
+  appName.textContent = t('title');
+  const appVer = document.createElement('span');
+  appVer.className = 'about-version';
+  appVer.textContent = appVersion || t('aboutUnknown');
+  appLine.append(appName, ' ', appVer);
+  body.appendChild(appLine);
+
+  const filesHeading = document.createElement('h4');
+  filesHeading.textContent = t('aboutDataFiles');
+  body.appendChild(filesHeading);
+
+  // Until the JSON lands there is nothing to report but the app version
+  if (!generator || !dataFiles) {
+    const pending = document.createElement('p');
+    pending.className = 'about-pending';
+    pending.textContent = t('aboutPending');
+    body.appendChild(pending);
+    return;
+  }
+
+  const table = document.createElement('table');
+  table.className = 'about-table';
+
+  const thead = document.createElement('thead');
+  const headRow = document.createElement('tr');
+  [t('aboutFileCol'), t('aboutVersionCol'), t('aboutUpdatedCol')].forEach(label => {
+    const th = document.createElement('th');
+    th.textContent = label;
+    headRow.appendChild(th);
+  });
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  Object.entries(dataFiles).forEach(([key, fileName]) => {
+    const meta = (generator.data[key] && generator.data[key].meta) || {};
+    const row = document.createElement('tr');
+    const cells = [
+      { text: fileName, className: 'about-file' },
+      { text: meta.version || t('aboutUnknown') },
+      { text: meta.updated || t('aboutUnknown') }
+    ];
+    cells.forEach(({ text, className }) => {
+      const cell = document.createElement('td');
+      cell.textContent = text;
+      if (className) cell.className = className;
+      row.appendChild(cell);
+    });
+    tbody.appendChild(row);
+  });
+  table.appendChild(tbody);
+  body.appendChild(table);
+};
+
+// Version dialog, opened from the top bar
+const setupAbout = () => {
+  const modal = document.getElementById('about-modal');
+  const body = document.getElementById('about-body');
+  const openBtn = document.getElementById('about-btn');
+  const closeBtn = document.getElementById('about-close-btn');
+  const okBtn = document.getElementById('about-ok-btn');
+  if (!modal || !body || !openBtn || !closeBtn || !okBtn) return;
+
+  const open = () => {
+    renderAbout();
+    modal.classList.remove('hidden');
+    body.scrollTop = 0;
+    body.focus();
+  };
+
+  const close = () => modal.classList.add('hidden');
+
+  openBtn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  okBtn.addEventListener('click', close);
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) close();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !modal.classList.contains('hidden')) close();
+  });
+};
+
 // Paste a full prompt into a dialog and let the parser tick what it knows
 const setupParsePrompt = () => {
   const modal = document.getElementById('parse-modal');
@@ -1410,8 +1569,14 @@ const updateAllCheckboxes = () => {
 document.addEventListener('DOMContentLoaded', () => {
   // Set initial language
   updateLanguage(currentLang);
+  // Help needs no data, so it is wired up before the JSON arrives — that is
+  // exactly when someone is most likely to reach for it.
+  setupHelp();
+  setupAbout();
 
   window.electronAPI.onJsonData((data) => {
+    appVersion = data.appVersion || null;
+    dataFiles = data.dataFiles || null;
     generator = new PromptGenerator(data);
     populateTabs();
     setupTabs();

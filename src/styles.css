@@ -1383,3 +1383,125 @@ body.is-web .left-panel {
   border-top: 1px solid #eee;
   flex-shrink: 0;
 }
+
+/* Help dialog. .modal hides its own overflow, so the body does the scrolling */
+.help-modal {
+  width: 560px;
+  max-width: 92vw;
+  height: 70vh;
+  max-height: 640px;
+}
+
+.help-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 16px 12px;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.help-body:focus {
+  outline: none;
+}
+
+.help-intro {
+  margin: 12px 0 4px;
+  color: #666;
+}
+
+.help-body h4 {
+  font-size: 13px;
+  color: #667eea;
+  font-weight: 600;
+  margin: 16px 0 6px;
+}
+
+.help-body ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.help-body li {
+  margin-bottom: 5px;
+}
+
+/* About dialog. Sized to its content rather than the viewport */
+.about-modal {
+  width: 460px;
+  max-width: 92vw;
+  max-height: 80vh;
+}
+
+.about-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 16px 14px;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.about-body:focus {
+  outline: none;
+}
+
+.about-body h4 {
+  font-size: 13px;
+  color: #667eea;
+  font-weight: 600;
+  margin: 14px 0 6px;
+}
+
+.about-app {
+  margin: 0;
+}
+
+.about-version {
+  font-weight: 600;
+  color: #333;
+}
+
+.about-pending {
+  margin: 0;
+  color: #999;
+}
+
+/* Fixed layout so the long file names wrap instead of widening the table */
+.about-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.about-table th:nth-child(2),
+.about-table td:nth-child(2) {
+  width: 62px;
+}
+
+.about-table th:nth-child(3),
+.about-table td:nth-child(3) {
+  width: 88px;
+}
+
+.about-table th {
+  text-align: left;
+  font-weight: 600;
+  color: #999;
+  padding: 4px 8px 4px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.about-table td {
+  padding: 4px 8px 4px 0;
+  border-bottom: 1px solid #f4f4f4;
+  white-space: nowrap;
+}
+
+.about-file {
+  color: #333;
+  font-family: Consolas, "Courier New", monospace;
+  white-space: normal;
+  word-break: break-all;
+}

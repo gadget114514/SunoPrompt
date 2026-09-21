@@ -31,7 +31,15 @@
     const entries = await Promise.all(
       Object.entries(DATA_FILES).map(async ([key, fileName]) => [key, await fetchJson(fileName)])
     );
-    return Object.fromEntries(entries);
+    // The About dialog needs the app version and which file each data set came
+    // from. package.json sits beside index.html on the deployed site and one
+    // level up in the repo, so the same two-location probe finds it.
+    const pkg = await fetchJson('package.json');
+    return {
+      ...Object.fromEntries(entries),
+      appVersion: pkg?.version || null,
+      dataFiles: DATA_FILES
+    };
   };
 
   const downloadText = (text, fileName) => {

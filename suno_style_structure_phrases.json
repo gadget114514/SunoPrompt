@@ -1,6 +1,8 @@
 {
   "meta": {
     "title": "Suno Style-field structure phrases",
+    "version": "1.0.0",
+    "updated": "2026-09-21",
     "note": "Natural-language cues for the Style box. Not Lyrics metatags. These bias arrangement arc, contrast, and energy over time.",
     "language": "en",
     "usage": "Append after genre, vocal, and instrument terms in the Style field."

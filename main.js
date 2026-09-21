@@ -6,6 +6,10 @@ const fs = require('fs');
 // size and position. The renderer's own preferences stay in its localStorage.
 const settingsFile = path.join(app.getPath('userData'), 'settings.json');
 
+// Shape of a saved project file. Bump this when the shape changes in a way a
+// reader has to handle; saves written before this existed carry no version.
+const PROJECT_FORMAT_VERSION = '1.0.0';
+
 const readSettings = () => {
   try {
     return JSON.parse(fs.readFileSync(settingsFile, 'utf-8'));
@@ -76,7 +80,10 @@ const loadJSONFiles = () => {
       data[key] = null;
     }
   }
-  return data;
+  // The About dialog reports the app version and, via this map, which file each
+  // data set came from. PromptGenerator reads only the keys it knows by name,
+  // so these two extras ride along untouched.
+  return { ...data, appVersion: app.getVersion(), dataFiles: files };
 };
 
 const DEFAULT_BOUNDS = { width: 1200, height: 800 };
@@ -191,6 +198,8 @@ ipcMain.handle('save-project', async (event, projectData) => {
     const filePath = path.join(getProjectsDir(), fileName);
 
     const project = {
+      // Stamped so a later build can recognise and migrate saves from an older shape
+      version: PROJECT_FORMAT_VERSION,
       name: projectData.name,
       timestamp: new Date().toISOString(),
       selections: projectData.selections

@@ -28,6 +28,8 @@
             </div>
           </div>
           <button id="parse-prompt-btn" class="btn btn-parse" data-i18n="parsePrompt">📥 Parse Prompt</button>
+          <button id="help-btn" class="btn btn-parse" data-i18n="help">❓ Help</button>
+          <button id="about-btn" class="btn btn-parse" data-i18n="about">ℹ️ About</button>
           <div class="language-switcher">
             <button class="lang-btn active" data-lang="en">English</button>
             <button class="lang-btn" data-lang="ja">日本語</button>
@@ -256,6 +258,34 @@
       <div class="modal-actions">
         <button type="button" id="parse-cancel-btn" class="btn btn-secondary" data-i18n="parseCancel">Cancel</button>
         <button type="button" id="parse-run-btn" class="btn btn-primary" data-i18n="parseRun">Parse</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-app feature reference; the body is built by renderHelp() from translations.helpSections -->
+  <div id="help-modal" class="modal-overlay hidden">
+    <div class="modal help-modal" role="dialog" aria-modal="true" aria-labelledby="help-modal-title">
+      <div class="modal-header">
+        <h3 id="help-modal-title" data-i18n="helpTitle">Help</h3>
+        <button type="button" id="help-close-btn" class="icon-btn" data-i18n-title="helpClose">✕</button>
+      </div>
+      <div id="help-body" class="help-body" tabindex="0"></div>
+      <div class="modal-actions">
+        <button type="button" id="help-ok-btn" class="btn btn-primary" data-i18n="helpClose">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- App and data-file versions; the body is built by renderAbout() -->
+  <div id="about-modal" class="modal-overlay hidden">
+    <div class="modal about-modal" role="dialog" aria-modal="true" aria-labelledby="about-modal-title">
+      <div class="modal-header">
+        <h3 id="about-modal-title" data-i18n="aboutTitle">About</h3>
+        <button type="button" id="about-close-btn" class="icon-btn" data-i18n-title="helpClose">✕</button>
+      </div>
+      <div id="about-body" class="about-body" tabindex="0"></div>
+      <div class="modal-actions">
+        <button type="button" id="about-ok-btn" class="btn btn-primary" data-i18n="helpClose">Close</button>
       </div>
     </div>
   </div>

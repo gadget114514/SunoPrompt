@@ -1,6 +1,8 @@
 {
   "meta": {
     "title": "Suno Style-field chord and harmony phrases",
+    "version": "1.0.0",
+    "updated": "2026-09-21",
     "note": "Natural-language harmony cues for the Style box. They bias progression, chord color and key, but exact chords are not guaranteed.",
     "language": "en",
     "usage": "Append after instrument terms in the Style field."

@@ -1,6 +1,8 @@
 {
   "meta": {
     "title": "Suno Style field: how to specify sound and vocals",
+    "version": "1.0.0",
+    "updated": "2026-09-21",
     "note": "Style box = genre, mood, instruments, vocal identity, arrangement arc. Lyrics box = words plus [Verse]/[Chorus] tags and per-section singer labels. Vocal phrases are steering cues, not hard locks.",
     "language": "en"
   },

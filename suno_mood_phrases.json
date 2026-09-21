@@ -1,6 +1,8 @@
 {
   "meta": {
     "title": "Suno Style-field mood and texture phrases",
+    "version": "1.0.0",
+    "updated": "2026-09-21",
     "note": "Natural-language mood, emotion and sound-texture cues for the Style box. They bias feel and production character rather than any specific arrangement.",
     "language": "en",
     "usage": "Append after chord terms in the Style field."
