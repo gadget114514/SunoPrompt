@@ -47,6 +47,7 @@
         "intentionally off-pitch vocal",
         "vocal scoop",
         "vocal runs and riffs",
+        "kobushi vocal ornamentation",
         "heavy vibrato",
         "belting",
         "vocal growl",
@@ -240,7 +241,8 @@
         { "phrase": "pitch-bent vocal", "definition": "Deliberately sliding pitch up or down into or out of a note rather than landing on it straight." },
         { "phrase": "intentionally off-pitch vocal", "definition": "Singing purposely flat or sharp of true pitch for character." },
         { "phrase": "vocal scoop", "definition": "Approaching a note from slightly below its true pitch and sliding up into it." },
-        { "phrase": "vocal runs and riffs", "definition": "Fast melodic embellishments (fake/riffing) that break a line into many quick moving notes." }
+        { "phrase": "vocal runs and riffs", "definition": "Fast melodic embellishments (fake/riffing) that break a line into many quick moving notes." },
+        { "phrase": "kobushi vocal ornamentation", "definition": "A rapid, quivering pitch-wavering ornament on sustained notes, characteristic of Japanese enka and min'yo singing." }
       ]
     },
     "vocal_effects": {
