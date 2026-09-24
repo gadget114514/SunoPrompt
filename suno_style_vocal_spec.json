@@ -48,6 +48,7 @@
         "vocal scoop",
         "vocal runs and riffs",
         "kobushi vocal ornamentation",
+        "vibrato",
         "heavy vibrato",
         "belting",
         "vocal growl",
@@ -248,6 +249,7 @@
     "vocal_effects": {
       "label": "Vocal Effects",
       "terms": [
+        { "phrase": "vibrato", "definition": "A regular up-and-down pitch wobble on sustained notes, from subtle to pronounced." },
         { "phrase": "heavy vibrato", "definition": "A fast, regular up-and-down pitch wobble on sustained notes." },
         { "phrase": "belting", "definition": "Pushing chest voice powerfully into the high range instead of switching to falsetto." },
         { "phrase": "vocal growl", "definition": "A raspy, rumbling growl/snarl texture, common in rock and jazz." },
