@@ -4,13 +4,17 @@ class PromptGenerator {
   }
 
   // BPM and the five categories are written in the order of the tabs,
-  // which the user can rearrange by dragging them.
+  // which the user can rearrange by dragging them. Excluded items always
+  // trail at the end as a single [EXCLUDE: ...] block, outside tab order.
   generatePrompt(selections) {
     const parts = [];
 
     PromptGenerator.categoryOrder(selections.categoryOrder).forEach(category => {
       parts.push(...this.categoryParts(category, selections));
     });
+
+    const excludes = this.excludeParts(selections);
+    if (excludes.length > 0) parts.push(`[EXCLUDE: ${excludes.join(', ')}]`);
 
     return parts.join(', ');
   }
@@ -81,10 +85,14 @@ class PromptGenerator {
         if (technique) groups.get(instrument).push(technique);
       });
     }
-    // Setting a position is enough to include the instrument
+    // Setting a position is enough to include the instrument, unless it was
+    // explicitly excluded
+    const excludedInstruments = selections.excludes?.instruments || [];
     Object.keys(selections.positions || {}).forEach(key => {
       const [category, instrument] = PromptGenerator.splitPositionKey(key);
-      if (category === 'instruments' && !groups.has(instrument)) groups.set(instrument, []);
+      if (category === 'instruments' && !groups.has(instrument) && !excludedInstruments.includes(instrument)) {
+        groups.set(instrument, []);
+      }
     });
     groups.forEach((techniques, instrument) => {
       const name = this.getInstrumentName(instrument);
@@ -92,6 +100,29 @@ class PromptGenerator {
       parts.push(details.length > 0 ? `${name} (${details.join(', ')})` : name);
     });
     return parts;
+  }
+
+  // Everything marked excluded, across every category, flattened into one
+  // list of display phrases for the trailing [EXCLUDE: ...] block.
+  excludeParts(selections) {
+    const excludes = selections.excludes || {};
+    const vocalModes = this.data.vocal?.vocal_modes || {};
+    const items = [];
+    PromptGenerator.CATEGORIES.forEach(category => {
+      (excludes[category] || []).forEach(item => {
+        if (category === 'instruments') {
+          const { instrument, technique } = this.parseInstrumentItem(item);
+          items.push(technique || (instrument ? this.getInstrumentName(instrument) : item));
+        } else if (category === 'vocals') {
+          items.push(vocalModes[item]?.style_phrases?.[0] || item);
+        } else if (category === 'structures' && this.data.structure?.categories?.[item]?.phrases) {
+          items.push(this.data.structure.categories[item].phrases[0]);
+        } else {
+          items.push(item);
+        }
+      });
+    });
+    return items;
   }
 
   // Chord / harmony phrases
@@ -665,6 +696,45 @@ class PromptGenerator {
     return matches.slice().sort((a, b) => rank(a.category) - rank(b.category))[0];
   }
 
+  // Match a single token from inside an [EXCLUDE: ...] block against the
+  // same vocab normal parsing uses, without touching techniques/positions —
+  // an excluded item is just a name in its category's list.
+  matchExcludeToken(value, precise, categoryOrder) {
+    const instrument = this.matchInstrument(value, precise);
+    if (instrument) {
+      if (!instrument.details) return { category: 'instruments', value: instrument.key };
+      const techniques = this.data.instruments?.instruments?.[instrument.key]?.techniques || [];
+      const mk = (s) => PromptGenerator.matchKey(s, precise);
+      const tech = techniques.find(t => mk(t) === mk(instrument.details));
+      return {
+        category: 'instruments',
+        value: tech ? PromptGenerator.techniqueValue(instrument.key, tech) : instrument.key
+      };
+    }
+
+    // A bare word can be a technique with no instrument name attached
+    // (excludeParts renders an excluded technique as just the technique
+    // phrase) as well as a genre/chord/mood/structure phrase or a vocal
+    // phrase — collect every reading and let tab order break the tie, the
+    // same way collectFlatMatches/resolveFlatMatch do for the main token
+    // loop below (e.g. "grunge" is both the Rock genre and an Electric
+    // Guitar technique).
+    const mk = (s) => PromptGenerator.matchKey(s, precise);
+    const instruments = this.data.instruments?.instruments || {};
+    const matches = this.collectFlatMatches(value, precise);
+    const owner = Object.keys(instruments).find(key => (instruments[key].techniques || []).some(t => mk(t) === mk(value)));
+    if (owner) {
+      const tech = instruments[owner].techniques.find(t => mk(t) === mk(value));
+      matches.push({ category: 'instruments', value: PromptGenerator.techniqueValue(owner, tech) });
+    }
+    const vocal = this.matchVocal(value, precise);
+    if (vocal) matches.push({ category: 'vocals', value: vocal.phrase });
+
+    if (matches.length === 0) return null;
+    if (matches.length > 1 && precise) return null;
+    return this.resolveFlatMatch(matches, categoryOrder);
+  }
+
   // Turn a flat Style text back into selections: tick every phrase the text
   // can be matched to, set BPM, and put whatever is left into "others".
   // Returns { selections, ambiguous } — ambiguous lists tokens that matched
@@ -674,13 +744,38 @@ class PromptGenerator {
   parsePrompt(text, { precise = false, categoryOrder = [] } = {}) {
     const sel = {
       genres: [], vocals: [], instruments: [], chords: [], moods: [], structures: [],
+      excludes: { genres: [], vocals: [], instruments: [], chords: [], moods: [], structures: [] },
       others: '', positions: {}, bpm: null
     };
     const ambiguous = [];
     if (!text) return { selections: sel, ambiguous };
 
     const leftovers = [];
-    PromptGenerator.splitTopLevel(text, ',').forEach(token => {
+
+    // Pull out a leading/trailing [EXCLUDE: ...] block before the normal
+    // comma split, so its contents never leak into the regular categories.
+    // Accepts the plural "EXCLUDES" too, since both show up in the wild.
+    let mainText = text;
+    const excludeMatch = text.match(/\[EXCLUDES?:\s*([\s\S]*?)\]/i);
+    if (excludeMatch) {
+      mainText = text.slice(0, excludeMatch.index) + text.slice(excludeMatch.index + excludeMatch[0].length);
+      const excludeLeftovers = [];
+      PromptGenerator.splitTopLevel(excludeMatch[1], ',').forEach(token => {
+        // Community EXCLUDE lists are often copied in with a leading bullet
+        // or dash per item ("‑shrill treble") — strip it before matching.
+        const value = token.trim().replace(/^[-–—−‑•*]+\s*/, '');
+        if (!value) return;
+        const match = this.matchExcludeToken(value, precise, categoryOrder);
+        if (match) {
+          if (!sel.excludes[match.category].includes(match.value)) sel.excludes[match.category].push(match.value);
+        } else {
+          excludeLeftovers.push(value);
+        }
+      });
+      if (excludeLeftovers.length > 0) leftovers.push(`[EXCLUDE: ${excludeLeftovers.join(', ')}]`);
+    }
+
+    PromptGenerator.splitTopLevel(mainText, ',').forEach(token => {
       const value = token.trim();
       if (!value) return;
 

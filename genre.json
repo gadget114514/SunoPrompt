@@ -8,6 +8,8 @@
     "usage": "Lead the Style field with one or two of these."
   },
   "Era": [
+    "Early",
+    "Late",
     "1920s",
     "1930s",
     "1940s",

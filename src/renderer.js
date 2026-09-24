@@ -15,6 +15,8 @@ const readStoredCategoryOrder = () => {
   }
 };
 
+const emptyExcludes = () => ({ genres: [], vocals: [], instruments: [], chords: [], moods: [], structures: [] });
+
 let selections = {
   genres: [],
   vocals: [],
@@ -22,6 +24,7 @@ let selections = {
   chords: [],
   moods: [],
   structures: [],
+  excludes: emptyExcludes(),
   others: '',
   positions: {},
   categoryOrder: readStoredCategoryOrder(),
@@ -35,6 +38,10 @@ const normalizeSelections = (sel) => {
   const normalized = { ...sel };
   CATEGORIES.forEach(category => {
     if (!Array.isArray(normalized[category])) normalized[category] = [];
+  });
+  if (!normalized.excludes || typeof normalized.excludes !== 'object') normalized.excludes = emptyExcludes();
+  CATEGORIES.forEach(category => {
+    if (!Array.isArray(normalized.excludes[category])) normalized.excludes[category] = [];
   });
   if (!normalized.positions || typeof normalized.positions !== 'object') normalized.positions = {};
   if (typeof normalized.others !== 'string') normalized.others = '';
@@ -577,6 +584,66 @@ const setupSearch = () => {
   });
 };
 
+// An item's tri-state, derived from data rather than stored on the DOM:
+// 'included' (in selections[category]), 'excluded' (in
+// selections.excludes[category]), or 'none' (in neither).
+const itemState = (category, value) => {
+  if (selections[category].includes(value)) return 'included';
+  if (selections.excludes[category]?.includes(value)) return 'excluded';
+  return 'none';
+};
+
+// Reflect a tri-state onto a checkbox: checked for included, the native
+// indeterminate dash for excluded (distinct from both checked and empty),
+// plus a CSS hook for the crossed-out excluded styling.
+const applyItemState = (wrapper, checkbox, state) => {
+  checkbox.checked = state === 'included';
+  checkbox.indeterminate = state === 'excluded';
+  wrapper.classList.toggle('state-excluded', state === 'excluded');
+};
+
+// A checkbox-item wired to cycle none -> included -> excluded -> none on
+// click (rather than the native 2-state toggle), shared by the flat and
+// hierarchical renderers below.
+const createSelectableItem = (category, value, text, extraClass = '') => {
+  const itemId = `${category}-${value}`;
+  const wrapper = document.createElement('div');
+  wrapper.className = `checkbox-item ${extraClass}`.trim();
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.id = itemId;
+  checkbox.value = value;
+  applyItemState(wrapper, checkbox, itemState(category, value));
+
+  checkbox.addEventListener('click', (e) => {
+    e.preventDefault();
+    const current = itemState(category, value);
+    if (current === 'included') {
+      selections[category] = selections[category].filter(x => x !== value);
+      selections.excludes[category].push(value);
+    } else if (current === 'excluded') {
+      selections.excludes[category] = selections.excludes[category].filter(x => x !== value);
+    } else {
+      selections[category].push(value);
+    }
+    // Deferred: a canceled checkbox click resets checked/indeterminate back
+    // to their pre-click values right after this handler returns, so the
+    // real DOM update has to happen after that native reset, not during it.
+    setTimeout(() => applyItemState(wrapper, checkbox, itemState(category, value)), 0);
+    // Force immediate preview update
+    setTimeout(updatePreview, 0);
+  });
+
+  const label = document.createElement('label');
+  label.htmlFor = itemId;
+  label.textContent = text;
+
+  wrapper.appendChild(checkbox);
+  wrapper.appendChild(label);
+  return { wrapper, checkbox, label };
+};
+
 const renderCheckboxList = (containerId, items, category) => {
   const container = document.getElementById(containerId);
   container.innerHTML = '';
@@ -591,32 +658,7 @@ const renderCheckboxList = (containerId, items, category) => {
   } else {
     // Simple flat list
     items.forEach(item => {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'checkbox-item';
-
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.id = `${category}-${item}`;
-      checkbox.value = item;
-      checkbox.checked = selections[category].includes(item);
-      checkbox.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          if (!selections[category].includes(item)) {
-            selections[category].push(item);
-          }
-        } else {
-          selections[category] = selections[category].filter(x => x !== item);
-        }
-        // Force immediate preview update
-        setTimeout(updatePreview, 0);
-      });
-
-      const label = document.createElement('label');
-      label.htmlFor = `${category}-${item}`;
-      label.textContent = item;
-
-      wrapper.appendChild(checkbox);
-      wrapper.appendChild(label);
+      const { wrapper } = createSelectableItem(category, item, item);
       container.appendChild(wrapper);
     });
   }
@@ -653,33 +695,7 @@ const renderHierarchicalList = (container, hierarchyObj, category, folderType) =
     content.className = 'folder-content hidden';
 
     const addChild = (value, text, extraClass = '') => {
-      const itemId = `${category}-${value}`;
-      const wrapper = document.createElement('div');
-      wrapper.className = `checkbox-item folder-item-child ${extraClass}`.trim();
-
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.id = itemId;
-      checkbox.value = value;
-      checkbox.checked = selections[category].includes(value);
-      checkbox.addEventListener('change', (e) => {
-        if (e.target.checked) {
-          if (!selections[category].includes(value)) {
-            selections[category].push(value);
-          }
-        } else {
-          selections[category] = selections[category].filter(x => x !== value);
-        }
-        // Force immediate preview update
-        setTimeout(updatePreview, 0);
-      });
-
-      const label = document.createElement('label');
-      label.htmlFor = itemId;
-      label.textContent = text;
-
-      wrapper.appendChild(checkbox);
-      wrapper.appendChild(label);
+      const { wrapper, label } = createSelectableItem(category, value, text, `folder-item-child ${extraClass}`.trim());
       content.appendChild(wrapper);
       return label;
     };
@@ -961,13 +977,14 @@ const syncBpmControls = () => {
 const randomizeCategories = (categories, { bpm = false } = {}) => {
   if (!generator) return;
 
-  const next = { ...selections, positions: { ...selections.positions } };
+  const next = { ...selections, positions: { ...selections.positions }, excludes: { ...selections.excludes } };
   categories.forEach(category => {
     next[category] = generator.randomCategory(category);
-    // The rerolled items are gone, so drop the positions that went with them
+    // The rerolled items are gone, so drop the positions and exclusions that went with them
     Object.keys(next.positions).forEach(key => {
       if (PromptGenerator.splitPositionKey(key)[0] === category) delete next.positions[key];
     });
+    next.excludes[category] = [];
   });
 
   if (bpm) next.bpm = generator.getRandomBPM();
@@ -1263,6 +1280,8 @@ const setupButtons = () => {
 
     document.querySelectorAll('.selections-container input[type="checkbox"]').forEach(cb => {
       cb.checked = false;
+      cb.indeterminate = false;
+      cb.closest('.checkbox-item')?.classList.remove('state-excluded');
     });
     syncPositionControls();
     syncOthersInput();
@@ -1559,7 +1578,8 @@ const updateAllCheckboxes = () => {
   CATEGORIES.forEach(category => {
     const checkboxes = document.querySelectorAll(`input[id^="${category}-"]`);
     checkboxes.forEach(cb => {
-      cb.checked = selections[category].includes(cb.value);
+      const wrapper = cb.closest('.checkbox-item');
+      applyItemState(wrapper, cb, itemState(category, cb.value));
     });
   });
   syncPositionControls();

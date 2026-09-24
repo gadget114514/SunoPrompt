@@ -414,6 +414,20 @@ header p {
   font-size: 13px;
 }
 
+.checkbox-item.state-excluded {
+  border-color: #c0392b;
+  background: #fdecea;
+}
+
+.checkbox-item.state-excluded input[type="checkbox"] {
+  accent-color: #c0392b;
+}
+
+.checkbox-item.state-excluded label {
+  color: #c0392b;
+  text-decoration: line-through;
+}
+
 .folder-item {
   margin-bottom: 8px;
   border: 1px solid #ddd;

@@ -108,7 +108,8 @@ const translations = {
         items: [
           'Six categories feed the prompt: Genres, Vocals, Instruments, Chords, Mood & Emotion and Structures.',
           'Vocals and Instruments are grouped into folders — click a folder to open it.',
-          'The Others tab is free text: whatever you type there is added to the prompt as-is.'
+          'The Others tab is free text: whatever you type there is added to the prompt as-is.',
+          'Click a ticked item again to mark it excluded (shown crossed out); a third click clears it. Excluded items are collected into an [EXCLUDE: ...] block at the end of the prompt.'
         ]
       },
       {
@@ -314,7 +315,8 @@ const translations = {
         items: [
           'プロンプトは6つのカテゴリから組み立てます。ジャンル・ボーカル・楽器・コード・ムード感情・構造です。',
           'ボーカルと楽器はフォルダにまとまっています。フォルダをクリックすると開きます。',
-          '「その他」タブは自由記述です。入力した内容はそのままプロンプトに追加されます。'
+          '「その他」タブは自由記述です。入力した内容はそのままプロンプトに追加されます。',
+          'チェック済みの項目をもう一度クリックすると除外（打ち消し線で表示）になり、もう一度クリックすると解除されます。除外した項目はプロンプト末尾に [EXCLUDE: ...] としてまとめて出力されます。'
         ]
       },
       {
@@ -520,7 +522,8 @@ const translations = {
         items: [
           'Seis categorías alimentan el prompt: Géneros, Voces, Instrumentos, Acordes, Ánimo y emoción, y Estructuras.',
           'Voces e Instrumentos están agrupados en carpetas; haz clic en una carpeta para abrirla.',
-          'La pestaña Otros es texto libre: lo que escribas allí se añade al prompt tal cual.'
+          'La pestaña Otros es texto libre: lo que escribas allí se añade al prompt tal cual.',
+          'Vuelve a hacer clic en un ítem marcado para excluirlo (se muestra tachado); un tercer clic lo deja sin marcar. Los ítems excluidos se agrupan al final del prompt en un bloque [EXCLUDE: ...].'
         ]
       },
       {
