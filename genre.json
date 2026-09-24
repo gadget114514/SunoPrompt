@@ -1,8 +1,8 @@
 {
   "meta": {
     "title": "Suno Style-field genres",
-    "version": "1.0.0",
-    "updated": "2026-09-21",
+    "version": "1.0.1",
+    "updated": "2026-09-24",
     "note": "Genre names grouped by family. Every other key in this file is an array of genre names, which is how readers tell the groups from this block.",
     "language": "en",
     "usage": "Lead the Style field with one or two of these."
