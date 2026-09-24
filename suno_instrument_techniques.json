@@ -69,6 +69,7 @@
         "dark piano stabs",
         "bright comping stabs",
         "dissonant arpeggios",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -121,6 +122,7 @@
         "bright comping stabs",
         "dissonant arpeggios",
         "piano loop",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -161,6 +163,7 @@
         "samba rock strumming",
         "rasgueado strumming",
         "golpe body taps",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -213,6 +216,7 @@
         "muted guitar licks",
         "samba rock guitar cutting",
         "faint background lead",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -283,6 +287,7 @@
         "violin lead melodies",
         "expressive solo with warm vibrato",
         "dark fiddle drone",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -363,6 +368,7 @@
         "Harmon mute",
         "bluesy trumpet solo",
         "fast syncopated riffs",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -387,6 +393,7 @@
         "gently descending phrases",
         "flutter-tonguing",
         "overblowing",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -416,6 +423,7 @@
         "rasgueado strumming",
         "golpe body taps",
         "flamenco guitar solo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -445,6 +453,7 @@
         "montunos",
         "gentle fingerstyle",
         "bossa nova comping",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -554,6 +563,7 @@
         "detached phrase followed by a legato echo",
         "flutter-tonguing",
         "glissando",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -578,6 +588,7 @@
         "brass stabs",
         "wah-wah mute",
         "fast syncopated Balkan riffs",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -615,6 +626,7 @@
         "double stops",
         "glissando",
         "Basso continuo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -637,6 +649,7 @@
         "soft low plucks",
         "harp glissandi",
         "harp motifs",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -697,6 +710,7 @@
         "drawbar swells",
         "gospel organ stabs",
         "Basso continuo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -715,6 +729,7 @@
         "soft flute-stop registration",
         "release both manuals and pedal after the final vocal phrase",
         "Basso continuo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -821,6 +836,7 @@
         "walking patterns",
         "double bass ostinato",
         "Basso continuo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -856,6 +872,7 @@
         "walking patterns",
         "upright bass ostinato",
         "Basso continuo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -880,6 +897,7 @@
         "soft resolution and natural decay",
         "bright horn stabs",
         "commanding war horn calls",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -942,6 +960,7 @@
       "techniques": [
         "low answering phrases following short high-register trumpet and clarinet bursts",
         "Balkan bass lines",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -958,6 +977,7 @@
         "lyrical countermelody",
         "repeat the melody with plainly sustained notes and no ornament",
         "unison sustained note with the singer",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -986,6 +1006,7 @@
         "bowed swells",
         "sustained drones",
         "restrained chords",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1254,6 +1275,7 @@
         "airy jazz chords",
         "smoky chords",
         "soft supporting harmony",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1275,6 +1297,7 @@
         "airy jazz chords",
         "smoky chords",
         "warm Rhodes keys",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1298,6 +1321,7 @@
         "isolated low-register notes",
         "felt piano motifs",
         "drenched in massive reverb",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1321,6 +1345,7 @@
         "isolated low-register notes",
         "reverb-drenched",
         "felt-dampened",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1345,6 +1370,7 @@
         "dramatic bassoon echo",
         "bassoon solo",
         "Basso continuo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1357,6 +1383,7 @@
       "techniques": [
         "plucked nimble melodies",
         "melodic doubling with oud",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1403,6 +1430,7 @@
       ],
       "techniques": [
         "gentle plucked motifs",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1418,6 +1446,7 @@
         "sparse accompaniment",
         "soft closing cadence",
         "Basso continuo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1596,6 +1625,7 @@
         "short chiming notes",
         "sparse plucked-style figures",
         "celesta countermelody",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1611,6 +1641,7 @@
         "sustained low drones",
         "breath tones",
         "gritty counter-melody",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1634,6 +1665,7 @@
         "return to crisp separated notes",
         "final clear sustained tone",
         "complete release before the voice returns",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1646,6 +1678,7 @@
       "techniques": [
         "sliding sustained phrases",
         "swelling slide-guitar tones",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1706,6 +1739,7 @@
         "sparse isolated notes",
         "harmonics",
         "solo harmonic figures",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1719,6 +1753,7 @@
         "plucked phrases",
         "repeating plucked figures",
         "Basso continuo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1732,6 +1767,7 @@
         "plucked phrases",
         "repeating plucked figures",
         "Basso continuo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1747,6 +1783,7 @@
         "nimble melodic lines",
         "melodic doubling with mandolin",
         "maghreb melodies",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1762,6 +1799,7 @@
         "bowed sustained lines",
         "quiet bowed drone",
         "dark fiddle drone",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1813,6 +1851,7 @@
       "techniques": [
         "long sustained drone",
         "soft breath-like sustained tones",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1830,6 +1869,7 @@
         "short percussive accents",
         "harmonics",
         "clipped harmonic notes",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1847,6 +1887,7 @@
         "gospel organ stabs",
         "glissando smears",
         "sustained chords",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1859,6 +1900,7 @@
       "techniques": [
         "breath tones",
         "sparse breathy responses",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1878,6 +1920,7 @@
         "honking riffs",
         "bends and scoops",
         "sax solo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1897,6 +1940,7 @@
         "honking riffs",
         "bends and scoops",
         "sax solo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1916,6 +1960,7 @@
         "honking riffs",
         "bends and scoops",
         "sax solo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1932,6 +1977,7 @@
         "warbles",
         "wailing blues licks",
         "chordal chugging",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1943,6 +1989,7 @@
       ],
       "techniques": [
         "bowed sustained phrases",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1975,6 +2022,7 @@
         "high harmonics",
         "expressive melodic solo",
         "lingering string resonance",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -1989,6 +2037,7 @@
         "sparse accents",
         "crisp strumming",
         "delicate strumming",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -2000,6 +2049,7 @@
       ],
       "techniques": [
         "sparse plucked phrases",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -2011,6 +2061,7 @@
       ],
       "techniques": [
         "sparse plucked phrases",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -2230,6 +2281,7 @@
       "techniques": [
         "arpeggios",
         "sustained chords",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -2243,6 +2295,7 @@
         "soft plucks",
         "sparse rhythmic accompaniment",
         "slap",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -2258,6 +2311,7 @@
         "bluegrass picking",
         "bright rolling arpeggios",
         "double-time picking",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -2273,6 +2327,7 @@
         "chunking",
         "bright rhythmic strumming",
         "campanella picking",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -3022,6 +3077,7 @@
         "soprano sax duet",
         "spectacular solo",
         "explosive final solo",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -3035,6 +3091,7 @@
         "sub weight low notes",
         "sustained low drones",
         "dark low countermelody",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -3243,6 +3300,7 @@
         "arpeggiated accompaniment",
         "gentle plucked melody",
         "glissandi",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -3334,6 +3392,7 @@
         "detuned lullaby melody",
         "delicate tinkling motifs",
         "warped music-box lines",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -3420,6 +3479,7 @@
         "cutting clear tone",
         "twangy single notes",
         "clean chord stabs",
+        "Tenuto",
         "trap",
         "follow"
       ]
@@ -3435,6 +3495,7 @@
         "picado runs",
         "percussive muted strums",
         "flamenco guitar solo",
+        "Tenuto",
         "trap",
         "follow"
       ]
