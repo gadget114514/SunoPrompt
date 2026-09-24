@@ -614,6 +614,7 @@
         "col legno",
         "double stops",
         "glissando",
+        "Basso continuo",
         "trap",
         "follow"
       ]
@@ -695,6 +696,7 @@
         "Leslie rotary swirl",
         "drawbar swells",
         "gospel organ stabs",
+        "Basso continuo",
         "trap",
         "follow"
       ]
@@ -712,6 +714,7 @@
         "return to the same manual melody with unchanged registration",
         "soft flute-stop registration",
         "release both manuals and pedal after the final vocal phrase",
+        "Basso continuo",
         "trap",
         "follow"
       ]
@@ -817,6 +820,7 @@
         "slap",
         "walking patterns",
         "double bass ostinato",
+        "Basso continuo",
         "trap",
         "follow"
       ]
@@ -851,6 +855,7 @@
         "slap",
         "walking patterns",
         "upright bass ostinato",
+        "Basso continuo",
         "trap",
         "follow"
       ]
@@ -1339,6 +1344,7 @@
         "deep dramatic countermelodies",
         "dramatic bassoon echo",
         "bassoon solo",
+        "Basso continuo",
         "trap",
         "follow"
       ]
@@ -1411,6 +1417,7 @@
         "quiet continuo cadence",
         "sparse accompaniment",
         "soft closing cadence",
+        "Basso continuo",
         "trap",
         "follow"
       ]
@@ -1711,6 +1718,7 @@
       "techniques": [
         "plucked phrases",
         "repeating plucked figures",
+        "Basso continuo",
         "trap",
         "follow"
       ]
@@ -1723,6 +1731,7 @@
       "techniques": [
         "plucked phrases",
         "repeating plucked figures",
+        "Basso continuo",
         "trap",
         "follow"
       ]
