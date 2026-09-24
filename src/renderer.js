@@ -482,14 +482,20 @@ const updateStageDiagram = () => {
   });
 };
 
-// Color folders that contain a checked item or a position setting
+// Color folders that contain a checked item or a position setting, and show
+// how many items are included vs. excluded — separate counts, since a
+// checkbox in the excluded (indeterminate) state is not ":checked"
 const updateFolderHighlights = () => {
   document.querySelectorAll('.folder-item').forEach(folder => {
     const checked = folder.querySelectorAll('input[type="checkbox"]:checked').length;
+    const excluded = folder.querySelectorAll('input[type="checkbox"]:indeterminate').length;
     const hasPosition = [...folder.querySelectorAll('.position-select')].some(select => select.value);
     folder.classList.toggle('has-selection', checked > 0 || hasPosition);
+    folder.classList.toggle('has-exclusion', excluded > 0);
     const count = folder.querySelector('.selection-count');
     if (count) count.textContent = checked > 0 ? checked : '';
+    const excludeCount = folder.querySelector('.exclude-count');
+    if (excludeCount) excludeCount.textContent = excluded > 0 ? `✕${excluded}` : '';
   });
 };
 
@@ -686,9 +692,13 @@ const renderHierarchicalList = (container, hierarchyObj, category, folderType) =
     const selectionCount = document.createElement('span');
     selectionCount.className = 'selection-count';
 
+    const excludeCount = document.createElement('span');
+    excludeCount.className = 'exclude-count';
+
     header.appendChild(toggle);
     header.appendChild(folderLabel);
     header.appendChild(selectionCount);
+    header.appendChild(excludeCount);
 
     // Folder content
     const content = document.createElement('div');
@@ -980,11 +990,13 @@ const randomizeCategories = (categories, { bpm = false } = {}) => {
   const next = { ...selections, positions: { ...selections.positions }, excludes: { ...selections.excludes } };
   categories.forEach(category => {
     next[category] = generator.randomCategory(category);
-    // The rerolled items are gone, so drop the positions and exclusions that went with them
+    // The rerolled items are gone, so drop the positions that went with them
     Object.keys(next.positions).forEach(key => {
       if (PromptGenerator.splitPositionKey(key)[0] === category) delete next.positions[key];
     });
-    next.excludes[category] = [];
+    // Seed a few fresh exclusions alongside the new selection, instead of
+    // always leaving the category's excludes empty
+    next.excludes[category] = generator.randomExcludes(category, next[category]);
   });
 
   if (bpm) next.bpm = generator.getRandomBPM();
@@ -1574,9 +1586,12 @@ const loadProjectsList = async () => {
 };
 
 const updateAllCheckboxes = () => {
-  // Update all checkboxes and position dropdowns to match current selections
+  // Update all checkboxes and position dropdowns to match current selections.
+  // Scoped to type="checkbox" so this doesn't also pick up each tab's
+  // "<category>-search" text input, which shares the id prefix but has no
+  // .checkbox-item wrapper.
   CATEGORIES.forEach(category => {
-    const checkboxes = document.querySelectorAll(`input[id^="${category}-"]`);
+    const checkboxes = document.querySelectorAll(`input[type="checkbox"][id^="${category}-"]`);
     checkboxes.forEach(cb => {
       const wrapper = cb.closest('.checkbox-item');
       applyItemState(wrapper, cb, itemState(category, cb.value));

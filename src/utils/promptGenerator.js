@@ -290,6 +290,53 @@ class PromptGenerator {
     }
   }
 
+  // Every value a category could hold in selections/excludes, flattened to
+  // the same string shape those arrays use (e.g. instruments include both
+  // bare instrument keys and "instrument::technique" pairs).
+  categoryPool(category) {
+    switch (category) {
+      case 'genres':
+        return Object.values(this.data.genre || {}).filter(Array.isArray).flat();
+      case 'vocals': {
+        const modes = this.data.vocal?.vocal_modes || {};
+        return Object.values(modes).flatMap(m => [...(m.style_phrases || []), ...(m.style_modifiers || [])]);
+      }
+      case 'instruments': {
+        const instruments = this.data.instruments?.instruments || {};
+        return Object.entries(instruments).flatMap(([key, data]) =>
+          [key, ...(data.techniques || []).map(t => PromptGenerator.techniqueValue(key, t))]);
+      }
+      case 'chords':
+        return Object.values(this.data.chord?.categories || {}).flatMap(c => c.phrases || []);
+      case 'moods':
+        return Object.values(this.data.mood?.categories || {}).flatMap(c => c.phrases || []);
+      case 'structures':
+        return Object.values(this.data.structure?.categories || {}).flatMap(c => c.phrases || []);
+      default:
+        return [];
+    }
+  }
+
+  // A handful of random exclusions for a category, used alongside
+  // randomCategory so a reroll can also seed a few [EXCLUDE: ...] entries
+  // instead of always leaving them empty. Draws from everything the category
+  // can hold, minus whatever was just selected for it. Mostly none, sometimes
+  // one, rarely two.
+  randomExcludes(category, selected = []) {
+    const pool = this.categoryPool(category).filter(item => !selected.includes(item));
+    const excludes = [];
+    if (pool.length === 0) return excludes;
+    if (Math.random() < 0.35) {
+      const idx = Math.floor(Math.random() * pool.length);
+      excludes.push(pool[idx]);
+      pool.splice(idx, 1);
+    }
+    if (pool.length > 0 && Math.random() < 0.15) {
+      excludes.push(pool[Math.floor(Math.random() * pool.length)]);
+    }
+    return excludes;
+  }
+
   // Random genres (1-2), plus an era some of the time
   randomGenres() {
     if (!this.data.genre) return [];

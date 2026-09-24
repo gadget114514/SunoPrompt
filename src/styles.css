@@ -1244,6 +1244,28 @@ body.is-web .left-panel {
   display: none;
 }
 
+.exclude-count {
+  order: 4;
+  margin-left: 4px;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #c0392b;
+  color: white;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+}
+
+.exclude-count:empty {
+  display: none;
+}
+
+/* Folders with an excluded item but nothing included */
+.folder-item.has-exclusion:not(.has-selection) > .folder-header {
+  color: #c0392b;
+}
+
 /* Per-tab search box, pinned above its list while the list scrolls */
 .list-search {
   position: sticky;
