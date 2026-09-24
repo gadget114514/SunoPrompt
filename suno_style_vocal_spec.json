@@ -1,8 +1,8 @@
 {
   "meta": {
     "title": "Suno Style field: how to specify sound and vocals",
-    "version": "1.0.0",
-    "updated": "2026-09-21",
+    "version": "1.0.1",
+    "updated": "2026-09-24",
     "note": "Style box = genre, mood, instruments, vocal identity, arrangement arc. Lyrics box = words plus [Verse]/[Chorus] tags and per-section singer labels. Vocal phrases are steering cues, not hard locks.",
     "language": "en"
   },
@@ -38,6 +38,20 @@
         "vocal chops",
         "call-and-response ad-libs",
         "light autotune",
+        "falsetto vocal",
+        "head voice",
+        "chest voice",
+        "mixed voice",
+        "vocal fry",
+        "pitch-bent vocal",
+        "intentionally off-pitch vocal",
+        "vocal scoop",
+        "vocal runs and riffs",
+        "heavy vibrato",
+        "belting",
+        "vocal growl",
+        "airy breathy vocal",
+        "yodel vocal",
         "strictly solo lead vocal"
       ],
       "style_examples": [
@@ -206,6 +220,37 @@
       "notes": [
         "Name the choir type (gospel, Gregorian, gang) for a steadier result.",
         "Combine with a lead vocal phrase when a soloist should sit on top of the choir."
+      ]
+    }
+  },
+  "vocal_technique_glossary": {
+    "voice_registers": {
+      "label": "Voice Registers",
+      "terms": [
+        { "phrase": "falsetto vocal", "definition": "A breathy, soft, airy high voice — the common, relaxed 'fake voice'." },
+        { "phrase": "head voice", "definition": "A resonant, focused high register felt around the crown/forehead, clearer and more core than falsetto." },
+        { "phrase": "chest voice", "definition": "The full, chest-resonant natural voice used in normal speech and powerful singing." },
+        { "phrase": "mixed voice", "definition": "A smooth blend of chest and head/falsetto voice that keeps power and core tone through the high range." },
+        { "phrase": "vocal fry", "definition": "A relaxed-throat, creaky, rattling low-register vibration effect." }
+      ]
+    },
+    "pitch_and_phrasing_variation": {
+      "label": "Pitch & Phrasing Variation",
+      "terms": [
+        { "phrase": "pitch-bent vocal", "definition": "Deliberately sliding pitch up or down into or out of a note rather than landing on it straight." },
+        { "phrase": "intentionally off-pitch vocal", "definition": "Singing purposely flat or sharp of true pitch for character." },
+        { "phrase": "vocal scoop", "definition": "Approaching a note from slightly below its true pitch and sliding up into it." },
+        { "phrase": "vocal runs and riffs", "definition": "Fast melodic embellishments (fake/riffing) that break a line into many quick moving notes." }
+      ]
+    },
+    "vocal_effects": {
+      "label": "Vocal Effects",
+      "terms": [
+        { "phrase": "heavy vibrato", "definition": "A fast, regular up-and-down pitch wobble on sustained notes." },
+        { "phrase": "belting", "definition": "Pushing chest voice powerfully into the high range instead of switching to falsetto." },
+        { "phrase": "vocal growl", "definition": "A raspy, rumbling growl/snarl texture, common in rock and jazz." },
+        { "phrase": "airy breathy vocal", "definition": "A whisper-like vocal with a lot of breath mixed into the tone." },
+        { "phrase": "yodel vocal", "definition": "Rapidly flipping between chest voice and falsetto, sometimes used as a pop accent." }
       ]
     }
   },
