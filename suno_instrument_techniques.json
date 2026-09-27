@@ -1,11 +1,11 @@
 {
   "meta": {
     "title": "Suno V6 instrument technique phrases",
-    "version": "1.0.1",
-    "updated": "2026-09-24",
+    "version": "1.1.0",
+    "updated": "2026-09-27",
     "note": "Phrases Suno attempted to express, not a guarantee of accurate playback. Collected from ~100 instrument-specified tracks.",
     "language": "en",
-    "format": "dictionary keyed by instrument name; techniques split into individual phrases",
+    "format": "dictionary keyed by instrument name; techniques split into individual phrases; tone_descriptors lists emotional tone words that can lead any instrument name",
     "categories": [
       "keyboard",
       "free_reed",
@@ -21,6 +21,32 @@
       "other"
     ]
   },
+  "tone_descriptors": [
+    "warm",
+    "cold",
+    "bright",
+    "dark",
+    "soft",
+    "harsh",
+    "mellow",
+    "gritty",
+    "lush",
+    "airy",
+    "dreamy",
+    "ethereal",
+    "icy",
+    "gentle",
+    "tender",
+    "intimate",
+    "melancholic",
+    "nostalgic",
+    "haunting",
+    "eerie",
+    "aggressive",
+    "playful",
+    "majestic",
+    "raw"
+  ],
   "instruments": {
     "Grand Piano": {
       "category": "keyboard",

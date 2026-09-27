@@ -1,8 +1,8 @@
 {
   "meta": {
     "title": "Suno Style-field structure phrases",
-    "version": "1.0.0",
-    "updated": "2026-09-21",
+    "version": "1.1.0",
+    "updated": "2026-09-27",
     "note": "Natural-language cues for the Style box. Not Lyrics metatags. These bias arrangement arc, contrast, and energy over time.",
     "language": "en",
     "usage": "Append after genre, vocal, and instrument terms in the Style field."
@@ -115,28 +115,102 @@
         "syncopated groove"
       ]
     },
-    "production": {
-      "description": "Mix, space and recording texture",
+    "production: recording quality": {
+      "description": "How clean or rough the recording itself is",
       "phrases": [
+        "lo-fi recording",
+        "hi-fi recording",
+        "high-fidelity",
+        "lo-fi",
+        "demo recording",
+        "bedroom recording",
+        "home studio recording",
+        "professional studio recording",
+        "live recording",
+        "field recording",
+        "4-track cassette recording",
+        "phone recording",
+        "AM radio sound",
+        "telephone EQ"
+      ]
+    },
+    "production: studio & room": {
+      "description": "The kind of studio and the room the sound was captured in",
+      "phrases": [
+        "analog studio",
+        "analogue recording",
+        "digital recording",
+        "1970s studio warmth",
+        "vintage studio sound",
+        "modern studio sound",
+        "live room bleed",
+        "live room ambience",
+        "dead room",
+        "big room sound",
+        "close-mic",
+        "dry close mix",
+        "church acoustics",
+        "concert hall acoustics"
+      ]
+    },
+    "production: analog character": {
+      "description": "Tape, vinyl, tubes and other colour from the signal chain",
+      "phrases": [
+        "analogue",
+        "warm analog feel",
         "tape saturation",
+        "tape wow and flutter",
         "vinyl crackle",
         "cassette hiss",
+        "analog console warmth",
+        "tube warmth",
+        "bitcrushed texture",
+        "digital clipping"
+      ]
+    },
+    "production: stereo & mix": {
+      "description": "Width, balance and polish of the mix",
+      "phrases": [
+        "wide 2-mix",
+        "wide stereo field",
+        "mono mix",
+        "narrow mix",
+        "binaural",
+        "polished radio mix",
+        "raw unpolished mix",
+        "balanced mix",
+        "vocal-forward mix",
+        "bass-heavy mix",
+        "cinematic depth"
+      ]
+    },
+    "production: reverb & space": {
+      "description": "Reverbs and echoes that place the sound in a space",
+      "phrases": [
         "plate reverb",
         "spring reverb",
+        "hall reverb",
+        "room reverb",
+        "cavernous reverb",
+        "gated reverb",
+        "shimmer reverb",
+        "tape delay",
+        "slapback echo",
+        "dub delay"
+      ]
+    },
+    "production: dynamics & mastering": {
+      "description": "Compression, loudness and the final master",
+      "phrases": [
+        "punchy compression",
+        "heavy compression",
         "sidechain pumping",
-        "wide stereo field",
-        "dry close mix",
-        "close-mic",
-        "live room bleed",
-        "lo-fi",
-        "polished radio mix",
-        "high-fidelity",
-        "warm analog feel",
-        "1970s studio warmth",
-        "4-track cassette recording",
-        "binaural",
-        "cinematic depth",
-        "punchy compression"
+        "dynamic uncompressed mix",
+        "loud modern master",
+        "gentle mastering",
+        "radio-ready master",
+        "crisp high end",
+        "deep low end"
       ]
     },
     "exclusions": {

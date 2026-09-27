@@ -1212,6 +1212,73 @@ body.is-web .left-panel {
   color: #667eea;
 }
 
+/* Instrument tone chips and note box */
+.tone-badge {
+  margin-left: 8px;
+  font-size: 11px;
+  color: #b0645a;
+}
+
+.tone-chip {
+  padding: 1px 8px;
+  border: 1px solid #d6cfe8;
+  border-radius: 10px;
+  background: white;
+  color: #555;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.tone-chip:hover {
+  border-color: #667eea;
+}
+
+.tone-chip.active {
+  border-color: #667eea;
+  background: #667eea;
+  color: white;
+}
+
+.note-input {
+  flex: 1;
+  min-width: 140px;
+  font-size: 12px;
+  padding: 2px 6px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-family: inherit;
+}
+
+/* Per-tab free text for words the list does not have */
+.custom-entry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  border: 1px dashed #c7cdf5;
+  border-radius: 8px;
+  background: #f8f9ff;
+}
+
+.custom-entry-label {
+  flex: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.custom-entry-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  font-family: inherit;
+}
+
 /* Folders with checked items or a position setting */
 .folder-item.has-selection {
   border-color: #667eea;

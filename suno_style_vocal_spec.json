@@ -1,8 +1,8 @@
 {
   "meta": {
     "title": "Suno Style field: how to specify sound and vocals",
-    "version": "1.0.1",
-    "updated": "2026-09-24",
+    "version": "1.1.0",
+    "updated": "2026-09-27",
     "note": "Style box = genre, mood, instruments, vocal identity, arrangement arc. Lyrics box = words plus [Verse]/[Chorus] tags and per-section singer labels. Vocal phrases are steering cues, not hard locks.",
     "language": "en"
   },
@@ -28,16 +28,11 @@
         "expressive lead vocal"
       ],
       "style_modifiers": [
-        "whisper vocals",
-        "breathy ASMR vocal",
         "androgynous whisper vocal",
-        "spoken-word vocal",
-        "rap vocal",
         "stacked harmonies",
         "layered vocals",
         "vocal chops",
         "call-and-response ad-libs",
-        "sing-along vocal",
         "light autotune",
         "falsetto vocal",
         "head voice",
@@ -51,10 +46,7 @@
         "kobushi vocal ornamentation",
         "vibrato",
         "heavy vibrato",
-        "belting",
-        "shout",
         "vocal growl",
-        "airy breathy vocal",
         "yodel vocal",
         "strictly solo lead vocal"
       ],
@@ -224,6 +216,79 @@
       "notes": [
         "Name the choir type (gospel, Gregorian, gang) for a steadier result.",
         "Combine with a lead vocal phrase when a soloist should sit on top of the choir."
+      ]
+    }
+  },
+  "vocal_descriptors": {
+    "Voice Quality": {
+      "description": "The timbre of the voice itself: texture, grain and color. Works with any singer.",
+      "phrases": [
+        "clear vocal",
+        "bright vocal",
+        "dark vocal",
+        "warm vocal",
+        "sweet vocal",
+        "smooth vocal",
+        "silky vocal",
+        "velvety vocal",
+        "smoky vocal",
+        "husky vocal",
+        "raspy vocal",
+        "gravelly vocal",
+        "gritty vocal",
+        "hoarse vocal",
+        "breathy vocal",
+        "airy breathy vocal",
+        "breathy ASMR vocal",
+        "thin vocal",
+        "nasal vocal",
+        "childlike vocal"
+      ]
+    },
+    "Resonance": {
+      "description": "Where the voice rings and how the space around it sounds: body resonance first, then room and reverb.",
+      "phrases": [
+        "chest-resonant vocal",
+        "full-bodied vocal",
+        "rich resonant vocal",
+        "deep resonant vocal",
+        "booming vocal",
+        "ringing vocal",
+        "open-throated vocal",
+        "throaty vocal",
+        "hollow vocal",
+        "thin heady vocal",
+        "dry vocal",
+        "echoing vocal",
+        "reverb-drenched vocal",
+        "cathedral reverb vocal"
+      ]
+    },
+    "Delivery": {
+      "description": "How the lines are performed: attitude, phrasing and attack.",
+      "phrases": [
+        "whisper vocals",
+        "spoken-word vocal",
+        "rap vocal",
+        "melodic rap flow",
+        "rapid-fire delivery",
+        "chanted vocal",
+        "sing-along vocal",
+        "crooning",
+        "belting",
+        "shout",
+        "conversational delivery",
+        "laid-back delivery",
+        "deadpan delivery",
+        "tender delivery",
+        "emotive delivery",
+        "restrained delivery",
+        "playful delivery",
+        "theatrical delivery",
+        "aggressive delivery",
+        "staccato delivery",
+        "legato phrasing",
+        "behind-the-beat phrasing"
       ]
     }
   },

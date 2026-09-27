@@ -27,6 +27,11 @@ let selections = {
   excludes: emptyExcludes(),
   others: '',
   positions: {},
+  // Per instrument: tone words ("warm", "icy") and a free-text note
+  instrumentTones: {},
+  instrumentNotes: {},
+  // Per tab: free text for anything the lists do not have
+  customs: {},
   categoryOrder: readStoredCategoryOrder(),
   bpm: 120
 };
@@ -45,6 +50,9 @@ const normalizeSelections = (sel) => {
   });
   if (!normalized.positions || typeof normalized.positions !== 'object') normalized.positions = {};
   if (typeof normalized.others !== 'string') normalized.others = '';
+  ['instrumentTones', 'instrumentNotes', 'customs'].forEach(key => {
+    if (!normalized[key] || typeof normalized[key] !== 'object') normalized[key] = {};
+  });
   // Projects saved before tabs could be reordered keep the order in use
   normalized.categoryOrder = PromptGenerator.categoryOrder(normalized.categoryOrder || selections.categoryOrder);
   if (generator) normalized.vocals = generator.normalizeVocals(normalized.vocals);
@@ -490,7 +498,9 @@ const updateFolderHighlights = () => {
     const checked = folder.querySelectorAll('input[type="checkbox"]:checked').length;
     const excluded = folder.querySelectorAll('input[type="checkbox"]:indeterminate').length;
     const hasPosition = [...folder.querySelectorAll('.position-select')].some(select => select.value);
-    folder.classList.toggle('has-selection', checked > 0 || hasPosition);
+    const hasTone = !!folder.querySelector('.tone-chip.active') ||
+      [...folder.querySelectorAll('.note-input')].some(input => input.value.trim());
+    folder.classList.toggle('has-selection', checked > 0 || hasPosition || hasTone);
     folder.classList.toggle('has-exclusion', excluded > 0);
     const count = folder.querySelector('.selection-count');
     if (count) count.textContent = checked > 0 ? checked : '';
@@ -659,6 +669,7 @@ const renderCheckboxList = (containerId, items, category) => {
     renderHierarchicalList(container, items.byInstrument, category, 'instrument');
   } else if (category === 'vocals' && items.byMode) {
     renderHierarchicalList(container, items.byMode, category, 'mode');
+    if (items.byDescriptor) renderHierarchicalList(container, items.byDescriptor, category, 'descriptor');
   } else if (items.byCategory) {
     renderHierarchicalList(container, items.byCategory, category, 'category');
   } else {
@@ -720,14 +731,25 @@ const renderHierarchicalList = (container, hierarchyObj, category, folderType) =
       label.append(' ', note);
     }
 
-    // Vocal modes and instruments can be placed in the stereo field
-    if (category === 'instruments' || category === 'vocals') {
+    // Vocal modes and instruments can be placed in the stereo field; voice
+    // quality, resonance and delivery describe a singer rather than one
+    if (category === 'instruments' || (category === 'vocals' && folderType === 'mode')) {
       const positionKey = PromptGenerator.positionKey(category, parentName);
       const badge = document.createElement('span');
       badge.className = 'position-badge';
       badge.dataset.positionKey = positionKey;
       header.appendChild(badge);
       content.appendChild(createPositionRow(positionKey));
+    }
+
+    // Instruments also take tone words and a note of their own
+    if (category === 'instruments') {
+      const toneBadge = document.createElement('span');
+      toneBadge.className = 'tone-badge';
+      toneBadge.dataset.instrument = parentName;
+      header.appendChild(toneBadge);
+      content.appendChild(createToneRow(parentName));
+      content.appendChild(createNoteRow(parentName));
     }
 
     // Add children checkboxes
@@ -794,6 +816,119 @@ const createPositionRow = (positionKey) => {
   });
 
   return row;
+};
+
+// Emotional tone words for one instrument, toggled as chips
+const createToneRow = (instrument) => {
+  const row = document.createElement('div');
+  row.className = 'position-row tone-row';
+
+  const label = document.createElement('span');
+  label.className = 'position-label';
+  label.setAttribute('data-i18n', 'tone');
+  label.textContent = t('tone');
+  row.appendChild(label);
+
+  (generator.data.instruments?.tone_descriptors || []).forEach(tone => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'tone-chip';
+    chip.dataset.instrument = instrument;
+    chip.dataset.tone = tone;
+    chip.textContent = tone;
+    chip.addEventListener('click', () => {
+      const current = selections.instrumentTones[instrument] || [];
+      const next = current.includes(tone) ? current.filter(x => x !== tone) : [...current, tone];
+      if (next.length > 0) selections.instrumentTones[instrument] = next;
+      else delete selections.instrumentTones[instrument];
+      syncToneControls();
+      updatePreview();
+    });
+    row.appendChild(chip);
+  });
+  return row;
+};
+
+// Free text for one instrument, written inside its parentheses
+const createNoteRow = (instrument) => {
+  const row = document.createElement('div');
+  row.className = 'position-row note-row';
+
+  const label = document.createElement('span');
+  label.className = 'position-label';
+  label.setAttribute('data-i18n', 'instrumentNote');
+  label.textContent = t('instrumentNote');
+  row.appendChild(label);
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'note-input';
+  input.dataset.instrument = instrument;
+  input.setAttribute('data-i18n-placeholder', 'instrumentNotePlaceholder');
+  input.placeholder = t('instrumentNotePlaceholder');
+  input.addEventListener('input', () => {
+    if (input.value.trim()) selections.instrumentNotes[instrument] = input.value;
+    else delete selections.instrumentNotes[instrument];
+    syncToneControls();
+    updatePreview();
+  });
+  row.appendChild(input);
+  return row;
+};
+
+// Reflect selections.instrumentTones / instrumentNotes in the chips, the
+// note boxes and the folder badges
+const syncToneControls = () => {
+  document.querySelectorAll('.tone-chip').forEach(chip => {
+    const active = (selections.instrumentTones[chip.dataset.instrument] || []).includes(chip.dataset.tone);
+    chip.classList.toggle('active', active);
+    chip.setAttribute('aria-pressed', String(active));
+  });
+  document.querySelectorAll('.note-input').forEach(input => {
+    const note = selections.instrumentNotes[input.dataset.instrument] || '';
+    // Leave the box being typed in alone, so its caret does not jump
+    if (input !== document.activeElement && input.value !== note) input.value = note;
+  });
+  document.querySelectorAll('.tone-badge').forEach(badge => {
+    const tones = selections.instrumentTones[badge.dataset.instrument] || [];
+    const note = selections.instrumentNotes[badge.dataset.instrument]?.trim();
+    badge.textContent = [tones.length ? `🎨 ${tones.join(' ')}` : '', note ? `✎ ${note}` : ''].filter(Boolean).join('  ');
+  });
+};
+
+// Each tab gets a free-text box for words its list does not have yet
+const setupCustomInputs = () => {
+  CATEGORIES.forEach(category => {
+    const search = document.querySelector(`#${category}-tab .list-search`);
+    if (!search || search.parentElement.querySelector('.custom-entry')) return;
+
+    const row = document.createElement('div');
+    row.className = 'custom-entry';
+    const label = document.createElement('span');
+    label.className = 'custom-entry-label';
+    label.setAttribute('data-i18n', 'customEntry');
+    label.textContent = t('customEntry');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'custom-entry-input';
+    input.dataset.customCategory = category;
+    input.setAttribute('data-i18n-placeholder', 'customEntryPlaceholder');
+    input.placeholder = t('customEntryPlaceholder');
+    input.addEventListener('input', () => {
+      if (input.value.trim()) selections.customs[category] = input.value;
+      else delete selections.customs[category];
+      updatePreview();
+    });
+    row.append(label, input);
+    search.after(row);
+  });
+};
+
+const syncCustomInputs = () => {
+  document.querySelectorAll('.custom-entry-input').forEach(input => {
+    const value = selections.customs[input.dataset.customCategory] || '';
+    if (input !== document.activeElement && input.value !== value) input.value = value;
+  });
 };
 
 // Reflect selections.positions in the dropdowns and folder badges
@@ -994,6 +1129,10 @@ const randomizeCategories = (categories, { bpm = false } = {}) => {
     Object.keys(next.positions).forEach(key => {
       if (PromptGenerator.splitPositionKey(key)[0] === category) delete next.positions[key];
     });
+    if (category === 'instruments') {
+      next.instrumentTones = generator.randomInstrumentTones(next.instruments);
+      next.instrumentNotes = {};
+    }
     // Seed a few fresh exclusions alongside the new selection, instead of
     // always leaving the category's excludes empty
     next.excludes[category] = generator.randomExcludes(category, next[category]);
@@ -1296,6 +1435,8 @@ const setupButtons = () => {
       cb.closest('.checkbox-item')?.classList.remove('state-excluded');
     });
     syncPositionControls();
+    syncToneControls();
+    syncCustomInputs();
     syncOthersInput();
 
     updatePreview();
@@ -1598,6 +1739,8 @@ const updateAllCheckboxes = () => {
     });
   });
   syncPositionControls();
+  syncToneControls();
+  syncCustomInputs();
 };
 
 // Initialize
@@ -1608,6 +1751,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // exactly when someone is most likely to reach for it.
   setupHelp();
   setupAbout();
+  setupCustomInputs();
 
   window.electronAPI.onJsonData((data) => {
     appVersion = data.appVersion || null;

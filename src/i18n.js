@@ -63,6 +63,11 @@ const translations = {
     clearSearch: 'Clear search',
     searchNoMatch: 'Nothing matches that search',
     position: 'Position',
+    tone: 'Tone',
+    instrumentNote: 'Note',
+    instrumentNotePlaceholder: 'Anything else for this instrument…',
+    customEntry: 'Free text',
+    customEntryPlaceholder: 'Words not in the list, comma-separated',
     panNone: 'Pan: —',
     depthNone: 'Distance: —',
     bpmTab: 'BPM',
@@ -108,6 +113,10 @@ const translations = {
         items: [
           'Six categories feed the prompt: Genres, Vocals, Instruments, Chords, Mood & Emotion and Structures.',
           'Vocals and Instruments are grouped into folders — click a folder to open it.',
+          'Besides the singers, Vocals has Voice Quality, Resonance and Delivery folders for how the voice sounds and is performed.',
+          'Each instrument folder has Tone chips (warm, cold, dreamy…) written before the name, and a Note box written inside its parentheses.',
+          'Every tab has a Free text box for words its list does not have; they are written right after that tab’s items.',
+          'Structures also has production folders — recording quality, studio & room, analog character, stereo & mix, reverb & space, dynamics & mastering — for how the record itself sounds (lo-fi recording, wide 2-mix, analogue…).',
           'The Others tab is free text: whatever you type there is added to the prompt as-is.',
           'Click a ticked item again to mark it excluded (shown crossed out); a third click clears it. Excluded items are collected into an [EXCLUDE: ...] block at the end of the prompt.'
         ]
@@ -272,6 +281,11 @@ const translations = {
     clearSearch: '検索をクリア',
     searchNoMatch: '一致する項目がありません',
     position: '定位',
+    tone: 'トーン',
+    instrumentNote: 'メモ',
+    instrumentNotePlaceholder: 'この楽器への自由な指定…',
+    customEntry: '自由入力',
+    customEntryPlaceholder: '一覧にない語をカンマ区切りで',
     panNone: '左右: —',
     depthNone: '距離: —',
     bpmTab: 'BPM',
@@ -315,6 +329,10 @@ const translations = {
         items: [
           'プロンプトは6つのカテゴリから組み立てます。ジャンル・ボーカル・楽器・コード・ムード感情・構造です。',
           'ボーカルと楽器はフォルダにまとまっています。フォルダをクリックすると開きます。',
+          'ボーカルには歌い手のほか、声の質（Voice Quality）・響き（Resonance）・デリバリー（Delivery）のフォルダがあります。',
+          '楽器フォルダのトーン（warm, cold, dreamy…）は楽器名の前に、メモ欄の内容は括弧の中に書き込まれます。',
+          '各タブの「自由入力」には一覧にない語を入れられます。そのタブの項目のすぐ後ろに書き込まれます。',
+          '構造タブにはプロダクション用のフォルダ（録音品質・スタジオと部屋・アナログ感・ステレオとミックス・リバーブと空間・ダイナミクスとマスタリング）もあり、lo-fi recording、wide 2-mix、analogue など録音そのものの音を指定できます。',
           '「その他」タブは自由記述です。入力した内容はそのままプロンプトに追加されます。',
           'チェック済みの項目をもう一度クリックすると除外（打ち消し線で表示）になり、もう一度クリックすると解除されます。除外した項目はプロンプト末尾に [EXCLUDE: ...] としてまとめて出力されます。'
         ]
@@ -479,6 +497,11 @@ const translations = {
     clearSearch: 'Borrar la búsqueda',
     searchNoMatch: 'No hay coincidencias',
     position: 'Posición',
+    tone: 'Tono',
+    instrumentNote: 'Nota',
+    instrumentNotePlaceholder: 'Cualquier otra indicación para este instrumento…',
+    customEntry: 'Texto libre',
+    customEntryPlaceholder: 'Palabras que no están en la lista, separadas por comas',
     panNone: 'Panorama: —',
     depthNone: 'Distancia: —',
     bpmTab: 'BPM',
@@ -522,6 +545,10 @@ const translations = {
         items: [
           'Seis categorías alimentan el prompt: Géneros, Voces, Instrumentos, Acordes, Ánimo y emoción, y Estructuras.',
           'Voces e Instrumentos están agrupados en carpetas; haz clic en una carpeta para abrirla.',
+          'Además de los cantantes, Voces tiene carpetas de Voice Quality, Resonance y Delivery para el timbre, la resonancia y la interpretación.',
+          'Cada carpeta de instrumento tiene fichas de Tono (warm, cold, dreamy…) que van delante del nombre y un cuadro de Nota que va entre sus paréntesis.',
+          'Cada pestaña tiene un cuadro de Texto libre para palabras que su lista no tiene; se escriben justo después de los elementos de esa pestaña.',
+          'Estructuras también tiene carpetas de producción —calidad de grabación, estudio y sala, carácter analógico, estéreo y mezcla, reverb y espacio, dinámica y masterización— para el sonido de la grabación (lo-fi recording, wide 2-mix, analogue…).',
           'La pestaña Otros es texto libre: lo que escribas allí se añade al prompt tal cual.',
           'Vuelve a hacer clic en un ítem marcado para excluirlo (se muestra tachado); un tercer clic lo deja sin marcar. Los ítems excluidos se agrupan al final del prompt en un bloque [EXCLUDE: ...].'
         ]

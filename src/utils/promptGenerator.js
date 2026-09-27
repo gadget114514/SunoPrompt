@@ -19,7 +19,14 @@ class PromptGenerator {
     return parts.join(', ');
   }
 
+  // Each tab's own free text follows the items ticked in it
   categoryParts(category, selections) {
+    const custom = selections.customs?.[category]?.trim();
+    const parts = this.listedParts(category, selections);
+    return custom ? [...parts, custom] : parts;
+  }
+
+  listedParts(category, selections) {
     switch (category) {
       case 'bpm': return selections.bpm ? [`${selections.bpm} bpm`] : [];
       case 'genres': return this.genreParts(selections);
@@ -69,8 +76,9 @@ class PromptGenerator {
     return vocalParts.map(part => part.text);
   }
 
-  // Instruments: techniques and position are always attached to their
-  // instrument name, e.g. "Grand Piano (legato arpeggios, panned left)"
+  // Instruments: tone words lead the name, and techniques, the free-text note
+  // and position are attached to it, e.g.
+  // "warm dreamy Grand Piano (legato arpeggios, like a music box, panned left)"
   instrumentParts(selections) {
     const parts = [];
     const groups = new Map();
@@ -85,18 +93,13 @@ class PromptGenerator {
         if (technique) groups.get(instrument).push(technique);
       });
     }
-    // Setting a position is enough to include the instrument, unless it was
-    // explicitly excluded
-    const excludedInstruments = selections.excludes?.instruments || [];
-    Object.keys(selections.positions || {}).forEach(key => {
-      const [category, instrument] = PromptGenerator.splitPositionKey(key);
-      if (category === 'instruments' && !groups.has(instrument) && !excludedInstruments.includes(instrument)) {
-        groups.set(instrument, []);
-      }
+    PromptGenerator.impliedInstruments(selections).forEach(instrument => {
+      if (!groups.has(instrument)) groups.set(instrument, []);
     });
     groups.forEach((techniques, instrument) => {
-      const name = this.getInstrumentName(instrument);
-      const details = [...techniques, ...this.getPositionPhrases(selections, 'instruments', instrument)];
+      const name = [...this.getInstrumentTones(selections, instrument), this.getInstrumentName(instrument)].join(' ');
+      const note = selections.instrumentNotes?.[instrument]?.trim();
+      const details = [...techniques, ...(note ? [note] : []), ...this.getPositionPhrases(selections, 'instruments', instrument)];
       parts.push(details.length > 0 ? `${name} (${details.join(', ')})` : name);
     });
     return parts;
@@ -194,6 +197,30 @@ class PromptGenerator {
     ) || null;
   }
 
+  // Tone words chosen for an instrument, in the order the data lists them
+  getInstrumentTones(selections, instrument) {
+    const chosen = selections.instrumentTones?.[instrument] || [];
+    return (this.data.instruments?.tone_descriptors || []).filter(tone => chosen.includes(tone));
+  }
+
+  // Instruments pulled in without being ticked: a position, a tone or a note
+  // is enough to include one, unless it was explicitly excluded
+  static impliedInstruments(selections) {
+    const excluded = selections.excludes?.instruments || [];
+    const keys = new Set();
+    Object.keys(selections.positions || {}).forEach(key => {
+      const [category, instrument] = PromptGenerator.splitPositionKey(key);
+      if (category === 'instruments') keys.add(instrument);
+    });
+    Object.entries(selections.instrumentTones || {}).forEach(([key, tones]) => {
+      if (tones?.length > 0) keys.add(key);
+    });
+    Object.entries(selections.instrumentNotes || {}).forEach(([key, note]) => {
+      if (note?.trim()) keys.add(key);
+    });
+    return [...keys].filter(key => !excluded.includes(key));
+  }
+
   // Stereo / depth placement chosen for a vocal mode or instrument
   getPositionPhrases(selections, category, name) {
     const position = selections.positions?.[PromptGenerator.positionKey(category, name)];
@@ -225,7 +252,7 @@ class PromptGenerator {
       const { instrument } = this.parseInstrumentItem(item);
       if (instrument) instruments.add(instrument);
     });
-    named('instruments').forEach(name => instruments.add(name));
+    PromptGenerator.impliedInstruments(selections).forEach(name => instruments.add(name));
 
     return [
       ...[...modes].map(mode => this.stagePlacement(selections, 'vocals', mode, mode)),
@@ -299,7 +326,10 @@ class PromptGenerator {
         return Object.values(this.data.genre || {}).filter(Array.isArray).flat();
       case 'vocals': {
         const modes = this.data.vocal?.vocal_modes || {};
-        return Object.values(modes).flatMap(m => [...(m.style_phrases || []), ...(m.style_modifiers || [])]);
+        return [
+          ...Object.values(modes).flatMap(m => [...(m.style_phrases || []), ...(m.style_modifiers || [])]),
+          ...this.vocalDescriptorPhrases()
+        ];
       }
       case 'instruments': {
         const instruments = this.data.instruments?.instruments || {};
@@ -379,7 +409,39 @@ class PromptGenerator {
     if (extras.length > 0 && Math.random() > 0.6) {
       vocals.push(extras[Math.floor(Math.random() * extras.length)]);
     }
+
+    // Now and then one voice-quality / resonance / delivery word on top
+    const descriptorGroups = Object.values(this.data.vocal?.vocal_descriptors || {})
+      .map(group => group.phrases || [])
+      .filter(phrases => phrases.length > 0);
+    if (descriptorGroups.length > 0 && Math.random() < 0.5) {
+      const phrases = descriptorGroups[Math.floor(Math.random() * descriptorGroups.length)];
+      vocals.push(phrases[Math.floor(Math.random() * phrases.length)]);
+    }
     return vocals;
+  }
+
+  // Voice quality, resonance and delivery words, which belong to no singer
+  vocalDescriptorPhrases() {
+    return Object.values(this.data.vocal?.vocal_descriptors || {}).flatMap(group => group.phrases || []);
+  }
+
+  // A tone word or two for some of the given instruments, keyed by instrument
+  randomInstrumentTones(instrumentItems) {
+    const tones = this.data.instruments?.tone_descriptors || [];
+    const result = {};
+    if (tones.length === 0) return result;
+    (instrumentItems || []).forEach(item => {
+      const { instrument, technique } = this.parseInstrumentItem(item);
+      if (!instrument || technique || Math.random() >= 0.35) return;
+      const pool = [...tones];
+      const count = Math.random() < 0.3 ? 2 : 1;
+      result[instrument] = [];
+      for (let i = 0; i < count; i++) {
+        result[instrument].push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+      }
+    });
+    return result;
   }
 
   // Random instruments (2-4 with more techniques each)
@@ -451,15 +513,18 @@ class PromptGenerator {
     return moods;
   }
 
-  // Random structures (2-3 phrases)
+  // Random structures (2-4 phrases), plus a production phrase some of the
+  // time — the production folders hold as many phrases as all the rest, so
+  // they are drawn separately rather than crowding out the arrangement cues
   randomStructures() {
     const allStructures = [];
-    for (const categoryData of Object.values(this.data.structure?.categories || {})) {
+    const production = [];
+    for (const [categoryName, categoryData] of Object.entries(this.data.structure?.categories || {})) {
       if (categoryData.phrases) {
-        allStructures.push(...categoryData.phrases);
+        (categoryName.startsWith(PromptGenerator.PRODUCTION_PREFIX) ? production : allStructures).push(...categoryData.phrases);
       }
     }
-    if (allStructures.length === 0) return [];
+    if (allStructures.length === 0 && production.length === 0) return [];
 
     const structures = [];
     const count = Math.min(Math.floor(Math.random() * 3) + 2, allStructures.length);
@@ -467,6 +532,9 @@ class PromptGenerator {
       const idx = Math.floor(Math.random() * allStructures.length);
       structures.push(allStructures[idx]);
       allStructures.splice(idx, 1);
+    }
+    if (production.length > 0 && Math.random() < 0.5) {
+      structures.push(production[Math.floor(Math.random() * production.length)]);
     }
     return structures;
   }
@@ -568,6 +636,10 @@ class PromptGenerator {
           if (!map.has(key)) map.set(key, { phrase, mode });
         });
       });
+      this.vocalDescriptorPhrases().forEach(phrase => {
+        const key = PromptGenerator.matchKey(phrase, precise);
+        if (!map.has(key)) map.set(key, { phrase, mode: null });
+      });
       this[cache] = map;
     }
     return this[cache];
@@ -644,8 +716,20 @@ class PromptGenerator {
       name = value.slice(0, paren).trim();
       details = value.slice(paren + 1, -1).trim();
     }
-    const key = this.instrumentIndex(precise).get(PromptGenerator.matchKey(name, precise));
-    return key ? { key, details } : null;
+    const index = this.instrumentIndex(precise);
+    const toneMap = new Map((this.data.instruments?.tone_descriptors || [])
+      .map(tone => [PromptGenerator.matchKey(tone, precise), tone]));
+    // "warm dreamy Rhodes": peel tone words off the front until a name is left
+    const words = name.split(/\s+/);
+    const tones = [];
+    for (;;) {
+      const key = index.get(PromptGenerator.matchKey(words.join(' '), precise));
+      if (key) return { key, details, tones };
+      const tone = words.length > 1 && toneMap.get(PromptGenerator.matchKey(words[0], precise));
+      if (!tone) return null;
+      tones.push(tone);
+      words.shift();
+    }
   }
 
   // A vocal phrase, optionally carrying a position in parentheses
@@ -661,10 +745,11 @@ class PromptGenerator {
     return entry ? { ...entry, details } : null;
   }
 
-  // Tick the instrument, its techniques and its position; return anything
-  // inside the parentheses that matched nothing, to become free text.
-  applyInstrumentParse(sel, { key, details }, precise) {
+  // Tick the instrument, its tones, techniques and position; anything inside
+  // the parentheses that matched nothing becomes the instrument's own note.
+  applyInstrumentParse(sel, { key, details, tones = [] }, precise) {
     const leftovers = [];
+    if (tones.length > 0) sel.instrumentTones[key] = [...new Set([...(sel.instrumentTones[key] || []), ...tones])];
     if (!sel.instruments.includes(key)) sel.instruments.push(key);
 
     const instrument = this.data.instruments?.instruments?.[key] || {};
@@ -691,7 +776,10 @@ class PromptGenerator {
     if (position.pan || position.depth) {
       sel.positions[PromptGenerator.positionKey('instruments', key)] = position;
     }
-    return leftovers;
+    if (leftovers.length > 0) {
+      sel.instrumentNotes[key] = [sel.instrumentNotes[key], ...leftovers].filter(Boolean).join(', ');
+    }
+    return [];
   }
 
   applyVocalParse(sel, { phrase, mode, details }, precise) {
@@ -711,8 +799,10 @@ class PromptGenerator {
       if (depthMap.has(keyPart)) { position.depth = depthMap.get(keyPart); return; }
       leftovers.push(p);
     });
-    if (position.pan || position.depth) {
+    if (mode && (position.pan || position.depth)) {
       sel.positions[PromptGenerator.positionKey('vocals', mode)] = position;
+    } else if (position.pan || position.depth) {
+      leftovers.push(...[position.pan, position.depth].filter(Boolean));
     }
     return leftovers;
   }
@@ -792,7 +882,7 @@ class PromptGenerator {
     const sel = {
       genres: [], vocals: [], instruments: [], chords: [], moods: [], structures: [],
       excludes: { genres: [], vocals: [], instruments: [], chords: [], moods: [], structures: [] },
-      others: '', positions: {}, bpm: null
+      others: '', positions: {}, instrumentTones: {}, instrumentNotes: {}, customs: {}, bpm: null
     };
     const ambiguous = [];
     if (!text) return { selections: sel, ambiguous };
@@ -904,6 +994,15 @@ class PromptGenerator {
       }
     }
 
+    // Voice quality, resonance and delivery, as folders of their own
+    items.vocals.byDescriptor = {};
+    for (const [groupName, groupData] of Object.entries(this.data.vocal?.vocal_descriptors || {})) {
+      if (groupData.phrases) {
+        items.vocals.byDescriptor[groupName] = groupData.phrases;
+        items.vocals.allPhrases.push(...groupData.phrases);
+      }
+    }
+
     // Structure instruments by instrument with techniques
     if (this.data.instruments?.instruments) {
       for (const [instrumentName, instrumentData] of Object.entries(this.data.instruments.instruments)) {
@@ -952,6 +1051,8 @@ PromptGenerator.TECHNIQUE_SEPARATOR = '::';
 PromptGenerator.ERA_GROUP = 'Era';
 // The mood group holding sound-texture words rather than moods
 PromptGenerator.MOOD_TEXTURE_GROUP = 'Sound Texture';
+// Structure folders holding studio / mix / mastering phrases
+PromptGenerator.PRODUCTION_PREFIX = 'production';
 PromptGenerator.POSITIONS = {
   pan: ['centered', 'panned left', 'panned right', 'panned hard left', 'panned hard right', 'wide stereo', 'auto-panned'],
   depth: ['upfront', 'close-miked', 'in the background', 'distant']
