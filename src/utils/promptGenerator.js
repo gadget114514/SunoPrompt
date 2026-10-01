@@ -601,114 +601,108 @@ class PromptGenerator {
     return parts;
   }
 
-  // The key a phrase is looked up by. Both modes ignore letter case; precise
-  // mode also drops hyphens and spaces, so "Synth-Pop", "synth pop" and
-  // "synthpop" all meet the same entry.
-  static matchKey(value, precise) {
-    const lower = value.toLowerCase();
-    return precise ? lower.replace(/[\s\-–—−]+/g, '') : lower;
+  // The key a phrase is looked up by. Letter case, spaces and hyphens are all
+  // ignored, so "Synth-Pop", "synth pop" and "synthpop" meet the same entry.
+  // This also resolves the hyphenated keywords generated from our data
+  // ("fade-out") against the spaced forms in older prompts ("fade out").
+  static matchKey(value) {
+    return value.toLowerCase().replace(/[\s\-–—−]+/g, '');
   }
 
-  // Lowercase (or, in precise mode, normalized) lookups, built once each.
-  genreIndex(precise) {
-    const cache = precise ? '_genreIndexPrecise' : '_genreIndex';
-    if (!this[cache]) {
+  // Normalized lookups, built once each.
+  genreIndex() {
+    if (!this._genreIndex) {
       const map = new Map();
       Object.values(this.data.genre || {}).forEach(list => {
         if (!Array.isArray(list)) return;
         list.forEach(name => {
-          const key = PromptGenerator.matchKey(name, precise);
+          const key = PromptGenerator.matchKey(name);
           if (!map.has(key)) map.set(key, name);
         });
       });
-      this[cache] = map;
+      this._genreIndex = map;
     }
-    return this[cache];
+    return this._genreIndex;
   }
 
-  vocalIndex(precise) {
-    const cache = precise ? '_vocalIndexPrecise' : '_vocalIndex';
-    if (!this[cache]) {
+  vocalIndex() {
+    if (!this._vocalIndex) {
       const map = new Map();
       Object.entries(this.data.vocal?.vocal_modes || {}).forEach(([mode, data]) => {
         [...(data.style_phrases || []), ...(data.style_modifiers || [])].forEach(phrase => {
-          const key = PromptGenerator.matchKey(phrase, precise);
+          const key = PromptGenerator.matchKey(phrase);
           if (!map.has(key)) map.set(key, { phrase, mode });
         });
       });
       this.vocalDescriptorPhrases().forEach(phrase => {
-        const key = PromptGenerator.matchKey(phrase, precise);
+        const key = PromptGenerator.matchKey(phrase);
         if (!map.has(key)) map.set(key, { phrase, mode: null });
       });
-      this[cache] = map;
+      this._vocalIndex = map;
     }
-    return this[cache];
+    return this._vocalIndex;
   }
 
-  chordIndex(precise) {
-    const cache = precise ? '_chordIndexPrecise' : '_chordIndex';
-    if (!this[cache]) {
+  chordIndex() {
+    if (!this._chordIndex) {
       const map = new Map();
       Object.values(this.data.chord?.categories || {}).forEach(cat => {
         (cat.phrases || []).forEach(p => {
-          const key = PromptGenerator.matchKey(p, precise);
+          const key = PromptGenerator.matchKey(p);
           if (!map.has(key)) map.set(key, p);
         });
       });
-      this[cache] = map;
+      this._chordIndex = map;
     }
-    return this[cache];
+    return this._chordIndex;
   }
 
-  moodIndex(precise) {
-    const cache = precise ? '_moodIndexPrecise' : '_moodIndex';
-    if (!this[cache]) {
+  moodIndex() {
+    if (!this._moodIndex) {
       const map = new Map();
       Object.values(this.data.mood?.categories || {}).forEach(cat => {
         (cat.phrases || []).forEach(p => {
-          const key = PromptGenerator.matchKey(p, precise);
+          const key = PromptGenerator.matchKey(p);
           if (!map.has(key)) map.set(key, p);
         });
       });
-      this[cache] = map;
+      this._moodIndex = map;
     }
-    return this[cache];
+    return this._moodIndex;
   }
 
-  structureIndex(precise) {
-    const cache = precise ? '_structureIndexPrecise' : '_structureIndex';
-    if (!this[cache]) {
+  structureIndex() {
+    if (!this._structureIndex) {
       const map = new Map();
       Object.values(this.data.structure?.categories || {}).forEach(cat => {
         (cat.phrases || []).forEach(p => {
-          const key = PromptGenerator.matchKey(p, precise);
+          const key = PromptGenerator.matchKey(p);
           if (!map.has(key)) map.set(key, p);
         });
       });
-      this[cache] = map;
+      this._structureIndex = map;
     }
-    return this[cache];
+    return this._structureIndex;
   }
 
-  instrumentIndex(precise) {
-    const cache = precise ? '_instrumentIndexPrecise' : '_instrumentIndex';
-    if (!this[cache]) {
+  instrumentIndex() {
+    if (!this._instrumentIndex) {
       const map = new Map();
       Object.entries(this.data.instruments?.instruments || {}).forEach(([key, data]) => {
-        map.set(PromptGenerator.matchKey(key, precise), key);
+        map.set(PromptGenerator.matchKey(key), key);
         (data.aliases || []).forEach(alias => {
-          const aliasKey = PromptGenerator.matchKey(alias, precise);
+          const aliasKey = PromptGenerator.matchKey(alias);
           if (!map.has(aliasKey)) map.set(aliasKey, key);
         });
       });
-      this[cache] = map;
+      this._instrumentIndex = map;
     }
-    return this[cache];
+    return this._instrumentIndex;
   }
 
   // "Grand Piano" or "Grand Piano (legato arpeggios, panned left)" -> the
   // instrument key plus whatever sits inside the parentheses.
-  matchInstrument(value, precise) {
+  matchInstrument(value) {
     let name = value;
     let details = '';
     const paren = value.indexOf('(');
@@ -716,16 +710,16 @@ class PromptGenerator {
       name = value.slice(0, paren).trim();
       details = value.slice(paren + 1, -1).trim();
     }
-    const index = this.instrumentIndex(precise);
+    const index = this.instrumentIndex();
     const toneMap = new Map((this.data.instruments?.tone_descriptors || [])
-      .map(tone => [PromptGenerator.matchKey(tone, precise), tone]));
+      .map(tone => [PromptGenerator.matchKey(tone), tone]));
     // "warm dreamy Rhodes": peel tone words off the front until a name is left
     const words = name.split(/\s+/);
     const tones = [];
     for (;;) {
-      const key = index.get(PromptGenerator.matchKey(words.join(' '), precise));
+      const key = index.get(PromptGenerator.matchKey(words.join(' ')));
       if (key) return { key, details, tones };
-      const tone = words.length > 1 && toneMap.get(PromptGenerator.matchKey(words[0], precise));
+      const tone = words.length > 1 && toneMap.get(PromptGenerator.matchKey(words[0]));
       if (!tone) return null;
       tones.push(tone);
       words.shift();
@@ -733,7 +727,7 @@ class PromptGenerator {
   }
 
   // A vocal phrase, optionally carrying a position in parentheses
-  matchVocal(value, precise) {
+  matchVocal(value) {
     let phrase = value;
     let details = '';
     const paren = value.indexOf('(');
@@ -741,19 +735,19 @@ class PromptGenerator {
       phrase = value.slice(0, paren).trim();
       details = value.slice(paren + 1, -1).trim();
     }
-    const entry = this.vocalIndex(precise).get(PromptGenerator.matchKey(phrase, precise));
+    const entry = this.vocalIndex().get(PromptGenerator.matchKey(phrase));
     return entry ? { ...entry, details } : null;
   }
 
   // Tick the instrument, its tones, techniques and position; anything inside
   // the parentheses that matched nothing becomes the instrument's own note.
-  applyInstrumentParse(sel, { key, details, tones = [] }, precise) {
+  applyInstrumentParse(sel, { key, details, tones = [] }) {
     const leftovers = [];
     if (tones.length > 0) sel.instrumentTones[key] = [...new Set([...(sel.instrumentTones[key] || []), ...tones])];
     if (!sel.instruments.includes(key)) sel.instruments.push(key);
 
     const instrument = this.data.instruments?.instruments?.[key] || {};
-    const mk = (s) => PromptGenerator.matchKey(s, precise);
+    const mk = (s) => PromptGenerator.matchKey(s);
     const techniques = new Map((instrument.techniques || []).map(t => [mk(t), t]));
     const panMap = new Map(PromptGenerator.POSITIONS.pan.map(p => [mk(p), p]));
     const depthMap = new Map(PromptGenerator.POSITIONS.depth.map(p => [mk(p), p]));
@@ -782,11 +776,11 @@ class PromptGenerator {
     return [];
   }
 
-  applyVocalParse(sel, { phrase, mode, details }, precise) {
+  applyVocalParse(sel, { phrase, mode, details }) {
     const leftovers = [];
     if (!sel.vocals.includes(phrase)) sel.vocals.push(phrase);
 
-    const mk = (s) => PromptGenerator.matchKey(s, precise);
+    const mk = (s) => PromptGenerator.matchKey(s);
     const panMap = new Map(PromptGenerator.POSITIONS.pan.map(p => [mk(p), p]));
     const depthMap = new Map(PromptGenerator.POSITIONS.depth.map(p => [mk(p), p]));
 
@@ -810,13 +804,13 @@ class PromptGenerator {
   // A token can match several flat categories at once — "lo-fi" is both a
   // genre and a production phrase. Collect every match so the caller can
   // resolve the clash rather than silently picking one.
-  collectFlatMatches(value, precise) {
-    const key = PromptGenerator.matchKey(value, precise);
+  collectFlatMatches(value) {
+    const key = PromptGenerator.matchKey(value);
     const matches = [];
-    if (this.genreIndex(precise).has(key)) matches.push({ category: 'genres', value: this.genreIndex(precise).get(key) });
-    if (this.chordIndex(precise).has(key)) matches.push({ category: 'chords', value: this.chordIndex(precise).get(key) });
-    if (this.moodIndex(precise).has(key)) matches.push({ category: 'moods', value: this.moodIndex(precise).get(key) });
-    if (this.structureIndex(precise).has(key)) matches.push({ category: 'structures', value: this.structureIndex(precise).get(key) });
+    if (this.genreIndex().has(key)) matches.push({ category: 'genres', value: this.genreIndex().get(key) });
+    if (this.chordIndex().has(key)) matches.push({ category: 'chords', value: this.chordIndex().get(key) });
+    if (this.moodIndex().has(key)) matches.push({ category: 'moods', value: this.moodIndex().get(key) });
+    if (this.structureIndex().has(key)) matches.push({ category: 'structures', value: this.structureIndex().get(key) });
     return matches;
   }
 
@@ -837,11 +831,11 @@ class PromptGenerator {
   // same vocab normal parsing uses, without touching techniques/positions —
   // an excluded item is just a name in its category's list.
   matchExcludeToken(value, precise, categoryOrder) {
-    const instrument = this.matchInstrument(value, precise);
+    const instrument = this.matchInstrument(value);
     if (instrument) {
       if (!instrument.details) return { category: 'instruments', value: instrument.key };
       const techniques = this.data.instruments?.instruments?.[instrument.key]?.techniques || [];
-      const mk = (s) => PromptGenerator.matchKey(s, precise);
+      const mk = (s) => PromptGenerator.matchKey(s);
       const tech = techniques.find(t => mk(t) === mk(instrument.details));
       return {
         category: 'instruments',
@@ -856,15 +850,15 @@ class PromptGenerator {
     // same way collectFlatMatches/resolveFlatMatch do for the main token
     // loop below (e.g. "grunge" is both the Rock genre and an Electric
     // Guitar technique).
-    const mk = (s) => PromptGenerator.matchKey(s, precise);
+    const mk = (s) => PromptGenerator.matchKey(s);
     const instruments = this.data.instruments?.instruments || {};
-    const matches = this.collectFlatMatches(value, precise);
+    const matches = this.collectFlatMatches(value);
     const owner = Object.keys(instruments).find(key => (instruments[key].techniques || []).some(t => mk(t) === mk(value)));
     if (owner) {
       const tech = instruments[owner].techniques.find(t => mk(t) === mk(value));
       matches.push({ category: 'instruments', value: PromptGenerator.techniqueValue(owner, tech) });
     }
-    const vocal = this.matchVocal(value, precise);
+    const vocal = this.matchVocal(value);
     if (vocal) matches.push({ category: 'vocals', value: vocal.phrase });
 
     if (matches.length === 0) return null;
@@ -919,19 +913,19 @@ class PromptGenerator {
       const bpm = value.match(/\b(\d{2,3})\s*bpm\b/i);
       if (bpm) { sel.bpm = parseInt(bpm[1], 10); return; }
 
-      const instrument = this.matchInstrument(value, precise);
+      const instrument = this.matchInstrument(value);
       if (instrument) {
-        leftovers.push(...this.applyInstrumentParse(sel, instrument, precise));
+        leftovers.push(...this.applyInstrumentParse(sel, instrument));
         return;
       }
 
-      const vocal = this.matchVocal(value, precise);
+      const vocal = this.matchVocal(value);
       if (vocal) {
-        leftovers.push(...this.applyVocalParse(sel, vocal, precise));
+        leftovers.push(...this.applyVocalParse(sel, vocal));
         return;
       }
 
-      const flat = this.collectFlatMatches(value, precise);
+      const flat = this.collectFlatMatches(value);
       if (flat.length === 0) {
         leftovers.push(value);
         return;
