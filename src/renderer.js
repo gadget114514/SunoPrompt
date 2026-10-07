@@ -63,6 +63,22 @@ const normalizeSelections = (sel) => {
 
 const t = (key) => translations[currentLang][key] || translations.en[key] || key;
 
+// Keyword display translation (display only; selections and prompts stay English).
+// Shows "English (訳)" when the UI language has a translation, English only otherwise.
+const keywordTrans = (phrase) => {
+  if (currentLang === 'en' || phrase == null) return null;
+  try {
+    if (typeof keywordTranslations === 'undefined') return null;
+    return keywordTranslations[currentLang]?.[phrase] || null;
+  } catch (error) {
+    return null;
+  }
+};
+const keywordLabel = (phrase) => {
+  const tr = keywordTrans(phrase);
+  return tr && tr !== phrase ? `${phrase} (${tr})` : phrase;
+};
+
 // Locale used for timestamps in the log and the project list
 const LOCALES = { en: 'en-US', ja: 'ja-JP', es: 'es-ES' };
 const localeFor = () => LOCALES[currentLang] || 'en-US';
@@ -96,6 +112,17 @@ const updateLanguage = (lang) => {
   updateStageDiagram();
   renderHelp();
   renderAbout();
+
+  // Keyword lists show "English (訳)" in ja/es; rebuild them on language switch.
+  // Data and selections stay English, so only the labels change.
+  if (generator) {
+    renderKeywordLists();
+    syncPositionControls();
+    syncToneControls();
+    updateAllCheckboxes();
+    updateFolderHighlights();
+    updatePreview();
+  }
 
   // Update lang buttons
   document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -477,8 +504,8 @@ const updateStageDiagram = () => {
       dot.appendChild(stagePin(placement, x, y));
     }
 
-    const detail = [placement.pan, placement.depth].filter(Boolean).join(', ') || t('stageUnplaced');
-    const text = `${placement.label} — ${detail}`;
+    const detail = [placement.pan, placement.depth].filter(Boolean).map(p => keywordLabel(p)).join(', ') || t('stageUnplaced');
+    const text = `${keywordLabel(placement.label)} — ${detail}`;
     const title = svgEl('title', {});
     title.textContent = text;
     dot.appendChild(title);
@@ -653,7 +680,8 @@ const createSelectableItem = (category, value, text, extraClass = '') => {
 
   const label = document.createElement('label');
   label.htmlFor = itemId;
-  label.textContent = text;
+  label.textContent = keywordLabel(text);
+  label.title = text;
 
   wrapper.appendChild(checkbox);
   wrapper.appendChild(label);
@@ -698,7 +726,9 @@ const renderHierarchicalList = (container, hierarchyObj, category, folderType) =
 
     const folderLabel = document.createElement('span');
     folderLabel.className = 'folder-name';
-    folderLabel.textContent = parentName;
+    const folderDisplay = category === 'instruments' ? generator.getInstrumentName(parentName) : parentName;
+    folderLabel.textContent = keywordLabel(folderDisplay);
+    folderLabel.title = folderDisplay;
 
     const selectionCount = document.createElement('span');
     selectionCount.className = 'selection-count';
@@ -798,7 +828,7 @@ const createPositionRow = (positionKey) => {
     PromptGenerator.POSITIONS[axis].forEach(phrase => {
       const option = document.createElement('option');
       option.value = phrase;
-      option.textContent = phrase;
+      option.textContent = keywordLabel(phrase);
       select.appendChild(option);
     });
 
@@ -835,7 +865,8 @@ const createToneRow = (instrument) => {
     chip.className = 'tone-chip';
     chip.dataset.instrument = instrument;
     chip.dataset.tone = tone;
-    chip.textContent = tone;
+    chip.textContent = keywordLabel(tone);
+    chip.title = tone;
     chip.addEventListener('click', () => {
       const current = selections.instrumentTones[instrument] || [];
       const next = current.includes(tone) ? current.filter(x => x !== tone) : [...current, tone];
@@ -892,7 +923,8 @@ const syncToneControls = () => {
   document.querySelectorAll('.tone-badge').forEach(badge => {
     const tones = selections.instrumentTones[badge.dataset.instrument] || [];
     const note = selections.instrumentNotes[badge.dataset.instrument]?.trim();
-    badge.textContent = [tones.length ? `🎨 ${tones.join(' ')}` : '', note ? `✎ ${note}` : ''].filter(Boolean).join('  ');
+    const toneText = tones.length ? `🎨 ${tones.map(tone => keywordLabel(tone)).join(' ')}` : '';
+    badge.textContent = [toneText, note ? `✎ ${note}` : ''].filter(Boolean).join('  ');
   });
 };
 
@@ -938,7 +970,7 @@ const syncPositionControls = () => {
   });
   document.querySelectorAll('.position-badge').forEach(badge => {
     const position = selections.positions[badge.dataset.positionKey];
-    badge.textContent = position ? `📍 ${[position.pan, position.depth].filter(Boolean).join(', ')}` : '';
+    badge.textContent = position ? `📍 ${[position.pan, position.depth].filter(Boolean).map(p => keywordLabel(p)).join(', ')}` : '';
   });
 };
 
@@ -948,7 +980,7 @@ const syncOthersInput = () => {
   if (input) input.value = selections.others || '';
 };
 
-const populateTabs = () => {
+const renderKeywordLists = () => {
   if (!generator) return;
   const items = generator.flattenAllItems();
 
@@ -961,6 +993,11 @@ const populateTabs = () => {
 
   // The lists were just rebuilt; a search that is still typed in must survive that
   applySearchFilters();
+};
+
+const populateTabs = () => {
+  if (!generator) return;
+  renderKeywordLists();
 
   addLog(t('logDataLoaded'), 'success');
 };
