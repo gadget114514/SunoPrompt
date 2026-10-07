@@ -141,6 +141,73 @@
             <div id="instruments-list" class="items-list"></div>
           </div>
           <div class="tab-content" id="chords-tab">
+            <div class="prog-editor" aria-label="Chord progression editor">
+              <div class="prog-row">
+                <label class="prog-field"><span data-i18n="progTemplate">Progression</span>
+                  <select id="prog-template" class="prog-select"></select>
+                </label>
+                <label class="prog-field"><span data-i18n="progKey">Key</span>
+                  <select id="prog-key" class="prog-select"></select>
+                </label>
+                <label class="prog-field"><span data-i18n="progMode">Mode</span>
+                  <select id="prog-mode" class="prog-select"></select>
+                </label>
+                <label class="prog-field"><span data-i18n="progMeter">Meter</span>
+                  <select id="prog-meter" class="prog-select"></select>
+                </label>
+                <label class="prog-field"><span data-i18n="progBars">Bars</span>
+                  <select id="prog-bars" class="prog-select"></select>
+                </label>
+                <label class="prog-field"><span data-i18n="progZoom">Scale</span>
+                  <input type="range" id="prog-zoom" min="24" max="72" value="40" class="prog-zoom">
+                </label>
+              </div>
+              <div class="prog-row prog-transport">
+                <button type="button" id="prog-play" class="icon-btn" data-i18n-title="progPlay">▶</button>
+                <button type="button" id="prog-stop" class="icon-btn" data-i18n-title="progStop">■</button>
+                <span id="prog-pos" class="prog-pos">1.1</span>
+                <label class="prog-field"><span data-i18n="progExportFormat">File</span>
+                  <select id="prog-export-format" class="prog-select">
+                    <option value="wav">WAV</option>
+                    <option value="mp3">MP3</option>
+                  </select>
+                </label>
+                <button type="button" id="prog-export" class="btn btn-secondary btn-small" data-i18n="progExport">Export</button>
+                <span id="prog-info" class="prog-info"></span>
+              </div>
+              <div class="prog-tracks">
+                <div class="prog-track-labels" aria-hidden="true">
+                  <div class="prog-ruler-spacer"></div>
+                  <div class="prog-track-label prog-track-label-melody"><span data-i18n="progMelodyTrack">Melody</span></div>
+                  <div class="prog-track-label prog-track-label-chord"><span data-i18n="progChordTrack">Chords</span></div>
+                </div>
+                <div class="prog-timeline-wrap">
+                  <div id="prog-ruler" class="prog-ruler"></div>
+                  <div id="prog-melody-lane" class="prog-melody-lane"><div id="prog-melody-cursor" class="prog-cursor" hidden></div></div>
+                  <div id="prog-lane" class="prog-lane"><div id="prog-cursor" class="prog-cursor" hidden></div></div>
+                </div>
+              </div>
+              <div class="prog-row prog-palette">
+                <label class="prog-field"><span data-i18n="progRoot">Chord</span>
+                  <select id="prog-root" class="prog-select"></select>
+                </label>
+                <label class="prog-field"><span data-i18n="progQuality">Type</span>
+                  <select id="prog-quality" class="prog-select"></select>
+                </label>
+                <span id="prog-preview" class="prog-preview"></span>
+                <button type="button" id="prog-add" class="btn btn-secondary btn-small" data-i18n="progAdd">Add</button>
+                <button type="button" id="prog-replace" class="btn btn-secondary btn-small" data-i18n="progReplace">Replace</button>
+                <button type="button" id="prog-delete" class="btn btn-secondary btn-small" data-i18n="progDelete">Delete</button>
+              </div>
+              <div class="prog-row prog-generate">
+                <button type="button" id="prog-generate" class="btn btn-primary btn-small" data-i18n="progGenerate">Generate</button>
+                <label class="prog-field"><span data-i18n="progGenMode">How</span>
+                  <select id="prog-gen-mode" class="prog-select"></select>
+                </label>
+                <span class="prog-gen-note" data-i18n="progGenNote">Generates chords bar by bar for the bar count above</span>
+              </div>
+              <p class="prog-hint" data-i18n="progHint">Hint</p>
+            </div>
             <div class="list-search">
               <span class="list-search-icon" aria-hidden="true">🔍</span>
               <input type="search" class="list-search-input" id="chords-search" data-search-list="chords-list"
@@ -255,6 +322,9 @@
   </div>
 
   <script src="webApi.js"></script>
+  <script src="vendor/lame.min.js"></script>
+  <script src="utils/chordTheory.js"></script>
+  <script src="utils/progAudio.js"></script>
   <script src="utils/promptGenerator.js"></script>
   <script src="i18n.js"></script>
   <script src="i18n_keywords.js"></script>

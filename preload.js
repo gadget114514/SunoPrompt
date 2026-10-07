@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getProjectsDir: () => ipcRenderer.invoke('get-projects-dir'),
   copyToClipboard: (text) => ipcRenderer.invoke('copy-to-clipboard', text),
   saveToFile: (text) => ipcRenderer.invoke('save-to-file', text),
+  saveBinaryFile: (payload) => ipcRenderer.invoke('save-binary-file', payload),
   saveProject: (projectData) => ipcRenderer.invoke('save-project', projectData),
   loadProjects: () => ipcRenderer.invoke('load-projects'),
   loadProject: (fileName) => ipcRenderer.invoke('load-project', fileName),

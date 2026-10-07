@@ -128,9 +128,29 @@ class PromptGenerator {
     return items;
   }
 
-  // Chord / harmony phrases
+  // Chord / harmony phrases + the progression timeline (if any).
+  // The timeline is rendered as compact text, e.g.
+  // "C major I-V-vi-IV (C - G - Am - F), 4/4 4 bars".
   chordParts(selections) {
-    return [...(selections.chords || [])];
+    const parts = [...(selections.chords || [])];
+    const prog = this.progressionText(selections);
+    if (prog) parts.push(prog);
+    return parts;
+  }
+
+  progressionText(selections) {
+    const prog = selections.progression;
+    if (!prog || !Array.isArray(prog.chords) || prog.chords.length === 0) return '';
+    const sorted = [...prog.chords].sort((a, b) => a.start - b.start);
+    const names = sorted.map(c => {
+      const suffix = { maj: '', min: 'm', 7: '7', maj7: 'maj7', m7: 'm7', m7b5: 'm7b5', dim: 'dim', aug: 'aug', sus4: 'sus4', add9: 'add9' }[c.quality] ?? c.quality;
+      return `${c.root}${suffix}`;
+    });
+    const key = prog.key || 'C';
+    const mode = prog.mode || 'major';
+    const meter = prog.meter || '4/4';
+    const bars = prog.bars || 4;
+    return `in ${key} ${mode}, ${names.join(' - ')} progression, ${meter} ${bars} bars`;
   }
 
   // Mood / emotion and sound-texture phrases

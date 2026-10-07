@@ -1656,3 +1656,304 @@ body.is-web .left-panel {
   white-space: normal;
   word-break: break-all;
 }
+
+/* The left (projects/settings) pane is hidden for now to give the track
+   editor room. The DOM stays so it can be brought back any time. */
+.left-panel {
+  display: none;
+}
+
+/* Chord progression editor (inside the Chords tab) */
+.prog-editor {  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fcfcff;
+}
+
+.prog-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.prog-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.prog-select {
+  font-size: 12px;
+  padding: 3px 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  max-width: 170px;
+}
+
+.prog-zoom {
+  width: 110px;
+}
+
+.prog-transport {
+  align-items: center;
+}
+
+.prog-pos {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  min-width: 40px;
+}
+
+.prog-info {
+  font-size: 11px;
+  color: #667eea;
+}
+
+.prog-timeline-wrap {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  overflow-x: auto;
+  background: white;
+  margin-bottom: 8px;
+}
+
+.prog-ruler {
+  position: relative;
+  height: 20px;
+  border-bottom: 1px solid #eee;
+  background: #f6f7fd;
+  cursor: pointer;
+  user-select: none;
+  touch-action: none;
+}
+
+.prog-ruler-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid #dfe3fa;
+  font-size: 10px;
+  color: #8a8fb4;
+  padding-left: 3px;
+  line-height: 20px;
+  pointer-events: none;
+}
+
+.prog-ruler-tick.bar {
+  border-left-color: #b9c2ea;
+  font-weight: 700;
+}
+
+.prog-lane {
+  position: relative;
+  height: 64px;
+  user-select: none;
+  touch-action: none;
+  background:
+    repeating-linear-gradient(to right, transparent 0, transparent calc(var(--beat-px, 40px) - 1px), #eef1ff calc(var(--beat-px, 40px) - 1px), var(--beat-px, 40px));
+}
+
+.prog-beat-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #eef1ff;
+  pointer-events: none;
+}
+
+.prog-beat-line.bar {
+  background: #c9d1f5;
+}
+
+.prog-chord {
+  position: absolute;
+  top: 8px;
+  height: 48px;
+  border: 1.5px solid #667eea;
+  border-radius: 6px;
+  background: #e8ecff;
+  color: #333;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  overflow: hidden;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.prog-chord.selected {
+  outline: 2px solid #764ba2;
+  outline-offset: 1px;
+}
+
+.prog-chord-nondiatonic {
+  border-color: #e8590c;
+  background: #fff1e4;
+  color: #b34700;
+}
+
+.prog-chord.playing {
+  box-shadow: 0 0 0 2px #10b981 inset;
+}
+
+.prog-chord-resize {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  cursor: ew-resize;
+}
+
+.prog-cursor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #10b981;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.prog-palette {
+  align-items: flex-end;
+}
+
+.prog-preview {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #e8ecff;
+  color: #333;
+  border: 1px solid #667eea;
+}
+
+.prog-preview.is-warning {
+  background: #fff1e4;
+  border-color: #e8590c;
+  color: #b34700;
+}
+
+#prog-add.is-warning,
+#prog-replace.is-warning {
+  border-color: #e8590c;
+  color: #b34700;
+}
+
+.prog-hint {
+  margin: 0;
+  font-size: 11px;
+  color: #999;
+}
+
+/* Two aligned tracks (melody above chords) sharing one timeline */
+.prog-tracks {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+  margin-bottom: 8px;
+}
+
+.prog-tracks .prog-timeline-wrap {
+  margin-bottom: 0;
+}
+
+.prog-track-labels {
+  flex: none;
+  width: 58px;
+  display: flex;
+  flex-direction: column;
+}
+
+.prog-ruler-spacer {
+  height: 20px;
+  flex: none;
+}
+
+.prog-track-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #f6f7fd;
+  color: #667eea;
+  padding: 0 2px;
+  text-align: center;
+}
+
+.prog-track-label-melody {
+  height: 88px;
+  color: #0d9488;
+  background: #f0fdfa;
+  border-color: #99f6e4;
+}
+
+.prog-track-label-chord {
+  height: 64px;
+  margin-top: 0;
+}
+
+.prog-melody-lane {
+  position: relative;
+  height: 88px;
+  user-select: none;
+  touch-action: none;
+  border-bottom: 1px solid #eee;
+  background:
+    repeating-linear-gradient(to right, transparent 0, transparent calc(var(--beat-px, 40px) - 1px), #eef1ff calc(var(--beat-px, 40px) - 1px), var(--beat-px, 40px));
+}
+
+.prog-note {
+  position: absolute;
+  height: 7px;
+  border-radius: 4px;
+  background: #14b8a6;
+  border: 1px solid #0d9488;
+  cursor: grab;
+  user-select: none;
+}
+
+.prog-note-passing {
+  background: #ccfbf1;
+}
+
+.prog-note-nonscale {
+  background: #fff1e4;
+  border-color: #e8590c;
+}
+
+.prog-note.selected {
+  outline: 2px solid #764ba2;
+  outline-offset: 1px;
+}
+
+.prog-note.sounding {
+  box-shadow: 0 0 0 2px #10b981;
+}
+
+.prog-note-grip-r {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  cursor: ew-resize;
+}

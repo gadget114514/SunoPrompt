@@ -207,6 +207,27 @@ ipcMain.handle('save-to-file', async (event, text) => {
   }
 });
 
+ipcMain.handle('save-binary-file', async (event, { fileName, base64, filters } = {}) => {
+  const { dialog } = require('electron');
+  try {
+    const safe = typeof fileName === 'string' && fileName
+      ? path.basename(fileName).replace(/[\\/:*?"<>|\x00-\x1F]/g, '_').slice(0, 128)
+      : 'audio.wav';
+    const result = await dialog.showSaveDialog(mainWindow, {
+      defaultPath: path.join(app.getPath('documents'), safe),
+      filters: Array.isArray(filters) && filters.length > 0 ? filters : [{ name: 'Audio', extensions: ['wav'] }]
+    });
+
+    if (!result.canceled) {
+      fs.writeFileSync(result.filePath, Buffer.from(String(base64 || ''), 'base64'));
+      return { success: true, filePath: result.filePath };
+    }
+    return { success: false, error: 'Save canceled' };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
 // Which folder projects are coming from. Asked for rather than pushed, so it
 // cannot arrive before the renderer is listening.
 ipcMain.handle('get-projects-dir', async () => getProjectsDir());

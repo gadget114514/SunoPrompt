@@ -89,6 +89,22 @@
     saveToFile: async (text) => {
       downloadText(text, 'suno-prompt.txt');
       return { success: true, filePath: 'suno-prompt.txt' };
+    },
+
+    saveBinaryFile: async ({ fileName, base64, mime }) => {
+      const raw = atob(String(base64 || ''));
+      const bytes = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+      const blob = new Blob([bytes], { type: mime || 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName || 'audio';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      return { success: true, filePath: fileName || 'audio' };
     }
   };
 })();
