@@ -28,6 +28,8 @@ A desktop app for building [Suno AI](https://suno.com/) style prompts by simply 
 
 Use it right in your browser — nothing to install: **[https://gadget114514.github.io/SunoPrompt/](https://gadget114514.github.io/SunoPrompt/)**
 
+Development version (latest `main` branch, may be unstable): [https://gadget114514.github.io/SunoPrompt/dev/](https://gadget114514.github.io/SunoPrompt/dev/)
+
 Project save/load is available only in the Windows app.
 
 ## Download (Windows app)

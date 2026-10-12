@@ -28,6 +28,8 @@
 
 インストール不要でブラウザからすぐに使えます: **[https://gadget114514.github.io/SunoPrompt/](https://gadget114514.github.io/SunoPrompt/)**
 
+開発版（`main` ブランチの最新。不安定な場合があります）: [https://gadget114514.github.io/SunoPrompt/dev/](https://gadget114514.github.io/SunoPrompt/dev/)
+
 プロジェクトの保存・読み込みは Windows アプリ版のみの機能です。
 
 ## ダウンロード (Windowsアプリ)
