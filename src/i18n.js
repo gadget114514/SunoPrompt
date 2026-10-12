@@ -131,6 +131,24 @@ const translations = {
     logProjectNameRequired: 'Please enter a project name',
     projectsEmpty: 'No projects saved yet',
     confirmDeleteProject: 'Delete this project?',
+    lyrics: 'Lyrics',
+    copyLyrics: 'Copy lyrics',
+    resetSamples: 'Fill empty sections with samples',
+    collapseLyrics: 'Collapse lyrics',
+    expandLyrics: 'Expand lyrics',
+    destStyle: 'Style',
+    destExclude: 'Exclude',
+    lyricIntro: 'Intro',
+    lyricVerse1: 'Verse 1',
+    lyricVerse2: 'Verse 2',
+    lyricPreChorus: 'Pre-Chorus',
+    lyricChorus: 'Chorus',
+    lyricOutro: 'Outro',
+    advancedMode: 'Advanced (lyrics sections / exclude)',
+    logLyricsCopied: 'Lyrics copied to clipboard',
+    logLyricsSamples: 'Empty lyric sections filled with samples',
+    logAdvancedOn: 'Advanced mode on',
+    logAdvancedOff: 'Advanced mode off',
     // Help dialog. helpSections is read by renderHelp() in renderer.js, so it
     // must never be referenced from a data-i18n attribute.
     help: '❓ Help',
@@ -214,6 +232,16 @@ const translations = {
           '📥 Parse Prompt takes a Style prompt you paste in and ticks everything it recognises.',
           'Ambiguous match accepts near misses; Precise match takes exact names only. Upper and lower case are ignored either way.',
           'Anything it cannot place is left in the Others tab as free text. Ctrl + Enter runs the parse.'
+        ]
+      },
+      {
+        heading: 'Lyrics pane and destinations',
+        items: [
+          'The Lyrics pane on the right writes Suno’s Lyrics field section by section; each heading is a control metatag such as [Verse 1, whisper].',
+          'The Advanced switch in Settings reveals a destination row on every non-genre item: S (Style), ✕ (Exclude) and one box per lyric section (In, V1, V2, PC, Ch, Out).',
+          'Ticking S or ✕ mirrors the item’s own checkbox and tri-state click; ticking a section box adds the item to that section’s tag line.',
+          'A section is written only when it has a tag or text, and sections are joined by a blank line. The counter tracks Suno’s 5000-character lyrics limit.',
+          '📋 copies the whole Lyrics text, and ♻️ fills any empty section with its sample control metatags.'
         ]
       },
       {
@@ -387,6 +415,24 @@ const translations = {
     logProjectNameRequired: 'プロジェクト名を入力してください',
     projectsEmpty: '保存済みプロジェクトはありません',
     confirmDeleteProject: 'このプロジェクトを削除しますか？',
+    lyrics: '歌詞',
+    copyLyrics: '歌詞をコピー',
+    resetSamples: '空欄をサンプルで埋める',
+    collapseLyrics: '歌詞パネルを閉じる',
+    expandLyrics: '歌詞パネルを開く',
+    destStyle: 'スタイル',
+    destExclude: '除外',
+    lyricIntro: 'イントロ',
+    lyricVerse1: '1番',
+    lyricVerse2: '2番',
+    lyricPreChorus: 'プレサビ',
+    lyricChorus: 'サビ',
+    lyricOutro: 'アウトロ',
+    advancedMode: '詳細設定（歌詞セクション / 除外）',
+    logLyricsCopied: '歌詞をクリップボードにコピーしました',
+    logLyricsSamples: '空の歌詞セクションをサンプルで埋めました',
+    logAdvancedOn: '詳細設定をオンにしました',
+    logAdvancedOff: '詳細設定をオフにしました',
     help: '❓ ヘルプ',
     helpTitle: 'ヘルプ',
     helpClose: '閉じる',
@@ -468,6 +514,16 @@ const translations = {
           '📥 プロンプト解析は、貼り付けたスタイルプロンプトから認識できた項目にチェックを入れます。',
           '曖昧一致は近い表記も受け入れ、完全一致は正式名称だけを受け入れます。どちらも大文字・小文字は区別しません。',
           '判別できなかった語は「その他」タブに自由記述として残ります。Ctrl + Enter で解析を実行できます。'
+        ]
+      },
+      {
+        heading: '歌詞パネルと出力先',
+        items: [
+          '右側の歌詞パネルは Suno の歌詞欄をセクション単位で書き出します。各見出しは [Verse 1, whisper] のようなコントロールメタタグです。',
+          '設定タブの「詳細設定」をオンにすると、ジャンル以外の各項目に出力先の行が出ます。S（スタイル）・✕（除外）・歌詞セクション（In・V1・V2・PC・Ch・Out）です。',
+          'S や ✕ をチェックすると項目本体のチェック・3状態クリックと連動します。セクションをチェックするとその項目がそのセクションのタグ行に追加されます。',
+          'タグか本文があるセクションだけが書き出され、セクション同士は空行で区切られます。カウンターは Suno の歌詞欄の上限5000文字を示します。',
+          '📋 で歌詞全体をコピー、♻️ で空のセクションをサンプルのコントロールメタタグで埋めます。'
         ]
       },
       {
@@ -641,6 +697,24 @@ const translations = {
     logProjectNameRequired: 'Introduce un nombre de proyecto',
     projectsEmpty: 'Aún no hay proyectos guardados',
     confirmDeleteProject: '¿Eliminar este proyecto?',
+    lyrics: 'Letra',
+    copyLyrics: 'Copiar la letra',
+    resetSamples: 'Rellenar las secciones vacías con ejemplos',
+    collapseLyrics: 'Plegar la letra',
+    expandLyrics: 'Desplegar la letra',
+    destStyle: 'Estilo',
+    destExclude: 'Excluir',
+    lyricIntro: 'Intro',
+    lyricVerse1: 'Verso 1',
+    lyricVerse2: 'Verso 2',
+    lyricPreChorus: 'Pre-Estribillo',
+    lyricChorus: 'Estribillo',
+    lyricOutro: 'Outro',
+    advancedMode: 'Avanzado (secciones de letra / exclusión)',
+    logLyricsCopied: 'Letra copiada al portapapeles',
+    logLyricsSamples: 'Secciones de letra vacías rellenadas con ejemplos',
+    logAdvancedOn: 'Modo avanzado activado',
+    logAdvancedOff: 'Modo avanzado desactivado',
     help: '❓ Ayuda',
     helpTitle: 'Ayuda',
     helpClose: 'Cerrar',
@@ -722,6 +796,16 @@ const translations = {
           '📥 Analizar prompt toma un prompt de estilo que pegues y marca todo lo que reconoce.',
           'La coincidencia ambigua acepta aproximaciones; la precisa solo admite nombres exactos. En ambos casos no se distingue entre mayúsculas y minúsculas.',
           'Lo que no logra situar se queda como texto libre en la pestaña Otros. Ctrl + Enter ejecuta el análisis.'
+        ]
+      },
+      {
+        heading: 'Panel de letra y destinos',
+        items: [
+          'El panel de Letra, a la derecha, escribe el campo de letra de Suno sección por sección; cada encabezado es una metaetiqueta como [Verse 1, whisper].',
+          'El interruptor Avanzado, en Ajustes, muestra una fila de destinos en cada elemento que no sea género: S (Estilo), ✕ (Excluir) y una casilla por sección de letra (In, V1, V2, PC, Ch, Out).',
+          'Marcar S o ✕ refleja la casilla y el clic de tres estados del propio elemento; marcar una sección añade el elemento a la línea de etiqueta de esa sección.',
+          'Una sección solo se escribe si tiene etiqueta o texto, y las secciones se unen con una línea en blanco. El contador controla el límite de 5000 caracteres del campo de letra de Suno.',
+          '📋 copia toda la letra y ♻️ rellena cualquier sección vacía con sus metaetiquetas de ejemplo.'
         ]
       },
       {

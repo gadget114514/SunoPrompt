@@ -17,6 +17,41 @@ const readStoredCategoryOrder = () => {
 
 const emptyExcludes = () => ({ genres: [], vocals: [], instruments: [], chords: [], moods: [], structures: [] });
 
+// The Lyrics pane's sections and the categories that can carry a metatag
+const LYRIC_SECTIONS = PromptGenerator.LYRIC_SECTIONS;
+const LYRIC_CATEGORIES = PromptGenerator.LYRIC_CATEGORIES;
+// i18n key for each section's label, keyed by its section key
+const LYRIC_SECTION_LABEL_KEYS = {
+  intro: 'lyricIntro',
+  verse1: 'lyricVerse1',
+  verse2: 'lyricVerse2',
+  preChorus: 'lyricPreChorus',
+  chorus: 'lyricChorus',
+  outro: 'lyricOutro'
+};
+
+// Sample control metatags, so a new project's Lyrics pane is not empty
+const SAMPLE_LYRICS = {
+  intro: '[Instrumental]\n[Soft Piano]',
+  verse1: '[Mood: Calm]\n[Vocal: Breathy]',
+  verse2: '[Energy: Medium]',
+  preChorus: '[Build-Up]',
+  chorus: '[Energy: High]\n[Harmonies]',
+  outro: '[Fade Out]\n[End]'
+};
+
+// Per section, per category, the items assigned as that section's metatags
+const emptyLyricTags = () => {
+  const tags = {};
+  LYRIC_SECTIONS.forEach(({ key }) => {
+    tags[key] = {};
+    LYRIC_CATEGORIES.forEach(category => { tags[key][category] = []; });
+  });
+  return tags;
+};
+
+const defaultLyrics = () => ({ ...SAMPLE_LYRICS });
+
 let selections = {
   genres: [],
   vocals: [],
@@ -30,10 +65,15 @@ let selections = {
   // Per instrument: tone words ("warm", "icy") and a free-text note
   instrumentTones: {},
   instrumentNotes: {},
+  // Per vocal mode: tone words ("warm", "solo")
+  vocalTones: {},
   // Per tab: free text for anything the lists do not have
   customs: {},
   categoryOrder: readStoredCategoryOrder(),
-  bpm: 120
+  bpm: 120,
+  // Lyrics pane: the items written into each section's metatag, and the text
+  lyricTags: emptyLyricTags(),
+  lyrics: defaultLyrics()
 };
 
 const CATEGORIES = PromptGenerator.CATEGORIES;
@@ -50,8 +90,20 @@ const normalizeSelections = (sel) => {
   });
   if (!normalized.positions || typeof normalized.positions !== 'object') normalized.positions = {};
   if (typeof normalized.others !== 'string') normalized.others = '';
-  ['instrumentTones', 'instrumentNotes', 'customs'].forEach(key => {
+  ['instrumentTones', 'instrumentNotes', 'vocalTones', 'customs'].forEach(key => {
     if (!normalized[key] || typeof normalized[key] !== 'object') normalized[key] = {};
+  });
+  // Projects saved before the Lyrics pane have no tags and get the samples
+  if (!normalized.lyricTags || typeof normalized.lyricTags !== 'object') normalized.lyricTags = {};
+  LYRIC_SECTIONS.forEach(({ key }) => {
+    if (!normalized.lyricTags[key] || typeof normalized.lyricTags[key] !== 'object') normalized.lyricTags[key] = {};
+    LYRIC_CATEGORIES.forEach(category => {
+      if (!Array.isArray(normalized.lyricTags[key][category])) normalized.lyricTags[key][category] = [];
+    });
+  });
+  if (!normalized.lyrics || typeof normalized.lyrics !== 'object') normalized.lyrics = {};
+  LYRIC_SECTIONS.forEach(({ key }) => {
+    if (typeof normalized.lyrics[key] !== 'string') normalized.lyrics[key] = SAMPLE_LYRICS[key] || '';
   });
   // Projects saved before tabs could be reordered keep the order in use
   normalized.categoryOrder = PromptGenerator.categoryOrder(normalized.categoryOrder || selections.categoryOrder);
@@ -123,6 +175,7 @@ const updateLanguage = (lang) => {
     updateAllCheckboxes();
     updateFolderHighlights();
     updatePreview();
+    if (typeof updateLyricsPreview === 'function') updateLyricsPreview();
   }
 
   // Update lang buttons
@@ -230,6 +283,7 @@ const updatePreview = () => {
   updateFolderHighlights();
   updateStageDiagram();
   if (typeof renderProgInfo === 'function') renderProgInfo();
+  if (typeof updateLyricsPreview === 'function') updateLyricsPreview();
 
   // Trigger animation
   setTimeout(() => {
@@ -1195,8 +1249,8 @@ const progExportAudio = async () => {
 // checkbox in the excluded (indeterminate) state is not ":checked"
 const updateFolderHighlights = () => {
   document.querySelectorAll('.folder-item').forEach(folder => {
-    const checked = folder.querySelectorAll('input[type="checkbox"]:checked').length;
-    const excluded = folder.querySelectorAll('input[type="checkbox"]:indeterminate').length;
+    const checked = folder.querySelectorAll('input.item-check:checked').length;
+    const excluded = folder.querySelectorAll('input.item-check:indeterminate').length;
     const hasPosition = [...folder.querySelectorAll('.position-select')].some(select => select.value);
     const hasTone = !!folder.querySelector('.tone-chip.active') ||
       [...folder.querySelectorAll('.note-input')].some(input => input.value.trim());
@@ -1206,6 +1260,11 @@ const updateFolderHighlights = () => {
     if (count) count.textContent = checked > 0 ? checked : '';
     const excludeCount = folder.querySelector('.exclude-count');
     if (excludeCount) excludeCount.textContent = excluded > 0 ? `✕${excluded}` : '';
+    // Items assigned to at least one lyric section, counted once each
+    const lyricAssigned = [...folder.querySelectorAll('.checkbox-item')]
+      .filter(item => item.querySelector('.dest-section:checked')).length;
+    const lyricCount = folder.querySelector('.lyric-count');
+    if (lyricCount) lyricCount.textContent = lyricAssigned > 0 ? `♪${lyricAssigned}` : '';
   });
 };
 
@@ -1311,11 +1370,92 @@ const itemState = (category, value) => {
 
 // Reflect a tri-state onto a checkbox: checked for included, the native
 // indeterminate dash for excluded (distinct from both checked and empty),
-// plus a CSS hook for the crossed-out excluded styling.
+// plus a CSS hook for the crossed-out excluded styling. The item's
+// destination row (Advanced mode) follows the same state.
 const applyItemState = (wrapper, checkbox, state) => {
   checkbox.checked = state === 'included';
   checkbox.indeterminate = state === 'excluded';
   wrapper.classList.toggle('state-excluded', state === 'excluded');
+  syncDestRow(wrapper);
+};
+
+// Set an item's tri-state in one place, so the main checkbox, the tri-state
+// cycle and the S / ✕ destination boxes all stay in step.
+const setItemState = (category, value, state, wrapper = null) => {
+  selections[category] = selections[category].filter(x => x !== value);
+  selections.excludes[category] = selections.excludes[category].filter(x => x !== value);
+  if (state === 'included') selections[category].push(value);
+  else if (state === 'excluded') selections.excludes[category].push(value);
+  // Deferred: a canceled checkbox click resets checked/indeterminate back to
+  // their pre-click values right after the handler returns, so the real DOM
+  // update has to happen after that native reset, not during it.
+  setTimeout(() => {
+    // Prefer the element that was clicked: the same value can appear in more
+    // than one folder, so a lookup by id could refresh the wrong one.
+    const item = wrapper || document.getElementById(`${category}-${value}`)?.closest('.checkbox-item');
+    if (item) applyItemState(item, item.querySelector('input.item-check'), itemState(category, value));
+    updatePreview();
+  }, 0);
+};
+
+// Add or remove a category item from one lyric section's metatags
+const toggleLyricTag = (section, category, value, on) => {
+  const list = selections.lyricTags[section][category];
+  selections.lyricTags[section][category] = on
+    ? [...new Set([...list, value])]
+    : list.filter(x => x !== value);
+  updatePreview();
+};
+
+// The per-item destination boxes, shown only in Advanced mode. S and ✕ mirror
+// the item's tri-state; the rest are the six lyric sections.
+const DESTINATIONS = [
+  { key: 'style', label: 'S', titleKey: 'destStyle', className: 'dest-style' },
+  { key: 'exclude', label: '✕', titleKey: 'destExclude', className: 'dest-exclude' },
+  ...LYRIC_SECTIONS.map(({ key, short }) => ({
+    key, label: short, titleKey: LYRIC_SECTION_LABEL_KEYS[key], className: 'dest-section'
+  }))
+];
+
+const createDestRow = (category, value) => {
+  const row = document.createElement('div');
+  row.className = 'dest-row';
+  DESTINATIONS.forEach(dest => {
+    const box = document.createElement('label');
+    box.className = 'dest-box';
+    box.title = t(dest.titleKey);
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.className = `dest-check ${dest.className}`;
+    input.dataset.dest = dest.key;
+    input.dataset.category = category;
+    input.dataset.value = value;
+    const span = document.createElement('span');
+    span.textContent = dest.label;
+    box.append(input, span);
+    input.addEventListener('change', () => {
+      const wrapper = input.closest('.checkbox-item');
+      if (dest.key === 'style') setItemState(category, value, input.checked ? 'included' : 'none', wrapper);
+      else if (dest.key === 'exclude') setItemState(category, value, input.checked ? 'excluded' : 'none', wrapper);
+      else toggleLyricTag(dest.key, category, value, input.checked);
+    });
+    row.appendChild(box);
+  });
+  return row;
+};
+
+// Mirror the current selections onto an item's destination row
+const syncDestRow = (wrapper) => {
+  const row = wrapper?.querySelector('.dest-row');
+  if (!row) return;
+  const first = row.querySelector('.dest-check');
+  const state = itemState(first.dataset.category, first.dataset.value);
+  row.querySelectorAll('.dest-check').forEach(box => {
+    const dest = box.dataset.dest;
+    if (dest === 'style') box.checked = state === 'included';
+    else if (dest === 'exclude') box.checked = state === 'excluded';
+    else box.checked = (selections.lyricTags?.[dest]?.[box.dataset.category] || []).includes(box.dataset.value);
+  });
 };
 
 // A checkbox-item wired to cycle none -> included -> excluded -> none on
@@ -1330,25 +1470,15 @@ const createSelectableItem = (category, value, text, extraClass = '') => {
   checkbox.type = 'checkbox';
   checkbox.id = itemId;
   checkbox.value = value;
+  checkbox.className = 'item-check';
+  checkbox.dataset.category = category;
+  checkbox.dataset.value = value;
   applyItemState(wrapper, checkbox, itemState(category, value));
 
   checkbox.addEventListener('click', (e) => {
     e.preventDefault();
     const current = itemState(category, value);
-    if (current === 'included') {
-      selections[category] = selections[category].filter(x => x !== value);
-      selections.excludes[category].push(value);
-    } else if (current === 'excluded') {
-      selections.excludes[category] = selections.excludes[category].filter(x => x !== value);
-    } else {
-      selections[category].push(value);
-    }
-    // Deferred: a canceled checkbox click resets checked/indeterminate back
-    // to their pre-click values right after this handler returns, so the
-    // real DOM update has to happen after that native reset, not during it.
-    setTimeout(() => applyItemState(wrapper, checkbox, itemState(category, value)), 0);
-    // Force immediate preview update
-    setTimeout(updatePreview, 0);
+    setItemState(category, value, current === 'included' ? 'excluded' : current === 'excluded' ? 'none' : 'included', wrapper);
   });
 
   const label = document.createElement('label');
@@ -1358,6 +1488,11 @@ const createSelectableItem = (category, value, text, extraClass = '') => {
 
   wrapper.appendChild(checkbox);
   wrapper.appendChild(label);
+  // Only categories that can be lyric metatags get the destination row
+  if (LYRIC_CATEGORIES.includes(category)) {
+    wrapper.appendChild(createDestRow(category, value));
+    syncDestRow(wrapper);
+  }
   return { wrapper, checkbox, label };
 };
 
@@ -1409,10 +1544,14 @@ const renderHierarchicalList = (container, hierarchyObj, category, folderType) =
     const excludeCount = document.createElement('span');
     excludeCount.className = 'exclude-count';
 
+    const lyricCount = document.createElement('span');
+    lyricCount.className = 'lyric-count';
+
     header.appendChild(toggle);
     header.appendChild(folderLabel);
     header.appendChild(selectionCount);
     header.appendChild(excludeCount);
+    header.appendChild(lyricCount);
 
     // Folder content
     const content = document.createElement('div');
@@ -1445,14 +1584,16 @@ const renderHierarchicalList = (container, hierarchyObj, category, folderType) =
       content.appendChild(createPositionRow(positionKey));
     }
 
-    // Instruments also take tone words and a note of their own
-    if (category === 'instruments') {
+    // Instruments and vocal modes also take tone words; instruments get a
+    // free-text note of their own too
+    if (category === 'instruments' || (category === 'vocals' && folderType === 'mode')) {
       const toneBadge = document.createElement('span');
       toneBadge.className = 'tone-badge';
-      toneBadge.dataset.instrument = parentName;
+      toneBadge.dataset.scope = category === 'vocals' ? 'vocals' : 'instruments';
+      toneBadge.dataset.key = parentName;
       header.appendChild(toneBadge);
-      content.appendChild(createToneRow(parentName));
-      content.appendChild(createNoteRow(parentName));
+      content.appendChild(createToneRow(toneBadge.dataset.scope, parentName));
+      if (category === 'instruments') content.appendChild(createNoteRow(parentName));
     }
 
     // Add children checkboxes
@@ -1521,8 +1662,11 @@ const createPositionRow = (positionKey) => {
   return row;
 };
 
-// Emotional tone words for one instrument, toggled as chips
-const createToneRow = (instrument) => {
+// The tone map a scope writes into: instrument names or vocal modes
+const toneMapFor = (scope) => (scope === 'vocals' ? selections.vocalTones : selections.instrumentTones);
+
+// Emotional tone words for one instrument or vocal mode, toggled as chips
+const createToneRow = (scope, key) => {
   const row = document.createElement('div');
   row.className = 'position-row tone-row';
 
@@ -1532,19 +1676,21 @@ const createToneRow = (instrument) => {
   label.textContent = t('tone');
   row.appendChild(label);
 
-  (generator.data.instruments?.tone_descriptors || []).forEach(tone => {
+  generator.toneDescriptors().forEach(tone => {
     const chip = document.createElement('button');
     chip.type = 'button';
     chip.className = 'tone-chip';
-    chip.dataset.instrument = instrument;
+    chip.dataset.scope = scope;
+    chip.dataset.key = key;
     chip.dataset.tone = tone;
     chip.textContent = keywordLabel(tone);
     chip.title = tone;
     chip.addEventListener('click', () => {
-      const current = selections.instrumentTones[instrument] || [];
+      const map = toneMapFor(scope);
+      const current = map[key] || [];
       const next = current.includes(tone) ? current.filter(x => x !== tone) : [...current, tone];
-      if (next.length > 0) selections.instrumentTones[instrument] = next;
-      else delete selections.instrumentTones[instrument];
+      if (next.length > 0) map[key] = next;
+      else delete map[key];
       syncToneControls();
       updatePreview();
     });
@@ -1580,11 +1726,11 @@ const createNoteRow = (instrument) => {
   return row;
 };
 
-// Reflect selections.instrumentTones / instrumentNotes in the chips, the
-// note boxes and the folder badges
+// Reflect selections.instrumentTones / vocalTones / instrumentNotes in the
+// chips, the note boxes and the folder badges
 const syncToneControls = () => {
   document.querySelectorAll('.tone-chip').forEach(chip => {
-    const active = (selections.instrumentTones[chip.dataset.instrument] || []).includes(chip.dataset.tone);
+    const active = (toneMapFor(chip.dataset.scope)[chip.dataset.key] || []).includes(chip.dataset.tone);
     chip.classList.toggle('active', active);
     chip.setAttribute('aria-pressed', String(active));
   });
@@ -1594,8 +1740,10 @@ const syncToneControls = () => {
     if (input !== document.activeElement && input.value !== note) input.value = note;
   });
   document.querySelectorAll('.tone-badge').forEach(badge => {
-    const tones = selections.instrumentTones[badge.dataset.instrument] || [];
-    const note = selections.instrumentNotes[badge.dataset.instrument]?.trim();
+    const tones = toneMapFor(badge.dataset.scope)[badge.dataset.key] || [];
+    const note = badge.dataset.scope === 'instruments'
+      ? selections.instrumentNotes[badge.dataset.key]?.trim()
+      : '';
     const toneText = tones.length ? `🎨 ${tones.map(tone => keywordLabel(tone)).join(' ')}` : '';
     badge.textContent = [toneText, note ? `✎ ${note}` : ''].filter(Boolean).join('  ');
   });
@@ -1844,6 +1992,9 @@ const randomizeCategories = (categories, { bpm = false } = {}) => {
       next.instrumentTones = generator.randomInstrumentTones(next.instruments);
       next.instrumentNotes = {};
     }
+    if (category === 'vocals') {
+      next.vocalTones = generator.randomVocalTones(next.vocals);
+    }
     // Seed a few fresh exclusions alongside the new selection, instead of
     // always leaving the category's excludes empty
     next.excludes[category] = generator.randomExcludes(category, next[category]);
@@ -1908,6 +2059,124 @@ const setupRandomButtons = () => {
 
   document.querySelectorAll('.random-target-check').forEach(cb => {
     cb.addEventListener('change', saveRandomTargets);
+  });
+};
+
+// ---- Lyrics pane ----
+// Suno's Lyrics field accepts up to 5000 characters
+const LYRICS_CHAR_LIMIT = 5000;
+const LYRICS_COLLAPSED_KEY = 'suno-lyrics-collapsed';
+
+// Six blocks, one per section: a label, its computed tag line (read-only) and
+// the text that follows it in the Lyrics field.
+const renderLyricsPanel = () => {
+  const body = document.getElementById('lyrics-body');
+  if (!body) return;
+  body.textContent = '';
+
+  LYRIC_SECTIONS.forEach(({ key }) => {
+    const section = document.createElement('div');
+    section.className = 'lyrics-section';
+
+    const label = document.createElement('label');
+    label.className = 'lyrics-label';
+    label.htmlFor = `lyrics-${key}`;
+    label.dataset.i18n = LYRIC_SECTION_LABEL_KEYS[key];
+    label.textContent = t(LYRIC_SECTION_LABEL_KEYS[key]);
+    section.appendChild(label);
+
+    const tagLine = document.createElement('div');
+    tagLine.className = 'lyrics-tag-line';
+    tagLine.id = `lyrics-tag-${key}`;
+    section.appendChild(tagLine);
+
+    const textarea = document.createElement('textarea');
+    textarea.className = 'lyrics-textarea';
+    textarea.id = `lyrics-${key}`;
+    textarea.dataset.section = key;
+    textarea.value = selections.lyrics[key] || '';
+    textarea.addEventListener('input', () => {
+      selections.lyrics[key] = textarea.value;
+      updateLyricsPreview();
+    });
+    section.appendChild(textarea);
+
+    body.appendChild(section);
+  });
+
+  updateLyricsPreview();
+};
+
+// Recompute each section's tag line and the character count
+const updateLyricsPreview = () => {
+  if (!generator) return;
+  LYRIC_SECTIONS.forEach(({ key }) => {
+    const tag = document.getElementById(`lyrics-tag-${key}`);
+    if (tag) tag.textContent = generator.lyricSectionTag(key, selections);
+    const textarea = document.getElementById(`lyrics-${key}`);
+    // Leave the box being typed in alone, so its caret does not jump
+    if (textarea && textarea !== document.activeElement && textarea.value !== (selections.lyrics[key] || '')) {
+      textarea.value = selections.lyrics[key] || '';
+    }
+  });
+  const el = document.getElementById('lyrics-char-count');
+  if (!el) return;
+  const count = generator.generateLyrics(selections).length;
+  el.textContent = `${count} / ${LYRICS_CHAR_LIMIT} ${t('chars')}`;
+  el.classList.toggle('over-limit', count > LYRICS_CHAR_LIMIT);
+};
+
+// Fill any empty section with its sample control metatags
+const resetLyricSamples = () => {
+  LYRIC_SECTIONS.forEach(({ key }) => {
+    if (!(selections.lyrics[key] || '').trim()) selections.lyrics[key] = SAMPLE_LYRICS[key] || '';
+  });
+  updateLyricsPreview();
+};
+
+const setupLyricsPanel = () => {
+  const panel = document.getElementById('lyrics-panel');
+  if (!panel) return;
+  renderLyricsPanel();
+
+  const collapseBtn = document.getElementById('lyrics-collapse-btn');
+  const setCollapsed = (collapsed) => {
+    panel.classList.toggle('collapsed', collapsed);
+    collapseBtn.textContent = collapsed ? '◂' : '▸';
+    const key = collapsed ? 'expandLyrics' : 'collapseLyrics';
+    collapseBtn.setAttribute('data-i18n-title', key);
+    collapseBtn.title = t(key);
+    collapseBtn.setAttribute('aria-label', t(key));
+    collapseBtn.setAttribute('aria-expanded', String(!collapsed));
+  };
+  setCollapsed(localStorage.getItem(LYRICS_COLLAPSED_KEY) === 'true');
+  collapseBtn.addEventListener('click', () => {
+    const collapsed = !panel.classList.contains('collapsed');
+    setCollapsed(collapsed);
+    localStorage.setItem(LYRICS_COLLAPSED_KEY, String(collapsed));
+  });
+
+  document.getElementById('lyrics-copy-btn').addEventListener('click', async () => {
+    const text = generator ? generator.generateLyrics(selections) : '';
+    if (!text) {
+      addLog(t('logErrorCopy'), 'error');
+      return;
+    }
+    try {
+      const result = await window.electronAPI.copyToClipboard(text);
+      if (result && result.success === false) {
+        addLog(`Error: ${result.error}`, 'error');
+      } else {
+        addLog(t('logLyricsCopied'), 'success');
+      }
+    } catch (error) {
+      addLog(`Error: ${error.message}`, 'error');
+    }
+  });
+
+  document.getElementById('lyrics-sample-btn').addEventListener('click', () => {
+    resetLyricSamples();
+    addLog(t('logLyricsSamples'), 'info');
   });
 };
 
@@ -2132,25 +2401,41 @@ const setupParsePrompt = () => {
   });
 };
 
+// Advanced mode reveals the per-item destination rows (lyric sections / exclude)
+const ADVANCED_KEY = 'suno-advanced';
+
+const setAdvancedMode = (on) => {
+  document.body.classList.toggle('advanced-mode', on);
+  const checkbox = document.getElementById('advanced-toggle');
+  if (checkbox) checkbox.checked = on;
+};
+
+const setupAdvancedToggle = () => {
+  setAdvancedMode(localStorage.getItem(ADVANCED_KEY) === 'true');
+  const checkbox = document.getElementById('advanced-toggle');
+  if (!checkbox) return;
+  checkbox.addEventListener('change', () => {
+    setAdvancedMode(checkbox.checked);
+    localStorage.setItem(ADVANCED_KEY, String(checkbox.checked));
+    addLog(t(checkbox.checked ? 'logAdvancedOn' : 'logAdvancedOff'), 'info');
+  });
+};
+
 const setupButtons = () => {
   setupRandomButtons();
   setupParsePrompt();
+  setupAdvancedToggle();
 
   // Clear all selections and preview
   document.getElementById('clear-all-btn').addEventListener('click', () => {
     selections = normalizeSelections({ bpm: null });
     progCursorBeat = 0;
 
-    document.querySelectorAll('.selections-container input[type="checkbox"]').forEach(cb => {
-      cb.checked = false;
-      cb.indeterminate = false;
-      cb.closest('.checkbox-item')?.classList.remove('state-excluded');
-    });
-    syncPositionControls();
-    syncToneControls();
-    syncCustomInputs();
+    // Resets the main boxes, the destination rows and the lyrics text through
+    // applyItemState / updateLyricsPreview, which updatePreview pulls in
+    syncBpmControls();
     syncOthersInput();
-
+    updateAllCheckboxes();
     updatePreview();
     addLog(t('logCleared'), 'info');
   });
@@ -2440,11 +2725,10 @@ const loadProjectsList = async () => {
 
 const updateAllCheckboxes = () => {
   // Update all checkboxes and position dropdowns to match current selections.
-  // Scoped to type="checkbox" so this doesn't also pick up each tab's
-  // "<category>-search" text input, which shares the id prefix but has no
-  // .checkbox-item wrapper.
+  // Scoped to .item-check, which only the item's own box carries, so the
+  // destination boxes and each tab's search input are left alone.
   CATEGORIES.forEach(category => {
-    const checkboxes = document.querySelectorAll(`input[type="checkbox"][id^="${category}-"]`);
+    const checkboxes = document.querySelectorAll(`input.item-check[data-category="${category}"]`);
     checkboxes.forEach(cb => {
       const wrapper = cb.closest('.checkbox-item');
       applyItemState(wrapper, cb, itemState(category, cb.value));
@@ -2474,6 +2758,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
     setupButtons();
     setupSearch();
+    setupLyricsPanel();
     if (typeof setupProgressionEditor === 'function') setupProgressionEditor();
     updatePreview();
   });

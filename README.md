@@ -13,6 +13,8 @@ A desktop app for building [Suno AI](https://suno.com/) style prompts by simply 
 - **Pick from 6 categories** — combine genres, vocals, instruments, chords, mood and structures into a prompt
 - **BPM control** — set the tempo in the top bar with a slider or by typing a number
 - **Live preview** — the prompt updates instantly as you select
+- **Lyrics pane** — write Suno's Lyrics field section by section (Intro / Verse 1 / Verse 2 / Pre-Chorus / Chorus / Outro) with per-section control metatags, collapsible and remembered between runs
+- **Advanced destinations** — turn on Advanced in Settings to send any item to Style, Exclude or a lyric section from the item itself
 - **Stage diagram** — a fan-shaped view of where each vocal and instrument sits, marked with its instrument-family icon; hover one for its name and placement
 - **Random generate** — create a random combination with one click, limited to the categories you tick
 - **Per-category reroll** — the 🎲 next to each category rerolls only that one and leaves the rest untouched
@@ -60,7 +62,16 @@ electronic, ensemble — so you can read the arrangement at a glance. Give an in
 mode a position inside its folder and its marker moves; anything without one stays hollow in the
 middle.
 A part with no single spot is drawn as what it is: `wide stereo` becomes a bar, `auto-panned` becomes
-the arc it travels along, with a marker riding it.
+the arc it travels along, with a marker riding it. Instruments and vocal modes also take emotional
+tone words from chips in their folder; the chosen words lead the name in the prompt, e.g.
+`warm dreamy Grand Piano` or `solo female vocal`.
+
+The **Lyrics** pane on the far right writes Suno's Lyrics field section by section. Each section has a
+control metatag line (for example `[Verse 1, whisper, soft piano]`) followed by its text; sections with
+neither are skipped and the rest are joined by a blank line. 📋 copies the whole Lyrics text and ♻️ fills
+any empty section with its sample control metatags. Turn on **Advanced** in the left panel's Settings tab
+to show a destination row on each non-genre item — **S** (Style), **✕** (Exclude) and one box per lyric
+section — so an item can be sent to several places at once.
 
 Save combinations you like with **Save Project** in the left panel.
 

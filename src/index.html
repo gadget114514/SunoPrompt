@@ -83,6 +83,12 @@
         <div class="panel-tab-content" id="settings-panel-tab">
           <div class="settings-section">
             <div class="setting-item">
+              <label class="setting-check">
+                <input type="checkbox" id="advanced-toggle">
+                <span data-i18n="advancedMode">Advanced (lyrics sections / exclude)</span>
+              </label>
+            </div>
+            <div class="setting-item">
               <label data-i18n="saveFolder">Save Folder</label>
               <div class="setting-value">
                 <span id="current-folder" class="folder-path">Default folder</span>
@@ -301,6 +307,22 @@
               <button type="button" class="icon-btn random-one-btn" data-random-category="structures" data-i18n-title="randomStructures">🎲</button>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Far-right Panel: Lyrics, written section by section -->
+      <div class="lyrics-panel" id="lyrics-panel">
+        <div class="lyrics-header">
+          <h3 data-i18n="lyrics">Lyrics</h3>
+          <div class="lyrics-actions">
+            <button type="button" id="lyrics-copy-btn" class="icon-btn" data-i18n-title="copyLyrics">📋</button>
+            <button type="button" id="lyrics-sample-btn" class="icon-btn" data-i18n-title="resetSamples">♻️</button>
+            <button type="button" id="lyrics-collapse-btn" class="icon-btn" data-i18n-title="collapseLyrics">▸</button>
+          </div>
+        </div>
+        <div class="lyrics-body" id="lyrics-body"></div>
+        <div class="lyrics-footer">
+          <div id="lyrics-char-count" class="char-count"></div>
         </div>
       </div>
     </div>

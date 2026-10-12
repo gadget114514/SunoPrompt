@@ -51,8 +51,9 @@ class PromptGenerator {
     return [genres.join(', ')];
   }
 
-  // Vocal (can be mode names or phrases/modifiers). A mode's position is
-  // attached to its first selected phrase, e.g. "female vocal (panned left)"
+  // Vocal (can be mode names or phrases/modifiers). A mode's tone words lead
+  // its first selected phrase and its position trails it, e.g.
+  // "warm breathy female vocal (panned left)"
   vocalParts(selections) {
     const vocalModes = this.data.vocal?.vocal_modes || {};
     const vocalParts = (selections.vocals || []).map(item => {
@@ -64,16 +65,28 @@ class PromptGenerator {
       return { mode: this.findVocalMode(item), text: item };
     }).filter(part => part.text);
     for (const [modeName, modeData] of Object.entries(vocalModes)) {
+      const tones = this.getVocalTones(selections, modeName);
       const position = this.getPositionPhrases(selections, 'vocals', modeName);
-      if (position.length === 0) continue;
+      if (tones.length === 0 && position.length === 0) continue;
       const target = vocalParts.find(part => part.mode === modeName);
       if (target) {
-        target.text = `${target.text} (${position.join(', ')})`;
+        target.text = this.leadWithTones(target.text, tones);
+        if (position.length > 0) target.text = `${target.text} (${position.join(', ')})`;
       } else if (modeData.style_phrases?.[0]) {
-        vocalParts.push({ mode: modeName, text: `${modeData.style_phrases[0]} (${position.join(', ')})` });
+        const text = this.leadWithTones(modeData.style_phrases[0], tones);
+        vocalParts.push({ mode: modeName, text: position.length > 0 ? `${text} (${position.join(', ')})` : text });
       }
     }
     return vocalParts.map(part => part.text);
+  }
+
+  // Tone words lead a phrase, unless it already opens with one of them, so
+  // "solo vocal" is never printed as "solo solo vocal"
+  leadWithTones(phrase, tones) {
+    if (tones.length === 0) return phrase;
+    const key = PromptGenerator.matchKey(phrase);
+    const lead = tones.filter(tone => !key.startsWith(PromptGenerator.matchKey(tone)));
+    return [...lead, phrase].join(' ');
   }
 
   // Instruments: tone words lead the name, and techniques, the free-text note
@@ -105,27 +118,70 @@ class PromptGenerator {
     return parts;
   }
 
+  // The display phrase for a single category value, as it is written in the
+  // prompt: a mode becomes its first style phrase, an instrument technique
+  // loses its instrument name, and so on.
+  itemPhrase(category, value) {
+    const vocalModes = this.data.vocal?.vocal_modes || {};
+    if (category === 'instruments') {
+      const { instrument, technique } = this.parseInstrumentItem(value);
+      return technique || (instrument ? this.getInstrumentName(instrument) : value);
+    }
+    if (category === 'vocals') {
+      return vocalModes[value]?.style_phrases?.[0] || value;
+    }
+    if (category === 'structures' && this.data.structure?.categories?.[value]?.phrases) {
+      return this.data.structure.categories[value].phrases[0];
+    }
+    return value;
+  }
+
   // Everything marked excluded, across every category, flattened into one
   // list of display phrases for the trailing [EXCLUDE: ...] block.
   excludeParts(selections) {
     const excludes = selections.excludes || {};
-    const vocalModes = this.data.vocal?.vocal_modes || {};
     const items = [];
     PromptGenerator.CATEGORIES.forEach(category => {
       (excludes[category] || []).forEach(item => {
-        if (category === 'instruments') {
-          const { instrument, technique } = this.parseInstrumentItem(item);
-          items.push(technique || (instrument ? this.getInstrumentName(instrument) : item));
-        } else if (category === 'vocals') {
-          items.push(vocalModes[item]?.style_phrases?.[0] || item);
-        } else if (category === 'structures' && this.data.structure?.categories?.[item]?.phrases) {
-          items.push(this.data.structure.categories[item].phrases[0]);
-        } else {
-          items.push(item);
-        }
+        items.push(this.itemPhrase(category, item));
       });
     });
     return items;
+  }
+
+  // The display phrases assigned to one lyric section, across every category
+  // that can carry a metatag.
+  lyricSectionPhrases(section, selections) {
+    const tags = selections.lyricTags?.[section] || {};
+    const phrases = [];
+    PromptGenerator.LYRIC_CATEGORIES.forEach(category => {
+      (tags[category] || []).forEach(value => phrases.push(this.itemPhrase(category, value)));
+    });
+    return phrases;
+  }
+
+  // The control metatag for one section, e.g. "[Verse 1, whisper, soft piano]",
+  // or just "[Verse 1]" when nothing is assigned to it.
+  lyricSectionTag(section, selections) {
+    const def = PromptGenerator.LYRIC_SECTIONS.find(s => s.key === section);
+    const tag = def ? def.tag : section;
+    const phrases = this.lyricSectionPhrases(section, selections);
+    return phrases.length > 0 ? `[${[tag, ...phrases].join(', ')}]` : `[${tag}]`;
+  }
+
+  // The Lyrics text: every section that has a tag or text becomes its control
+  // metatag followed by its text, and the sections are joined by a blank line.
+  generateLyrics(selections) {
+    const lyrics = selections.lyrics || {};
+    const sections = [];
+    PromptGenerator.LYRIC_SECTIONS.forEach(({ key }) => {
+      const phrases = this.lyricSectionPhrases(key, selections);
+      const text = (lyrics[key] || '').trim();
+      if (phrases.length === 0 && !text) return;
+      const tagLine = this.lyricSectionTag(key, selections);
+      sections.push(text ? `${tagLine}\n${text}` : tagLine);
+    });
+    return sections.join('\n\n');
   }
 
   // Chord / harmony phrases + the progression timeline (if any).
@@ -217,10 +273,21 @@ class PromptGenerator {
     ) || null;
   }
 
+  // The emotional tone words that can lead any instrument name or vocal mode
+  toneDescriptors() {
+    return this.data.instruments?.tone_descriptors || [];
+  }
+
   // Tone words chosen for an instrument, in the order the data lists them
   getInstrumentTones(selections, instrument) {
     const chosen = selections.instrumentTones?.[instrument] || [];
-    return (this.data.instruments?.tone_descriptors || []).filter(tone => chosen.includes(tone));
+    return this.toneDescriptors().filter(tone => chosen.includes(tone));
+  }
+
+  // Tone words chosen for a vocal mode, in the order the data lists them
+  getVocalTones(selections, mode) {
+    const chosen = selections.vocalTones?.[mode] || [];
+    return this.toneDescriptors().filter(tone => chosen.includes(tone));
   }
 
   // Instruments pulled in without being ticked: a position, a tone or a note
@@ -265,6 +332,9 @@ class PromptGenerator {
     });
     named('vocals').forEach(name => {
       if (vocalModes[name]) modes.add(name);
+    });
+    Object.entries(selections.vocalTones || {}).forEach(([mode, tones]) => {
+      if (tones?.length > 0 && vocalModes[mode]) modes.add(mode);
     });
 
     const instruments = new Set();
@@ -448,7 +518,7 @@ class PromptGenerator {
 
   // A tone word or two for some of the given instruments, keyed by instrument
   randomInstrumentTones(instrumentItems) {
-    const tones = this.data.instruments?.tone_descriptors || [];
+    const tones = this.toneDescriptors();
     const result = {};
     if (tones.length === 0) return result;
     (instrumentItems || []).forEach(item => {
@@ -459,6 +529,28 @@ class PromptGenerator {
       result[instrument] = [];
       for (let i = 0; i < count; i++) {
         result[instrument].push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+      }
+    });
+    return result;
+  }
+
+  // A tone word or two for some of the given vocal modes, keyed by mode
+  randomVocalTones(vocals) {
+    const tones = this.toneDescriptors();
+    const result = {};
+    if (tones.length === 0) return result;
+    const modes = new Set();
+    (vocals || []).forEach(item => {
+      const mode = this.data.vocal?.vocal_modes?.[item] ? item : this.findVocalMode(item);
+      if (mode) modes.add(mode);
+    });
+    modes.forEach(mode => {
+      if (Math.random() >= 0.35) return;
+      const pool = [...tones];
+      const count = Math.random() < 0.3 ? 2 : 1;
+      result[mode] = [];
+      for (let i = 0; i < count; i++) {
+        result[mode].push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
       }
     });
     return result;
@@ -731,7 +823,7 @@ class PromptGenerator {
       details = value.slice(paren + 1, -1).trim();
     }
     const index = this.instrumentIndex();
-    const toneMap = new Map((this.data.instruments?.tone_descriptors || [])
+    const toneMap = new Map(this.toneDescriptors()
       .map(tone => [PromptGenerator.matchKey(tone), tone]));
     // "warm dreamy Rhodes": peel tone words off the front until a name is left
     const words = name.split(/\s+/);
@@ -746,7 +838,8 @@ class PromptGenerator {
     }
   }
 
-  // A vocal phrase, optionally carrying a position in parentheses
+  // A vocal phrase, optionally carrying a position in parentheses and with
+  // any tone words peeled off the front ("warm female vocal" -> tones + phrase)
   matchVocal(value) {
     let phrase = value;
     let details = '';
@@ -755,8 +848,28 @@ class PromptGenerator {
       phrase = value.slice(0, paren).trim();
       details = value.slice(paren + 1, -1).trim();
     }
-    const entry = this.vocalIndex().get(PromptGenerator.matchKey(phrase));
-    return entry ? { ...entry, details } : null;
+    const index = this.vocalIndex();
+    const toneMap = new Map(this.toneDescriptors()
+      .map(tone => [PromptGenerator.matchKey(tone), tone]));
+    // Try the whole phrase first, so "solo vocal" stays one phrase. Otherwise
+    // peel tone words off the front and keep the deepest phrase that matches,
+    // so a phrase that itself opens with a tone ("airy female vocal") is not
+    // mistaken for a tone on top of a shorter one.
+    const words = phrase.split(/\s+/);
+    const tones = [];
+    let best = null;
+    for (;;) {
+      const entry = index.get(PromptGenerator.matchKey(words.join(' ')));
+      if (entry) {
+        if (tones.length === 0) return { ...entry, details, tones };
+        best = { ...entry, details, tones: [...tones] };
+      }
+      const tone = words.length > 1 && toneMap.get(PromptGenerator.matchKey(words[0]));
+      if (!tone) break;
+      tones.push(tone);
+      words.shift();
+    }
+    return best;
   }
 
   // Tick the instrument, its tones, techniques and position; anything inside
@@ -796,9 +909,15 @@ class PromptGenerator {
     return [];
   }
 
-  applyVocalParse(sel, { phrase, mode, details }) {
+  applyVocalParse(sel, { phrase, mode, details, tones = [] }) {
     const leftovers = [];
     if (!sel.vocals.includes(phrase)) sel.vocals.push(phrase);
+    // Tone words hang on the mode; a descriptor phrase has no mode to hold
+    // them, so they stay in the text rather than being lost
+    if (tones.length > 0) {
+      if (mode) sel.vocalTones[mode] = [...new Set([...(sel.vocalTones[mode] || []), ...tones])];
+      else leftovers.push(...tones);
+    }
 
     const mk = (s) => PromptGenerator.matchKey(s);
     const panMap = new Map(PromptGenerator.POSITIONS.pan.map(p => [mk(p), p]));
@@ -896,7 +1015,7 @@ class PromptGenerator {
     const sel = {
       genres: [], vocals: [], instruments: [], chords: [], moods: [], structures: [],
       excludes: { genres: [], vocals: [], instruments: [], chords: [], moods: [], structures: [] },
-      others: '', positions: {}, instrumentTones: {}, instrumentNotes: {}, customs: {}, bpm: null
+      others: '', positions: {}, instrumentTones: {}, vocalTones: {}, instrumentNotes: {}, customs: {}, bpm: null
     };
     const ambiguous = [];
     if (!text) return { selections: sel, ambiguous };
@@ -1073,6 +1192,19 @@ PromptGenerator.POSITIONS = {
 };
 // Selection categories, in the order they appear in the UI
 PromptGenerator.CATEGORIES = ['genres', 'vocals', 'instruments', 'chords', 'moods', 'structures'];
+// The lyric sections the Lyrics pane writes, in reading order. `tag` is the
+// name Suno expects in the control metatag; `short` is the column label.
+PromptGenerator.LYRIC_SECTIONS = [
+  { key: 'intro', tag: 'Intro', short: 'In' },
+  { key: 'verse1', tag: 'Verse 1', short: 'V1' },
+  { key: 'verse2', tag: 'Verse 2', short: 'V2' },
+  { key: 'preChorus', tag: 'Pre-Chorus', short: 'PC' },
+  { key: 'chorus', tag: 'Chorus', short: 'Ch' },
+  { key: 'outro', tag: 'Outro', short: 'Out' }
+];
+// Categories whose items can be written as lyric-section metatags — every
+// category except Genres (and BPM, which holds no items of its own).
+PromptGenerator.LYRIC_CATEGORIES = PromptGenerator.CATEGORIES.filter(category => category !== 'genres');
 // Everything that has a place in the prompt, in its default order. BPM sits
 // among them but holds no selections of its own — its tab only marks where the
 // tempo is written, while the control for it stays in the top bar.
