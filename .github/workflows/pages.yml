@@ -1,8 +1,9 @@
 name: Deploy to GitHub Pages
 
+# One site holds both branches: stable at the root, main under /dev/
 on:
   push:
-    branches: [main]
+    branches: [stable, main]
   workflow_dispatch:
 
 permissions:
@@ -22,15 +23,31 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: stable
+          path: stable
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main
 
       - name: Assemble site
         run: |
-          mkdir -p _site
-          cp -r src/. _site/
-          cp genre.json suno_style_vocal_spec.json suno_instrument_techniques.json suno_chord_phrases.json suno_mood_phrases.json suno_style_structure_phrases.json _site/
-          # The About dialog reads the app version from here
-          cp package.json _site/
-          cp images/application.ico _site/favicon.ico
+          assemble() {
+            src=$1
+            out=$2
+            mkdir -p "$out"
+            cp -r "$src/src/." "$out/"
+            for f in genre.json suno_style_vocal_spec.json suno_instrument_techniques.json suno_chord_phrases.json suno_mood_phrases.json suno_style_structure_phrases.json; do
+              cp "$src/$f" "$out/"
+            done
+            # The About dialog reads the app version from here
+            cp "$src/package.json" "$out/"
+            cp "$src/images/application.ico" "$out/favicon.ico"
+          }
+          assemble stable _site
+          assemble main _site/dev
           touch _site/.nojekyll
 
       - uses: actions/configure-pages@v5
