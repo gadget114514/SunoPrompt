@@ -265,20 +265,30 @@ ipcMain.handle('save-project', async (event, projectData) => {
 ipcMain.handle('load-projects', async (event) => {
   try {
     const dir = getProjectsDir();
-    const entries = await fs.promises.readdir(dir);
-    const jsonFiles = entries.filter(f => f.endsWith('.json'));
+    const files = await fs.promises.readdir(dir);
+    const jsonFiles = files.filter(f => f.endsWith('.json'));
 
-    let skipped = 0;
-    const projectPromises = jsonFiles.map(async (fileName) => {
+    const filePromises = jsonFiles.map(async (fileName) => {
       // One unreadable file must not hide every other project
       try {
         const content = await fs.promises.readFile(path.join(dir, fileName), 'utf-8');
         const project = JSON.parse(content);
-        return { ...project, fileName };
+        return { project: { ...project, fileName }, skipped: false };
       } catch (error) {
         console.error(`Skipping ${fileName}:`, error.message);
+        return { project: null, skipped: true };
+      }
+    });
+
+    const results = await Promise.all(filePromises);
+    const projects = [];
+    let skipped = 0;
+
+    for (const res of results) {
+      if (res.skipped) {
         skipped += 1;
-        return null;
+      } else if (res.project) {
+        projects.push(res.project);
       }
     });
 
@@ -297,7 +307,7 @@ ipcMain.handle('load-project', async (event, fileName) => {
   try {
     const filePath = projectPath(fileName);
     if (!filePath) return { success: false, error: `Not a project file: ${fileName}` };
-    const content = fs.readFileSync(filePath, 'utf-8');
+    const content = await fs.promises.readFile(filePath, 'utf-8');
     const project = JSON.parse(content);
     return { success: true, project };
   } catch (error) {
@@ -310,7 +320,7 @@ ipcMain.handle('delete-project', async (event, fileName) => {
   try {
     const filePath = projectPath(fileName);
     if (!filePath) return { success: false, error: `Not a project file: ${fileName}` };
-    fs.unlinkSync(filePath);
+    await fs.promises.unlink(filePath);
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };

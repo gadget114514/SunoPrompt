@@ -1,5 +1,28 @@
 // Chord progression theory helpers (key/scale/diatonic/templates).
 // Loaded before promptGenerator.js / renderer.js via a plain script tag.
+
+function getRandomFloat() {
+  if (typeof globalThis !== 'undefined' && globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function') {
+    const array = new Uint32Array(1);
+    globalThis.crypto.getRandomValues(array);
+    return array[0] / 4294967296;
+  }
+  if (typeof require !== 'undefined') {
+    try {
+      const crypto = require('crypto');
+      if (typeof crypto.getRandomValues === 'function') {
+        const array = new Uint32Array(1);
+        crypto.getRandomValues(array);
+        return array[0] / 4294967296;
+      }
+      if (typeof crypto.randomBytes === 'function') {
+        return crypto.randomBytes(4).readUInt32BE(0) / 4294967296;
+      }
+    } catch (e) {}
+  }
+  return Math.random();
+}
+
 class ChordTheory {
   // One chord the palette / timeline deals with.
   // quality values: maj, min, 7, maj7, m7, m7b5, dim, aug, sus4, add9
@@ -159,7 +182,7 @@ class ChordTheory {
 
   // Random progression: one diatonic chord per bar (N bars), starting and
   // ending on the tonic, random-walking in between without direct repeats.
-  static randomProgression(key, mode, meter, bars, rng = Math.random) {
+  static randomProgression(key, mode, meter, bars, rng = getRandomFloat) {
     const bpb = ChordTheory.beatsPerBar(meter);
     const chords = [];
     let degree = 0;
@@ -211,7 +234,7 @@ class ChordTheory {
   // Monophonic melody over the given chords: chord tone on each chord's
   // downbeat, then a stepwise-biased random walk on an 8th-note grid with
   // occasional rests. Range is C4..C6, note lengths 0.5 or 1 beat.
-  static randomMelody(key, mode, chords, rng = Math.random) {
+  static randomMelody(key, mode, chords, rng = getRandomFloat) {
     const total = [...chords].reduce((mx, c) => Math.max(mx, c.start + c.dur), 0);
     const inScale = (m) => ChordTheory.scalePcs(key, mode).includes(((m % 12) + 12) % 12);
     const ladder = [];
@@ -261,4 +284,8 @@ class ChordTheory {
     });
     return notes;
   }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ChordTheory;
 }

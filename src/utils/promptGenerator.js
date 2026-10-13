@@ -1,3 +1,27 @@
+if (typeof getRandomFloat !== 'function') {
+  function getRandomFloat() {
+    if (typeof globalThis !== 'undefined' && globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function') {
+      const array = new Uint32Array(1);
+      globalThis.crypto.getRandomValues(array);
+      return array[0] / 4294967296;
+    }
+    if (typeof require !== 'undefined') {
+      try {
+        const crypto = require('crypto');
+        if (typeof crypto.getRandomValues === 'function') {
+          const array = new Uint32Array(1);
+          crypto.getRandomValues(array);
+          return array[0] / 4294967296;
+        }
+        if (typeof crypto.randomBytes === 'function') {
+          return crypto.randomBytes(4).readUInt32BE(0) / 4294967296;
+        }
+      } catch (e) {}
+    }
+    return Math.random();
+  }
+}
+
 class PromptGenerator {
   constructor(jsonData) {
     this.data = jsonData;
@@ -446,13 +470,13 @@ class PromptGenerator {
     const pool = this.categoryPool(category).filter(item => !selected.includes(item));
     const excludes = [];
     if (pool.length === 0) return excludes;
-    if (Math.random() < 0.35) {
-      const idx = Math.floor(Math.random() * pool.length);
+    if (getRandomFloat() < 0.35) {
+      const idx = Math.floor(getRandomFloat() * pool.length);
       excludes.push(pool[idx]);
       pool.splice(idx, 1);
     }
-    if (pool.length > 0 && Math.random() < 0.15) {
-      excludes.push(pool[Math.floor(Math.random() * pool.length)]);
+    if (pool.length > 0 && getRandomFloat() < 0.15) {
+      excludes.push(pool[Math.floor(getRandomFloat() * pool.length)]);
     }
     return excludes;
   }
@@ -470,13 +494,13 @@ class PromptGenerator {
     }
 
     const eras = this.data.genre[PromptGenerator.ERA_GROUP];
-    if (Array.isArray(eras) && eras.length > 0 && Math.random() < 0.3) {
-      genres.push(eras[Math.floor(Math.random() * eras.length)]);
+    if (Array.isArray(eras) && eras.length > 0 && getRandomFloat() < 0.3) {
+      genres.push(eras[Math.floor(getRandomFloat() * eras.length)]);
     }
 
-    const count = Math.random() > 0.5 ? 2 : 1;
+    const count = getRandomFloat() > 0.5 ? 2 : 1;
     for (let i = 0; i < count && allGenres.length > 0; i++) {
-      const idx = Math.floor(Math.random() * allGenres.length);
+      const idx = Math.floor(getRandomFloat() * allGenres.length);
       genres.push(allGenres[idx]);
       allGenres.splice(idx, 1);
     }
@@ -491,22 +515,22 @@ class PromptGenerator {
       .filter(m => m.style_phrases?.length > 0);
     if (vocalModes.length === 0) return [];
 
-    const modeData = vocalModes[Math.floor(Math.random() * vocalModes.length)];
-    const main = modeData.style_phrases[Math.floor(Math.random() * modeData.style_phrases.length)];
+    const modeData = vocalModes[Math.floor(getRandomFloat() * vocalModes.length)];
+    const main = modeData.style_phrases[Math.floor(getRandomFloat() * modeData.style_phrases.length)];
     const vocals = [main];
 
     const extras = [...modeData.style_phrases, ...(modeData.style_modifiers || [])].filter(p => p !== main);
-    if (extras.length > 0 && Math.random() > 0.6) {
-      vocals.push(extras[Math.floor(Math.random() * extras.length)]);
+    if (extras.length > 0 && getRandomFloat() > 0.6) {
+      vocals.push(extras[Math.floor(getRandomFloat() * extras.length)]);
     }
 
     // Now and then one voice-quality / resonance / delivery word on top
     const descriptorGroups = Object.values(this.data.vocal?.vocal_descriptors || {})
       .map(group => group.phrases || [])
       .filter(phrases => phrases.length > 0);
-    if (descriptorGroups.length > 0 && Math.random() < 0.5) {
-      const phrases = descriptorGroups[Math.floor(Math.random() * descriptorGroups.length)];
-      vocals.push(phrases[Math.floor(Math.random() * phrases.length)]);
+    if (descriptorGroups.length > 0 && getRandomFloat() < 0.5) {
+      const phrases = descriptorGroups[Math.floor(getRandomFloat() * descriptorGroups.length)];
+      vocals.push(phrases[Math.floor(getRandomFloat() * phrases.length)]);
     }
     return vocals;
   }
@@ -523,12 +547,12 @@ class PromptGenerator {
     if (tones.length === 0) return result;
     (instrumentItems || []).forEach(item => {
       const { instrument, technique } = this.parseInstrumentItem(item);
-      if (!instrument || technique || Math.random() >= 0.35) return;
+      if (!instrument || technique || getRandomFloat() >= 0.35) return;
       const pool = [...tones];
-      const count = Math.random() < 0.3 ? 2 : 1;
+      const count = getRandomFloat() < 0.3 ? 2 : 1;
       result[instrument] = [];
       for (let i = 0; i < count; i++) {
-        result[instrument].push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+        result[instrument].push(pool.splice(Math.floor(getRandomFloat() * pool.length), 1)[0]);
       }
     });
     return result;
@@ -545,12 +569,12 @@ class PromptGenerator {
       if (mode) modes.add(mode);
     });
     modes.forEach(mode => {
-      if (Math.random() >= 0.35) return;
+      if (getRandomFloat() >= 0.35) return;
       const pool = [...tones];
-      const count = Math.random() < 0.3 ? 2 : 1;
+      const count = getRandomFloat() < 0.3 ? 2 : 1;
       result[mode] = [];
       for (let i = 0; i < count; i++) {
-        result[mode].push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+        result[mode].push(pool.splice(Math.floor(getRandomFloat() * pool.length), 1)[0]);
       }
     });
     return result;
@@ -563,11 +587,11 @@ class PromptGenerator {
 
     // Weighted selection: more instruments used
     const weights = [2, 2, 3, 4];
-    const instrumentCount = weights[Math.floor(Math.random() * weights.length)];
+    const instrumentCount = weights[Math.floor(getRandomFloat() * weights.length)];
     const selected = [];
 
     for (let i = 0; i < instrumentCount && instruments.length > 0; i++) {
-      const idx = Math.floor(Math.random() * instruments.length);
+      const idx = Math.floor(getRandomFloat() * instruments.length);
       const [instName, instData] = instruments[idx];
 
       // Add instrument
@@ -576,9 +600,9 @@ class PromptGenerator {
       // Add 2-3 techniques from this instrument
       if (instData.techniques && instData.techniques.length > 0) {
         const techniques = [...instData.techniques];
-        const techCount = Math.min(Math.floor(Math.random() * 2) + 2, techniques.length);
+        const techCount = Math.min(Math.floor(getRandomFloat() * 2) + 2, techniques.length);
         for (let j = 0; j < techCount; j++) {
-          const tidx = Math.floor(Math.random() * techniques.length);
+          const tidx = Math.floor(getRandomFloat() * techniques.length);
           selected.push(PromptGenerator.techniqueValue(instName, techniques[tidx]));
           techniques.splice(tidx, 1);
         }
@@ -596,8 +620,8 @@ class PromptGenerator {
     const chords = [];
     for (const categoryName of ['Progressions', 'Chord Colors']) {
       const phrases = this.data.chord.categories[categoryName]?.phrases;
-      if (phrases && phrases.length > 0 && Math.random() < 0.5) {
-        chords.push(phrases[Math.floor(Math.random() * phrases.length)]);
+      if (phrases && phrases.length > 0 && getRandomFloat() < 0.5) {
+        chords.push(phrases[Math.floor(getRandomFloat() * phrases.length)]);
       }
     }
     return chords;
@@ -611,15 +635,15 @@ class PromptGenerator {
     const moodGroups = Object.entries(categories)
       .filter(([name, data]) => name !== PromptGenerator.MOOD_TEXTURE_GROUP && data.phrases?.length > 0)
       .map(([, data]) => data.phrases);
-    const pick = (phrases) => phrases[Math.floor(Math.random() * phrases.length)];
+    const pick = (phrases) => phrases[Math.floor(getRandomFloat() * phrases.length)];
 
     const moods = [];
     if (moodGroups.length > 0) {
-      moods.push(pick(moodGroups[Math.floor(Math.random() * moodGroups.length)]));
+      moods.push(pick(moodGroups[Math.floor(getRandomFloat() * moodGroups.length)]));
     }
 
     const textures = categories[PromptGenerator.MOOD_TEXTURE_GROUP]?.phrases;
-    if (textures?.length > 0 && Math.random() < 0.4) {
+    if (textures?.length > 0 && getRandomFloat() < 0.4) {
       moods.push(pick(textures));
     }
     return moods;
@@ -639,14 +663,14 @@ class PromptGenerator {
     if (allStructures.length === 0 && production.length === 0) return [];
 
     const structures = [];
-    const count = Math.min(Math.floor(Math.random() * 3) + 2, allStructures.length);
+    const count = Math.min(Math.floor(getRandomFloat() * 3) + 2, allStructures.length);
     for (let i = 0; i < count; i++) {
-      const idx = Math.floor(Math.random() * allStructures.length);
+      const idx = Math.floor(getRandomFloat() * allStructures.length);
       structures.push(allStructures[idx]);
       allStructures.splice(idx, 1);
     }
-    if (production.length > 0 && Math.random() < 0.5) {
-      structures.push(production[Math.floor(Math.random() * production.length)]);
+    if (production.length > 0 && getRandomFloat() < 0.5) {
+      structures.push(production[Math.floor(getRandomFloat() * production.length)]);
     }
     return structures;
   }
@@ -679,13 +703,13 @@ class PromptGenerator {
       { range: [140, 200], weight: 0.3 }   // Fast (30%)
     ];
 
-    const rand = Math.random();
+    const rand = getRandomFloat();
     let accumulated = 0;
 
     for (const { range, weight } of weights) {
       accumulated += weight;
       if (rand < accumulated) {
-        return Math.floor(Math.random() * (range[1] - range[0]) + range[0]);
+        return Math.floor(getRandomFloat() * (range[1] - range[0]) + range[0]);
       }
     }
 
