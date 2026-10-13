@@ -65,3 +65,61 @@ test('ProgAudio.encodeMp3 throws error when lamejs is not loaded', () => {
     message: 'MP3 encoder (lamejs) is not loaded'
   });
 });
+
+test('ProgAudio.render renders progression timeline to AudioBuffer with mock OfflineAudioContext', async () => {
+  class MockParam {
+    setValueAtTime() {}
+    exponentialRampToValueAtTime() {}
+  }
+  class MockNode {
+    constructor() {
+      this.gain = new MockParam();
+      this.frequency = new MockParam();
+    }
+    connect() {}
+    start() {}
+    stop() {}
+  }
+  class MockOfflineAudioContext {
+    constructor(channels, length, sampleRate) {
+      this.destination = new MockNode();
+      this.length = length;
+      this.sampleRate = sampleRate;
+      this.numberOfChannels = channels;
+    }
+    createGain() { return new MockNode(); }
+    createDynamicsCompressor() { return new MockNode(); }
+    createBiquadFilter() { return new MockNode(); }
+    createOscillator() { return new MockNode(); }
+    async startRendering() {
+      return {
+        numberOfChannels: this.numberOfChannels,
+        sampleRate: this.sampleRate,
+        length: this.length,
+        getChannelData: () => new Float32Array(this.length)
+      };
+    }
+  }
+
+  global.OfflineAudioContext = MockOfflineAudioContext;
+
+  const prog = {
+    meter: '4/4',
+    bars: 2,
+    chords: [
+      { start: 0, dur: 4, root: 'C', quality: 'maj' },
+      { start: 4, dur: 4, root: 'G', quality: 'maj' }
+    ],
+    melody: [
+      { start: 0, dur: 1, midi: 60 },
+      { start: 1, dur: 1, midi: 64 }
+    ]
+  };
+
+  const buffer = await ProgAudio.render(prog, 120);
+  assert.equal(buffer.sampleRate, 44100);
+  assert.equal(buffer.numberOfChannels, 1);
+  assert.ok(buffer.length > 0);
+
+  delete global.OfflineAudioContext;
+});
