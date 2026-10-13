@@ -1,4 +1,4 @@
-let currentLang = typeof localStorage !== 'undefined' ? (localStorage.getItem('suno-lang') || 'en') : 'en';
+let currentLang = localStorage.getItem('suno-lang') || 'en';
 let generator = null;
 // Reported by the About dialog; both arrive with the JSON payload
 let appVersion = null;
@@ -9,20 +9,17 @@ const CATEGORY_ORDER_KEY = 'suno-category-order';
 
 const readStoredCategoryOrder = () => {
   try {
-    if (typeof localStorage === 'undefined' || typeof PromptGenerator === 'undefined') {
-      return typeof PromptGenerator !== 'undefined' ? PromptGenerator.categoryOrder(null) : [];
-    }
     return PromptGenerator.categoryOrder(JSON.parse(localStorage.getItem(CATEGORY_ORDER_KEY)));
   } catch (error) {
-    return typeof PromptGenerator !== 'undefined' ? PromptGenerator.categoryOrder(null) : [];
+    return PromptGenerator.categoryOrder(null);
   }
 };
 
 const emptyExcludes = () => ({ genres: [], vocals: [], instruments: [], chords: [], moods: [], structures: [] });
 
 // The Lyrics pane's sections and the categories that can carry a metatag
-const LYRIC_SECTIONS = typeof PromptGenerator !== 'undefined' ? PromptGenerator.LYRIC_SECTIONS : [];
-const LYRIC_CATEGORIES = typeof PromptGenerator !== 'undefined' ? PromptGenerator.LYRIC_CATEGORIES : [];
+const LYRIC_SECTIONS = PromptGenerator.LYRIC_SECTIONS;
+const LYRIC_CATEGORIES = PromptGenerator.LYRIC_CATEGORIES;
 // i18n key for each section's label, keyed by its section key
 const LYRIC_SECTION_LABEL_KEYS = {
   intro: 'lyricIntro',
@@ -79,7 +76,7 @@ let selections = {
   lyrics: defaultLyrics()
 };
 
-const CATEGORIES = typeof PromptGenerator !== 'undefined' ? PromptGenerator.CATEGORIES : [];
+const CATEGORIES = PromptGenerator.CATEGORIES;
 
 // Bring older saved projects up to the current data format
 const normalizeSelections = (sel) => {
@@ -670,63 +667,72 @@ const progSelected = (prog = getProg()) => prog.chords.find(c => c.id === prog.s
 const beatToX = (beat) => beat * progBeatPx;
 const xToBeat = (x) => Math.max(0, Math.round(x / progBeatPx));
 
-const setupProgressionEditor = () => {
-  if (!progHasTheory()) return;
-  const $ = (id) => document.getElementById(id);
-  const tpl = $('prog-template'), key = $('prog-key'), mode = $('prog-mode'),
-    meter = $('prog-meter'), bars = $('prog-bars'), zoom = $('prog-zoom'),
-    root = $('prog-root'), quality = $('prog-quality');
-  if (!tpl || !key || !root) return;
-
-  tpl.innerHTML = '';
+const populateProgressionOptions = ({ tpl, key, meter, bars, root, quality, genMode }) => {
+  tpl.innerHTML = "";
   ChordTheory.TEMPLATES.forEach(t => {
-    const o = document.createElement('option');
+    const o = document.createElement("option");
     o.value = t.id;
     o.textContent = progTemplateLabel(t);
     tpl.appendChild(o);
   });
-  const customOpt = document.createElement('option');
-  customOpt.value = 'custom';
+  const customOpt = document.createElement("option");
+  customOpt.value = "custom";
   tpl.appendChild(customOpt);
-  key.innerHTML = '';
+
+  key.innerHTML = "";
   ChordTheory.KEYS.forEach(k => {
-    const o = document.createElement('option');
+    const o = document.createElement("option");
     o.value = k;
     o.textContent = k;
     key.appendChild(o);
   });
-  meter.innerHTML = '';
+
+  meter.innerHTML = "";
   Object.keys(ChordTheory.METERS).forEach(m => {
-    const o = document.createElement('option');
+    const o = document.createElement("option");
     o.value = m;
     o.textContent = m;
     meter.appendChild(o);
   });
-  bars.innerHTML = '';
+
+  bars.innerHTML = "";
   for (let b = 1; b <= 16; b++) {
-    const o = document.createElement('option');
+    const o = document.createElement("option");
     o.value = String(b);
-    o.textContent = `${b} ${t('progBar')}`;
+    o.textContent = `${b} ${t("progBar")}`;
     bars.appendChild(o);
   }
-  root.innerHTML = '';
+
+  root.innerHTML = "";
   ChordTheory.SHARP_NAMES.forEach(r => {
-    const o = document.createElement('option');
+    const o = document.createElement("option");
     o.value = r;
     o.textContent = r;
     root.appendChild(o);
   });
-  quality.innerHTML = '';
+
+  quality.innerHTML = "";
   ChordTheory.QUALITIES.forEach(q => {
-    const o = document.createElement('option');
+    const o = document.createElement("option");
     o.value = q;
     o.textContent = q;
     quality.appendChild(o);
   });
-  if (!root.value) root.value = 'C';
-  if (!quality.value) quality.value = 'maj';
 
-  tpl.addEventListener('change', () => {
+  if (!root.value) root.value = "C";
+  if (!quality.value) quality.value = "maj";
+
+  if (genMode && genMode.options.length === 0) {
+    ["random", "specified"].forEach(v => {
+      const o = document.createElement("option");
+      o.value = v;
+      genMode.appendChild(o);
+    });
+  }
+};
+
+const attachProgressionEventListeners = ({ $, tpl, key, mode, meter, bars, zoom, root, quality }) => {
+  tpl.addEventListener("change", () => {
     const prog = getProg();
     prog.templateId = tpl.value;
     prog.chords = ChordTheory.buildFromTemplate(prog.templateId, prog.key, prog.mode, prog.meter, prog.bars);
@@ -736,9 +742,10 @@ const setupProgressionEditor = () => {
     progCursorBeat = 0;
     renderProgressionEditor();
     updatePreview();
-    addLog(t('logProgTemplate') + progTemplateLabel(ChordTheory.TEMPLATES.find(x => x.id === prog.templateId)), 'info');
+    addLog(t("logProgTemplate") + progTemplateLabel(ChordTheory.TEMPLATES.find(x => x.id === prog.templateId)), "info");
   });
-  key.addEventListener('change', () => {
+
+  key.addEventListener("change", () => {
     const prog = getProg();
     const delta = (ChordTheory.pcOf(key.value) - ChordTheory.pcOf(prog.key) + 12) % 12;
     prog.key = key.value;
@@ -748,12 +755,14 @@ const setupProgressionEditor = () => {
     renderProgressionEditor();
     updatePreview();
   });
-  mode.addEventListener('change', () => {
+
+  mode.addEventListener("change", () => {
     getProg().mode = mode.value;
     renderProgressionEditor();
     updatePreview();
   });
-  meter.addEventListener('change', () => {
+
+  meter.addEventListener("change", () => {
     const prog = getProg();
     prog.meter = meter.value;
     const total = progTotalBeats();
@@ -763,7 +772,8 @@ const setupProgressionEditor = () => {
     renderProgressionEditor();
     updatePreview();
   });
-  bars.addEventListener('change', () => {
+
+  bars.addEventListener("change", () => {
     const prog = getProg();
     prog.bars = parseInt(bars.value, 10);
     const total = progTotalBeats();
@@ -773,52 +783,62 @@ const setupProgressionEditor = () => {
     renderProgressionEditor();
     updatePreview();
   });
-  zoom.addEventListener('input', () => {
+
+  zoom.addEventListener("input", () => {
     progBeatPx = parseInt(zoom.value, 10);
     renderProgTimeline();
   });
-  root.addEventListener('change', renderProgPalette);
-  quality.addEventListener('change', renderProgPalette);
 
-  $('prog-add').addEventListener('click', progAddAtCursor);
-  $('prog-replace').addEventListener('click', progReplaceSelected);
-  $('prog-delete').addEventListener('click', () => {
+  root.addEventListener("change", renderProgPalette);
+  quality.addEventListener("change", renderProgPalette);
+
+  $("prog-add").addEventListener("click", progAddAtCursor);
+  $("prog-replace").addEventListener("click", progReplaceSelected);
+  $("prog-delete").addEventListener("click", () => {
     const prog = getProg();
     if (progSelected(prog)) {
       prog.chords = prog.chords.filter(c => c.id !== prog.selectedId);
       prog.selectedId = null;
       renderProgressionEditor();
       updatePreview();
-      addLog(t('logProgDeleted'), 'info');
+      addLog(t("logProgDeleted"), "info");
       return;
     }
     const note = prog.melody.find(n => n.id === prog.melodySelectedId);
-    if (!note) { addLog(t('logProgNoSelection'), 'error'); return; }
+    if (!note) { addLog(t("logProgNoSelection"), "error"); return; }
     prog.melody = prog.melody.filter(n => n.id !== note.id);
     prog.melodySelectedId = null;
     renderProgressionEditor();
     updatePreview();
-    addLog(t('logProgDeleted'), 'info');
+    addLog(t("logProgDeleted"), "info");
   });
-  $('prog-play').addEventListener('click', progPlay);
-  $('prog-stop').addEventListener('click', progStop);
-  $('prog-export').addEventListener('click', progExportAudio);
-  const genMode = $('prog-gen-mode');
-  if (genMode && genMode.options.length === 0) {
-    ['random', 'specified'].forEach(v => {
-      const o = document.createElement('option');
-      o.value = v;
-      genMode.appendChild(o);
-    });
-  }
-  $('prog-generate').addEventListener('click', progGenerate);
-  $('prog-ruler').addEventListener('pointerdown', (e) => {
+
+  $("prog-play").addEventListener("click", progPlay);
+  $("prog-stop").addEventListener("click", progStop);
+  $("prog-export").addEventListener("click", progExportAudio);
+  $("prog-generate").addEventListener("click", progGenerate);
+
+  $("prog-ruler").addEventListener("pointerdown", (e) => {
     const ruler = e.currentTarget;
     const box = ruler.getBoundingClientRect();
     progCursorBeat = Math.min(progTotalBeats() - 1, xToBeat(e.clientX - box.left));
     progStop();
     renderProgTimeline();
   });
+};
+
+const setupProgressionEditor = () => {
+  if (!progHasTheory()) return;
+  const $ = (id) => document.getElementById(id);
+  const tpl = $("prog-template"), key = $("prog-key"), mode = $("prog-mode"),
+    meter = $("prog-meter"), bars = $("prog-bars"), zoom = $("prog-zoom"),
+    root = $("prog-root"), quality = $("prog-quality"), genMode = $("prog-gen-mode");
+  if (!tpl || !key || !root) return;
+
+  const elements = { $, tpl, key, mode, meter, bars, zoom, root, quality, genMode };
+
+  populateProgressionOptions(elements);
+  attachProgressionEventListeners(elements);
 
   setupProgLaneDrag();
   renderProgressionEditor();
@@ -2744,36 +2764,25 @@ const updateAllCheckboxes = () => {
 };
 
 // Initialize
-if (typeof document !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', () => {
-    // Set initial language
-    updateLanguage(currentLang);
-    // Help needs no data, so it is wired up before the JSON arrives — that is
-    // exactly when someone is most likely to reach for it.
-    setupHelp();
-    setupAbout();
-    setupCustomInputs();
+document.addEventListener('DOMContentLoaded', () => {
+  // Set initial language
+  updateLanguage(currentLang);
+  // Help needs no data, so it is wired up before the JSON arrives — that is
+  // exactly when someone is most likely to reach for it.
+  setupHelp();
+  setupAbout();
+  setupCustomInputs();
 
-    window.electronAPI.onJsonData((data) => {
-      appVersion = data.appVersion || null;
-      dataFiles = data.dataFiles || null;
-      generator = new PromptGenerator(data);
-      populateTabs();
-      setupTabs();
-      setupButtons();
-      setupSearch();
-      setupLyricsPanel();
-      if (typeof setupProgressionEditor === 'function') setupProgressionEditor();
-      updatePreview();
-    });
+  window.electronAPI.onJsonData((data) => {
+    appVersion = data.appVersion || null;
+    dataFiles = data.dataFiles || null;
+    generator = new PromptGenerator(data);
+    populateTabs();
+    setupTabs();
+    setupButtons();
+    setupSearch();
+    setupLyricsPanel();
+    if (typeof setupProgressionEditor === 'function') setupProgressionEditor();
+    updatePreview();
   });
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    keywordTrans,
-    keywordLabel,
-    getCurrentLang: () => currentLang,
-    setCurrentLang: (lang) => { currentLang = lang; }
-  };
-}
+});
