@@ -2421,11 +2421,7 @@ const setupAdvancedToggle = () => {
   });
 };
 
-const setupButtons = () => {
-  setupRandomButtons();
-  setupParsePrompt();
-  setupAdvancedToggle();
-
+const setupClearButton = () => {
   // Clear all selections and preview
   document.getElementById('clear-all-btn').addEventListener('click', () => {
     selections = normalizeSelections({ bpm: null });
@@ -2439,7 +2435,9 @@ const setupButtons = () => {
     updatePreview();
     addLog(t('logCleared'), 'info');
   });
+};
 
+const setupOthersInput = () => {
   // Free text rides along as a single value, written wherever its tab sits
   const othersInput = document.getElementById('others-input');
   if (othersInput) {
@@ -2448,7 +2446,9 @@ const setupButtons = () => {
       updatePreview();
     });
   }
+};
 
+const setupClipboardAndFileExport = () => {
   // Copy to clipboard
   document.getElementById('copy-btn').addEventListener('click', async () => {
     const prompt = document.getElementById('preview').textContent;
@@ -2488,7 +2488,9 @@ const setupButtons = () => {
       addLog(`Error: ${error.message}`, 'error');
     }
   });
+};
 
+const setupLogResizerAndControls = () => {
   // Drag the bar above the log to give it more or less room
   const resizer = document.getElementById('log-resizer');
   const savedHeight = parseInt(localStorage.getItem(LOG_HEIGHT_KEY), 10);
@@ -2541,7 +2543,9 @@ const setupButtons = () => {
     document.getElementById('log-window').innerHTML = '';
     addLog(t('logLogCleared'), 'info');
   });
+};
 
+const setupLanguageSwitcher = () => {
   // Language switcher
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -2549,7 +2553,9 @@ const setupButtons = () => {
       updateLanguage(lang);
     });
   });
+};
 
+const setupBpmControls = () => {
   // BPM slider and input sync
   const bpmSlider = document.getElementById('bpm-slider');
   const bpmInput = document.getElementById('bpm-input');
@@ -2585,7 +2591,9 @@ const setupButtons = () => {
       }
     });
   }
+};
 
+const setupProjectManagement = () => {
   // Projects and save folder exist only in the desktop app
   if (window.electronAPI.isWeb) {
     document.body.classList.add('is-web');
@@ -2636,6 +2644,19 @@ const setupButtons = () => {
   window.electronAPI.getProjectsDir().then(currentPath => {
     document.getElementById('current-folder').textContent = currentPath;
   });
+};
+
+const setupButtons = () => {
+  setupRandomButtons();
+  setupParsePrompt();
+  setupAdvancedToggle();
+  setupClearButton();
+  setupOthersInput();
+  setupClipboardAndFileExport();
+  setupLogResizerAndControls();
+  setupLanguageSwitcher();
+  setupBpmControls();
+  setupProjectManagement();
 };
 
 const loadProjectsList = async () => {
