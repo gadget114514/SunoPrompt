@@ -14,7 +14,6 @@ const appDir = __dirname;
 // Check if npm is available
 const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
-console.log('🎵 Starting Suno Style Generator...');
 console.log(`📁 Application directory: ${appDir}`);
 
 // Spawn npm start process
