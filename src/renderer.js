@@ -913,6 +913,101 @@ const progReplaceSelected = () => {
   addLog(t('logProgReplaced') + ChordTheory.chordSymbol(sel.root, sel.quality) + (v.diatonic ? '' : ` ⚠ ${v.reason}`), v.diatonic ? 'success' : 'info');
 };
 
+// Drag helpers for progression lane interaction.
+const handleProgChordResize = (lane, chord, grab) => {
+  const orig = chord.dur;
+  const move = (m) => {
+    grab(m);
+    const b = lane.getBoundingClientRect();
+    chord.dur = Math.max(1, xToBeat(m.clientX - b.left) - chord.start);
+    if (chord.start + chord.dur > progTotalBeats()) chord.dur = progTotalBeats() - chord.start;
+    renderProgTimeline();
+  };
+  const up = () => {
+    lane.removeEventListener('pointermove', move);
+    lane.removeEventListener('pointerup', up);
+    lane.removeEventListener('pointercancel', up);
+    if (progOverlaps(chord.start, chord.dur, chord.id)) {
+      chord.dur = orig;
+      addLog(t('logProgOverlap'), 'error');
+    }
+    renderProgressionEditor();
+    updatePreview();
+  };
+  lane.addEventListener('pointermove', move);
+  lane.addEventListener('pointerup', up);
+  lane.addEventListener('pointercancel', up);
+};
+
+const handleProgChordMove = (lane, chord, prog, grabOffset, grab) => {
+  prog.selectedId = chord.id;
+  progCursorBeat = chord.start;
+  renderProgTimeline();
+  const origStart = chord.start;
+  const move = (m) => {
+    grab(m);
+    const b = lane.getBoundingClientRect();
+    let s = xToBeat(m.clientX - b.left) - grabOffset;
+    s = Math.max(0, Math.min(progTotalBeats() - chord.dur, s));
+    chord.start = s;
+    renderProgTimeline();
+  };
+  const up = () => {
+    lane.removeEventListener('pointermove', move);
+    lane.removeEventListener('pointerup', up);
+    lane.removeEventListener('pointercancel', up);
+    if (progOverlaps(chord.start, chord.dur, chord.id)) {
+      chord.start = origStart;
+      addLog(t('logProgOverlap'), 'error');
+    } else {
+      progCursorBeat = chord.start;
+    }
+    renderProgressionEditor();
+    updatePreview();
+  };
+  lane.addEventListener('pointermove', move);
+  lane.addEventListener('pointerup', up);
+  lane.addEventListener('pointercancel', up);
+};
+
+const handleProgLaneCreate = (lane, prog, anchor, grab) => {
+  let end = anchor;
+  const move = (m) => {
+    grab(m);
+    const b = lane.getBoundingClientRect();
+    end = Math.max(0, Math.min(progTotalBeats(), xToBeat(m.clientX - b.left)));
+    renderProgTimeline(anchor, end);
+  };
+  const up = () => {
+    lane.removeEventListener('pointermove', move);
+    lane.removeEventListener('pointerup', up);
+    lane.removeEventListener('pointercancel', up);
+    const start = Math.min(anchor, end);
+    const dur = Math.max(1, Math.abs(end - anchor));
+    if (progOverlaps(start, dur)) {
+      addLog(t('logProgOverlap'), 'error');
+      renderProgTimeline();
+      return;
+    }
+    const chord = {
+      id: `c${Date.now()}`,
+      root: document.getElementById('prog-root').value,
+      quality: document.getElementById('prog-quality').value,
+      start, dur
+    };
+    prog.chords.push(chord);
+    prog.selectedId = chord.id;
+    progCursorBeat = start;
+    renderProgressionEditor();
+    updatePreview();
+    const v = progCheck(chord.root, chord.quality, prog);
+    addLog(t('logProgAdded') + ChordTheory.chordSymbol(chord.root, chord.quality) + (v.diatonic ? '' : ` ⚠ ${v.reason}`), v.diatonic ? 'success' : 'info');
+  };
+  lane.addEventListener('pointermove', move);
+  lane.addEventListener('pointerup', up);
+  lane.addEventListener('pointercancel', up);
+};
+
 // Drag on the lane: empty area creates (length = drag distance), edges resize, body moves.
 const setupProgLaneDrag = () => {
   const lane = document.getElementById('prog-lane');
@@ -934,29 +1029,7 @@ const setupProgLaneDrag = () => {
     if (block && e.target.classList.contains('prog-chord-resize')) {
       e.preventDefault();
       const chord = prog.chords.find(c => c.id === block.dataset.chordId);
-      if (!chord) return;
-      const orig = chord.dur;
-      const move = (m) => {
-        grab(m);
-        const b = lane.getBoundingClientRect();
-        chord.dur = Math.max(1, xToBeat(m.clientX - b.left) - chord.start);
-        if (chord.start + chord.dur > progTotalBeats()) chord.dur = progTotalBeats() - chord.start;
-        renderProgTimeline();
-      };
-      const up = () => {
-        lane.removeEventListener('pointermove', move);
-        lane.removeEventListener('pointerup', up);
-        lane.removeEventListener('pointercancel', up);
-        if (progOverlaps(chord.start, chord.dur, chord.id)) {
-          chord.dur = orig;
-          addLog(t('logProgOverlap'), 'error');
-        }
-        renderProgressionEditor();
-        updatePreview();
-      };
-      lane.addEventListener('pointermove', move);
-      lane.addEventListener('pointerup', up);
-      lane.addEventListener('pointercancel', up);
+      if (chord) handleProgChordResize(lane, chord, grab);
       return;
     }
 
@@ -964,77 +1037,14 @@ const setupProgLaneDrag = () => {
     if (block) {
       e.preventDefault();
       const chord = prog.chords.find(c => c.id === block.dataset.chordId);
-      if (!chord) return;
-      prog.selectedId = chord.id;
-      progCursorBeat = chord.start;
-      renderProgTimeline();
-      const origStart = chord.start;
-      const grabOffset = beat - chord.start;
-      const move = (m) => {
-        grab(m);
-        const b = lane.getBoundingClientRect();
-        let s = xToBeat(m.clientX - b.left) - grabOffset;
-        s = Math.max(0, Math.min(progTotalBeats() - chord.dur, s));
-        chord.start = s;
-        renderProgTimeline();
-      };
-      const up = () => {
-        lane.removeEventListener('pointermove', move);
-        lane.removeEventListener('pointerup', up);
-        lane.removeEventListener('pointercancel', up);
-        if (progOverlaps(chord.start, chord.dur, chord.id)) {
-          chord.start = origStart;
-          addLog(t('logProgOverlap'), 'error');
-        } else {
-          progCursorBeat = chord.start;
-        }
-        renderProgressionEditor();
-        updatePreview();
-      };
-      lane.addEventListener('pointermove', move);
-      lane.addEventListener('pointerup', up);
-      lane.addEventListener('pointercancel', up);
+      if (chord) handleProgChordMove(lane, chord, prog, beat - chord.start, grab);
       return;
     }
 
     // Empty lane: drag out the new chord's length.
     e.preventDefault();
     const anchor = Math.min(beat, progTotalBeats() - 1);
-    let end = anchor;
-    const move = (m) => {
-      grab(m);
-      const b = lane.getBoundingClientRect();
-      end = Math.max(0, Math.min(progTotalBeats(), xToBeat(m.clientX - b.left)));
-      renderProgTimeline(anchor, end);
-    };
-    const up = () => {
-      lane.removeEventListener('pointermove', move);
-      lane.removeEventListener('pointerup', up);
-      lane.removeEventListener('pointercancel', up);
-      const start = Math.min(anchor, end);
-      const dur = Math.max(1, Math.abs(end - anchor));
-      if (progOverlaps(start, dur)) {
-        addLog(t('logProgOverlap'), 'error');
-        renderProgTimeline();
-        return;
-      }
-      const chord = {
-        id: `c${Date.now()}`,
-        root: document.getElementById('prog-root').value,
-        quality: document.getElementById('prog-quality').value,
-        start, dur
-      };
-      prog.chords.push(chord);
-      prog.selectedId = chord.id;
-      progCursorBeat = start;
-      renderProgressionEditor();
-      updatePreview();
-      const v = progCheck(chord.root, chord.quality, prog);
-      addLog(t('logProgAdded') + ChordTheory.chordSymbol(chord.root, chord.quality) + (v.diatonic ? '' : ` ⚠ ${v.reason}`), v.diatonic ? 'success' : 'info');
-    };
-    lane.addEventListener('pointermove', move);
-    lane.addEventListener('pointerup', up);
-    lane.addEventListener('pointercancel', up);
+    handleProgLaneCreate(lane, prog, anchor, grab);
   });
 };
 
