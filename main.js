@@ -290,7 +290,10 @@ ipcMain.handle('load-projects', async (event) => {
       } else if (res.project) {
         projects.push(res.project);
       }
-    }
+    });
+
+    const results = await Promise.all(projectPromises);
+    const projects = results.filter(Boolean);
 
     projects.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     return { success: true, projects, skipped };
