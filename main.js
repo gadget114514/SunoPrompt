@@ -265,19 +265,25 @@ ipcMain.handle('save-project', async (event, projectData) => {
 ipcMain.handle('load-projects', async (event) => {
   try {
     const dir = getProjectsDir();
-    const projects = [];
-    let skipped = 0;
+    const entries = await fs.promises.readdir(dir);
+    const jsonFiles = entries.filter(f => f.endsWith('.json'));
 
-    for (const fileName of fs.readdirSync(dir).filter(f => f.endsWith('.json'))) {
+    let skipped = 0;
+    const projectPromises = jsonFiles.map(async (fileName) => {
       // One unreadable file must not hide every other project
       try {
-        const project = JSON.parse(fs.readFileSync(path.join(dir, fileName), 'utf-8'));
-        projects.push({ ...project, fileName });
+        const content = await fs.promises.readFile(path.join(dir, fileName), 'utf-8');
+        const project = JSON.parse(content);
+        return { ...project, fileName };
       } catch (error) {
         console.error(`Skipping ${fileName}:`, error.message);
         skipped += 1;
+        return null;
       }
-    }
+    });
+
+    const results = await Promise.all(projectPromises);
+    const projects = results.filter(Boolean);
 
     projects.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     return { success: true, projects, skipped };
