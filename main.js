@@ -291,7 +291,7 @@ ipcMain.handle('load-project', async (event, fileName) => {
   try {
     const filePath = projectPath(fileName);
     if (!filePath) return { success: false, error: `Not a project file: ${fileName}` };
-    const content = fs.readFileSync(filePath, 'utf-8');
+    const content = await fs.promises.readFile(filePath, 'utf-8');
     const project = JSON.parse(content);
     return { success: true, project };
   } catch (error) {
