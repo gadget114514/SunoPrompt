@@ -8,6 +8,7 @@
     "suno-prompt-generator": "launcher.js"
   },
   "scripts": {
+    "test": "node --test",
     "start": "electron .",
     "debug": "electron . --remote-debugging-port=9222",
     "dev": "electron .",
