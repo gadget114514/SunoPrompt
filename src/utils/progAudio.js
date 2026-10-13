@@ -1,38 +1,43 @@
 // Render the progression timeline (chords + melody) to audio and encode it.
 // Loaded via a plain script tag; needs ChordTheory for pitch mapping only.
-const ProgAudio = (() => {
-  const midiFreq = (m) => 440 * Math.pow(2, (m - 69) / 12);
-  const hasTheory = () => typeof ChordTheory !== 'undefined';
+class ProgAudio {
+  static midiFreq(m) {
+    return 440 * Math.pow(2, (m - 69) / 12);
+  }
 
-  const beatsPerBar = (prog) => {
-    if (hasTheory()) return ChordTheory.beatsPerBar(prog.meter);
+  static hasTheory() {
+    return typeof ChordTheory !== 'undefined';
+  }
+
+  static beatsPerBar(prog) {
+    if (ProgAudio.hasTheory()) return ChordTheory.beatsPerBar(prog.meter);
     return parseInt(prog.meter, 10) || 4;
-  };
+  }
 
   // Pad register: root around C3 plus the quality's intervals.
-  const chordMidis = (chord) => {
-    const pc = hasTheory() ? ChordTheory.pcOf(chord.root) : 0;
-    const iv = (hasTheory() && ChordTheory.QUALITY_INTERVALS[chord.quality]) || [0, 4, 7];
+  static chordMidis(chord) {
+    const pc = ProgAudio.hasTheory() ? ChordTheory.pcOf(chord.root) : 0;
+    const iv = (ProgAudio.hasTheory() && ChordTheory.QUALITY_INTERVALS[chord.quality]) || [0, 4, 7];
     return iv.map(s => 48 + pc + s);
-  };
+  }
 
   // Click-free envelope: attack up, hold, release down.
-  const adsr = (param, t0, dur, peak, attack, release) => {
+  static adsr(param, t0, dur, peak, attack, release) {
     const a = Math.min(attack, dur * 0.4);
     const r = Math.min(release, dur * 0.4);
     param.setValueAtTime(0.0001, t0);
     param.exponentialRampToValueAtTime(Math.max(peak, 0.0002), t0 + Math.max(a, 0.01));
     param.setValueAtTime(Math.max(peak, 0.0002), Math.max(t0 + a, t0 + dur - r));
     param.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  };
+  }
 
   // Offline mix: triangle pads through a lowpass, sine lead with vibrato,
   // glued by a compressor. Returns an AudioBuffer (mono, 44.1kHz).
-  const render = async (prog, bpm) => {
+  static async render(prog, bpm) {
     const rate = 44100;
     const tempo = Math.max(30, Math.min(240, bpm || 120));
     const beat = 60 / tempo;
-    const totalBeats = beatsPerBar(prog) * prog.bars;
+    const totalBeats = ProgAudio.beatsPerBar(prog) * prog.bars;
     const ctx = new OfflineAudioContext(1, Math.ceil((totalBeats * beat + 1.5) * rate), rate);
 
     const master = ctx.createGain();
@@ -49,13 +54,13 @@ const ProgAudio = (() => {
     [...(prog.chords || [])].sort((a, b) => a.start - b.start).forEach(ch => {
       const t0 = ch.start * beat;
       const dur = ch.dur * beat;
-      const midis = chordMidis(ch);
+      const midis = ProgAudio.chordMidis(ch);
       midis.forEach(m => {
         const osc = ctx.createOscillator();
         osc.type = 'triangle';
-        osc.frequency.value = midiFreq(m);
+        osc.frequency.value = ProgAudio.midiFreq(m);
         const g = ctx.createGain();
-        adsr(g.gain, t0, dur, 0.3 / midis.length, 0.3, 0.4);
+        ProgAudio.adsr(g.gain, t0, dur, 0.3 / midis.length, 0.3, 0.4);
         osc.connect(g);
         g.connect(lp);
         osc.start(t0);
@@ -68,7 +73,7 @@ const ProgAudio = (() => {
       const dur = n.dur * beat;
       const osc = ctx.createOscillator();
       osc.type = 'sine';
-      osc.frequency.value = midiFreq(n.midi);
+      osc.frequency.value = ProgAudio.midiFreq(n.midi);
       const lfo = ctx.createOscillator();
       lfo.frequency.value = 5.5;
       const lfoGain = ctx.createGain();
@@ -76,7 +81,7 @@ const ProgAudio = (() => {
       lfo.connect(lfoGain);
       lfoGain.connect(osc.frequency);
       const g = ctx.createGain();
-      adsr(g.gain, t0, dur, 0.22, 0.02, 0.1);
+      ProgAudio.adsr(g.gain, t0, dur, 0.22, 0.02, 0.1);
       osc.connect(g);
       g.connect(master);
       osc.start(t0);
@@ -86,11 +91,11 @@ const ProgAudio = (() => {
     });
 
     return ctx.startRendering();
-  };
+  }
 
   // 16-bit PCM WAV bytes for an AudioBuffer (duck-typed: sampleRate,
   // numberOfChannels, length/getChannelData work with a stub too).
-  const encodeWav = (buffer) => {
+  static encodeWav(buffer) {
     const channels = [];
     for (let c = 0; c < buffer.numberOfChannels; c++) {
       channels.push(buffer.getChannelData(c));
@@ -121,10 +126,10 @@ const ProgAudio = (() => {
       }
     }
     return bytes;
-  };
+  }
 
   // CBR MP3 via the vendored lamejs (global `lamejs` from vendor/lame.min.js).
-  const encodeMp3 = (buffer, kbps = 128) => {
+  static encodeMp3(buffer, kbps = 128) {
     if (typeof lamejs === 'undefined' || !lamejs.Mp3Encoder) {
       throw new Error('MP3 encoder (lamejs) is not loaded');
     }
@@ -156,16 +161,14 @@ const ProgAudio = (() => {
     let off = 0;
     parts.forEach(p => { out.set(p, off); off += p.length; });
     return out;
-  };
+  }
 
-  const toBase64 = (bytes) => {
+  static toBase64(bytes) {
     let s = '';
     const CHUNK = 0x8000;
     for (let i = 0; i < bytes.length; i += CHUNK) {
       s += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
     }
     return btoa(s);
-  };
-
-  return { render, encodeWav, encodeMp3, toBase64, midiFreq };
-})();
+  }
+}
