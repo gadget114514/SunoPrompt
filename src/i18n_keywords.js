@@ -4187,3 +4187,7 @@ const keywordTranslations = {
   "wooden rim taps": "toques de aro de madera"
 }
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = keywordTranslations;
+}
