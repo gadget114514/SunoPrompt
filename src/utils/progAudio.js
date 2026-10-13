@@ -17,7 +17,7 @@ const ProgAudio = (() => {
   };
 
   // Click-free envelope: attack up, hold, release down.
-  const adsr = (param, t0, dur, peak, attack, release) => {
+  const adsr = (param, { t0, dur, peak, attack, release }) => {
     const a = Math.min(attack, dur * 0.4);
     const r = Math.min(release, dur * 0.4);
     param.setValueAtTime(0.0001, t0);
@@ -55,7 +55,7 @@ const ProgAudio = (() => {
         osc.type = 'triangle';
         osc.frequency.value = midiFreq(m);
         const g = ctx.createGain();
-        adsr(g.gain, t0, dur, 0.3 / midis.length, 0.3, 0.4);
+        adsr(g.gain, { t0, dur, peak: 0.3 / midis.length, attack: 0.3, release: 0.4 });
         osc.connect(g);
         g.connect(lp);
         osc.start(t0);
@@ -76,7 +76,7 @@ const ProgAudio = (() => {
       lfo.connect(lfoGain);
       lfoGain.connect(osc.frequency);
       const g = ctx.createGain();
-      adsr(g.gain, t0, dur, 0.22, 0.02, 0.1);
+      adsr(g.gain, { t0, dur, peak: 0.22, attack: 0.02, release: 0.1 });
       osc.connect(g);
       g.connect(master);
       osc.start(t0);
