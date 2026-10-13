@@ -667,63 +667,72 @@ const progSelected = (prog = getProg()) => prog.chords.find(c => c.id === prog.s
 const beatToX = (beat) => beat * progBeatPx;
 const xToBeat = (x) => Math.max(0, Math.round(x / progBeatPx));
 
-const setupProgressionEditor = () => {
-  if (!progHasTheory()) return;
-  const $ = (id) => document.getElementById(id);
-  const tpl = $('prog-template'), key = $('prog-key'), mode = $('prog-mode'),
-    meter = $('prog-meter'), bars = $('prog-bars'), zoom = $('prog-zoom'),
-    root = $('prog-root'), quality = $('prog-quality');
-  if (!tpl || !key || !root) return;
-
-  tpl.innerHTML = '';
+const populateProgressionOptions = ({ tpl, key, meter, bars, root, quality, genMode }) => {
+  tpl.innerHTML = "";
   ChordTheory.TEMPLATES.forEach(t => {
-    const o = document.createElement('option');
+    const o = document.createElement("option");
     o.value = t.id;
     o.textContent = progTemplateLabel(t);
     tpl.appendChild(o);
   });
-  const customOpt = document.createElement('option');
-  customOpt.value = 'custom';
+  const customOpt = document.createElement("option");
+  customOpt.value = "custom";
   tpl.appendChild(customOpt);
-  key.innerHTML = '';
+
+  key.innerHTML = "";
   ChordTheory.KEYS.forEach(k => {
-    const o = document.createElement('option');
+    const o = document.createElement("option");
     o.value = k;
     o.textContent = k;
     key.appendChild(o);
   });
-  meter.innerHTML = '';
+
+  meter.innerHTML = "";
   Object.keys(ChordTheory.METERS).forEach(m => {
-    const o = document.createElement('option');
+    const o = document.createElement("option");
     o.value = m;
     o.textContent = m;
     meter.appendChild(o);
   });
-  bars.innerHTML = '';
+
+  bars.innerHTML = "";
   for (let b = 1; b <= 16; b++) {
-    const o = document.createElement('option');
+    const o = document.createElement("option");
     o.value = String(b);
-    o.textContent = `${b} ${t('progBar')}`;
+    o.textContent = `${b} ${t("progBar")}`;
     bars.appendChild(o);
   }
-  root.innerHTML = '';
+
+  root.innerHTML = "";
   ChordTheory.SHARP_NAMES.forEach(r => {
-    const o = document.createElement('option');
+    const o = document.createElement("option");
     o.value = r;
     o.textContent = r;
     root.appendChild(o);
   });
-  quality.innerHTML = '';
+
+  quality.innerHTML = "";
   ChordTheory.QUALITIES.forEach(q => {
-    const o = document.createElement('option');
+    const o = document.createElement("option");
     o.value = q;
     o.textContent = q;
     quality.appendChild(o);
   });
-  if (!root.value) root.value = 'C';
-  if (!quality.value) quality.value = 'maj';
 
-  tpl.addEventListener('change', () => {
+  if (!root.value) root.value = "C";
+  if (!quality.value) quality.value = "maj";
+
+  if (genMode && genMode.options.length === 0) {
+    ["random", "specified"].forEach(v => {
+      const o = document.createElement("option");
+      o.value = v;
+      genMode.appendChild(o);
+    });
+  }
+};
+
+const attachProgressionEventListeners = ({ $, tpl, key, mode, meter, bars, zoom, root, quality }) => {
+  tpl.addEventListener("change", () => {
     const prog = getProg();
     prog.templateId = tpl.value;
     prog.chords = ChordTheory.buildFromTemplate(prog.templateId, prog.key, prog.mode, prog.meter, prog.bars);
@@ -733,9 +742,10 @@ const setupProgressionEditor = () => {
     progCursorBeat = 0;
     renderProgressionEditor();
     updatePreview();
-    addLog(t('logProgTemplate') + progTemplateLabel(ChordTheory.TEMPLATES.find(x => x.id === prog.templateId)), 'info');
+    addLog(t("logProgTemplate") + progTemplateLabel(ChordTheory.TEMPLATES.find(x => x.id === prog.templateId)), "info");
   });
-  key.addEventListener('change', () => {
+
+  key.addEventListener("change", () => {
     const prog = getProg();
     const delta = (ChordTheory.pcOf(key.value) - ChordTheory.pcOf(prog.key) + 12) % 12;
     prog.key = key.value;
@@ -745,12 +755,14 @@ const setupProgressionEditor = () => {
     renderProgressionEditor();
     updatePreview();
   });
-  mode.addEventListener('change', () => {
+
+  mode.addEventListener("change", () => {
     getProg().mode = mode.value;
     renderProgressionEditor();
     updatePreview();
   });
-  meter.addEventListener('change', () => {
+
+  meter.addEventListener("change", () => {
     const prog = getProg();
     prog.meter = meter.value;
     const total = progTotalBeats();
@@ -760,7 +772,8 @@ const setupProgressionEditor = () => {
     renderProgressionEditor();
     updatePreview();
   });
-  bars.addEventListener('change', () => {
+
+  bars.addEventListener("change", () => {
     const prog = getProg();
     prog.bars = parseInt(bars.value, 10);
     const total = progTotalBeats();
@@ -770,52 +783,62 @@ const setupProgressionEditor = () => {
     renderProgressionEditor();
     updatePreview();
   });
-  zoom.addEventListener('input', () => {
+
+  zoom.addEventListener("input", () => {
     progBeatPx = parseInt(zoom.value, 10);
     renderProgTimeline();
   });
-  root.addEventListener('change', renderProgPalette);
-  quality.addEventListener('change', renderProgPalette);
 
-  $('prog-add').addEventListener('click', progAddAtCursor);
-  $('prog-replace').addEventListener('click', progReplaceSelected);
-  $('prog-delete').addEventListener('click', () => {
+  root.addEventListener("change", renderProgPalette);
+  quality.addEventListener("change", renderProgPalette);
+
+  $("prog-add").addEventListener("click", progAddAtCursor);
+  $("prog-replace").addEventListener("click", progReplaceSelected);
+  $("prog-delete").addEventListener("click", () => {
     const prog = getProg();
     if (progSelected(prog)) {
       prog.chords = prog.chords.filter(c => c.id !== prog.selectedId);
       prog.selectedId = null;
       renderProgressionEditor();
       updatePreview();
-      addLog(t('logProgDeleted'), 'info');
+      addLog(t("logProgDeleted"), "info");
       return;
     }
     const note = prog.melody.find(n => n.id === prog.melodySelectedId);
-    if (!note) { addLog(t('logProgNoSelection'), 'error'); return; }
+    if (!note) { addLog(t("logProgNoSelection"), "error"); return; }
     prog.melody = prog.melody.filter(n => n.id !== note.id);
     prog.melodySelectedId = null;
     renderProgressionEditor();
     updatePreview();
-    addLog(t('logProgDeleted'), 'info');
+    addLog(t("logProgDeleted"), "info");
   });
-  $('prog-play').addEventListener('click', progPlay);
-  $('prog-stop').addEventListener('click', progStop);
-  $('prog-export').addEventListener('click', progExportAudio);
-  const genMode = $('prog-gen-mode');
-  if (genMode && genMode.options.length === 0) {
-    ['random', 'specified'].forEach(v => {
-      const o = document.createElement('option');
-      o.value = v;
-      genMode.appendChild(o);
-    });
-  }
-  $('prog-generate').addEventListener('click', progGenerate);
-  $('prog-ruler').addEventListener('pointerdown', (e) => {
+
+  $("prog-play").addEventListener("click", progPlay);
+  $("prog-stop").addEventListener("click", progStop);
+  $("prog-export").addEventListener("click", progExportAudio);
+  $("prog-generate").addEventListener("click", progGenerate);
+
+  $("prog-ruler").addEventListener("pointerdown", (e) => {
     const ruler = e.currentTarget;
     const box = ruler.getBoundingClientRect();
     progCursorBeat = Math.min(progTotalBeats() - 1, xToBeat(e.clientX - box.left));
     progStop();
     renderProgTimeline();
   });
+};
+
+const setupProgressionEditor = () => {
+  if (!progHasTheory()) return;
+  const $ = (id) => document.getElementById(id);
+  const tpl = $("prog-template"), key = $("prog-key"), mode = $("prog-mode"),
+    meter = $("prog-meter"), bars = $("prog-bars"), zoom = $("prog-zoom"),
+    root = $("prog-root"), quality = $("prog-quality"), genMode = $("prog-gen-mode");
+  if (!tpl || !key || !root) return;
+
+  const elements = { $, tpl, key, mode, meter, bars, zoom, root, quality, genMode };
+
+  populateProgressionOptions(elements);
+  attachProgressionEventListeners(elements);
 
   setupProgLaneDrag();
   renderProgressionEditor();
@@ -913,6 +936,101 @@ const progReplaceSelected = () => {
   addLog(t('logProgReplaced') + ChordTheory.chordSymbol(sel.root, sel.quality) + (v.diatonic ? '' : ` ⚠ ${v.reason}`), v.diatonic ? 'success' : 'info');
 };
 
+// Drag helpers for progression lane interaction.
+const handleProgChordResize = (lane, chord, grab) => {
+  const orig = chord.dur;
+  const move = (m) => {
+    grab(m);
+    const b = lane.getBoundingClientRect();
+    chord.dur = Math.max(1, xToBeat(m.clientX - b.left) - chord.start);
+    if (chord.start + chord.dur > progTotalBeats()) chord.dur = progTotalBeats() - chord.start;
+    renderProgTimeline();
+  };
+  const up = () => {
+    lane.removeEventListener('pointermove', move);
+    lane.removeEventListener('pointerup', up);
+    lane.removeEventListener('pointercancel', up);
+    if (progOverlaps(chord.start, chord.dur, chord.id)) {
+      chord.dur = orig;
+      addLog(t('logProgOverlap'), 'error');
+    }
+    renderProgressionEditor();
+    updatePreview();
+  };
+  lane.addEventListener('pointermove', move);
+  lane.addEventListener('pointerup', up);
+  lane.addEventListener('pointercancel', up);
+};
+
+const handleProgChordMove = (lane, chord, prog, grabOffset, grab) => {
+  prog.selectedId = chord.id;
+  progCursorBeat = chord.start;
+  renderProgTimeline();
+  const origStart = chord.start;
+  const move = (m) => {
+    grab(m);
+    const b = lane.getBoundingClientRect();
+    let s = xToBeat(m.clientX - b.left) - grabOffset;
+    s = Math.max(0, Math.min(progTotalBeats() - chord.dur, s));
+    chord.start = s;
+    renderProgTimeline();
+  };
+  const up = () => {
+    lane.removeEventListener('pointermove', move);
+    lane.removeEventListener('pointerup', up);
+    lane.removeEventListener('pointercancel', up);
+    if (progOverlaps(chord.start, chord.dur, chord.id)) {
+      chord.start = origStart;
+      addLog(t('logProgOverlap'), 'error');
+    } else {
+      progCursorBeat = chord.start;
+    }
+    renderProgressionEditor();
+    updatePreview();
+  };
+  lane.addEventListener('pointermove', move);
+  lane.addEventListener('pointerup', up);
+  lane.addEventListener('pointercancel', up);
+};
+
+const handleProgLaneCreate = (lane, prog, anchor, grab) => {
+  let end = anchor;
+  const move = (m) => {
+    grab(m);
+    const b = lane.getBoundingClientRect();
+    end = Math.max(0, Math.min(progTotalBeats(), xToBeat(m.clientX - b.left)));
+    renderProgTimeline(anchor, end);
+  };
+  const up = () => {
+    lane.removeEventListener('pointermove', move);
+    lane.removeEventListener('pointerup', up);
+    lane.removeEventListener('pointercancel', up);
+    const start = Math.min(anchor, end);
+    const dur = Math.max(1, Math.abs(end - anchor));
+    if (progOverlaps(start, dur)) {
+      addLog(t('logProgOverlap'), 'error');
+      renderProgTimeline();
+      return;
+    }
+    const chord = {
+      id: `c${Date.now()}`,
+      root: document.getElementById('prog-root').value,
+      quality: document.getElementById('prog-quality').value,
+      start, dur
+    };
+    prog.chords.push(chord);
+    prog.selectedId = chord.id;
+    progCursorBeat = start;
+    renderProgressionEditor();
+    updatePreview();
+    const v = progCheck(chord.root, chord.quality, prog);
+    addLog(t('logProgAdded') + ChordTheory.chordSymbol(chord.root, chord.quality) + (v.diatonic ? '' : ` ⚠ ${v.reason}`), v.diatonic ? 'success' : 'info');
+  };
+  lane.addEventListener('pointermove', move);
+  lane.addEventListener('pointerup', up);
+  lane.addEventListener('pointercancel', up);
+};
+
 // Drag on the lane: empty area creates (length = drag distance), edges resize, body moves.
 const setupProgLaneDrag = () => {
   const lane = document.getElementById('prog-lane');
@@ -934,29 +1052,7 @@ const setupProgLaneDrag = () => {
     if (block && e.target.classList.contains('prog-chord-resize')) {
       e.preventDefault();
       const chord = prog.chords.find(c => c.id === block.dataset.chordId);
-      if (!chord) return;
-      const orig = chord.dur;
-      const move = (m) => {
-        grab(m);
-        const b = lane.getBoundingClientRect();
-        chord.dur = Math.max(1, xToBeat(m.clientX - b.left) - chord.start);
-        if (chord.start + chord.dur > progTotalBeats()) chord.dur = progTotalBeats() - chord.start;
-        renderProgTimeline();
-      };
-      const up = () => {
-        lane.removeEventListener('pointermove', move);
-        lane.removeEventListener('pointerup', up);
-        lane.removeEventListener('pointercancel', up);
-        if (progOverlaps(chord.start, chord.dur, chord.id)) {
-          chord.dur = orig;
-          addLog(t('logProgOverlap'), 'error');
-        }
-        renderProgressionEditor();
-        updatePreview();
-      };
-      lane.addEventListener('pointermove', move);
-      lane.addEventListener('pointerup', up);
-      lane.addEventListener('pointercancel', up);
+      if (chord) handleProgChordResize(lane, chord, grab);
       return;
     }
 
@@ -964,77 +1060,14 @@ const setupProgLaneDrag = () => {
     if (block) {
       e.preventDefault();
       const chord = prog.chords.find(c => c.id === block.dataset.chordId);
-      if (!chord) return;
-      prog.selectedId = chord.id;
-      progCursorBeat = chord.start;
-      renderProgTimeline();
-      const origStart = chord.start;
-      const grabOffset = beat - chord.start;
-      const move = (m) => {
-        grab(m);
-        const b = lane.getBoundingClientRect();
-        let s = xToBeat(m.clientX - b.left) - grabOffset;
-        s = Math.max(0, Math.min(progTotalBeats() - chord.dur, s));
-        chord.start = s;
-        renderProgTimeline();
-      };
-      const up = () => {
-        lane.removeEventListener('pointermove', move);
-        lane.removeEventListener('pointerup', up);
-        lane.removeEventListener('pointercancel', up);
-        if (progOverlaps(chord.start, chord.dur, chord.id)) {
-          chord.start = origStart;
-          addLog(t('logProgOverlap'), 'error');
-        } else {
-          progCursorBeat = chord.start;
-        }
-        renderProgressionEditor();
-        updatePreview();
-      };
-      lane.addEventListener('pointermove', move);
-      lane.addEventListener('pointerup', up);
-      lane.addEventListener('pointercancel', up);
+      if (chord) handleProgChordMove(lane, chord, prog, beat - chord.start, grab);
       return;
     }
 
     // Empty lane: drag out the new chord's length.
     e.preventDefault();
     const anchor = Math.min(beat, progTotalBeats() - 1);
-    let end = anchor;
-    const move = (m) => {
-      grab(m);
-      const b = lane.getBoundingClientRect();
-      end = Math.max(0, Math.min(progTotalBeats(), xToBeat(m.clientX - b.left)));
-      renderProgTimeline(anchor, end);
-    };
-    const up = () => {
-      lane.removeEventListener('pointermove', move);
-      lane.removeEventListener('pointerup', up);
-      lane.removeEventListener('pointercancel', up);
-      const start = Math.min(anchor, end);
-      const dur = Math.max(1, Math.abs(end - anchor));
-      if (progOverlaps(start, dur)) {
-        addLog(t('logProgOverlap'), 'error');
-        renderProgTimeline();
-        return;
-      }
-      const chord = {
-        id: `c${Date.now()}`,
-        root: document.getElementById('prog-root').value,
-        quality: document.getElementById('prog-quality').value,
-        start, dur
-      };
-      prog.chords.push(chord);
-      prog.selectedId = chord.id;
-      progCursorBeat = start;
-      renderProgressionEditor();
-      updatePreview();
-      const v = progCheck(chord.root, chord.quality, prog);
-      addLog(t('logProgAdded') + ChordTheory.chordSymbol(chord.root, chord.quality) + (v.diatonic ? '' : ` ⚠ ${v.reason}`), v.diatonic ? 'success' : 'info');
-    };
-    lane.addEventListener('pointermove', move);
-    lane.addEventListener('pointerup', up);
-    lane.addEventListener('pointercancel', up);
+    handleProgLaneCreate(lane, prog, anchor, grab);
   });
 };
 
