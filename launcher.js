@@ -14,7 +14,9 @@ const appDir = __dirname;
 // Check if npm is available
 const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
+
 console.log(`📁 Application directory: ${appDir}`);
+
 
 // Spawn npm start process
 const npmProcess = spawn(npmCmd, ['start'], {
