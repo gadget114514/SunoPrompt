@@ -1,4 +1,4 @@
-let currentLang = localStorage.getItem('suno-lang') || 'en';
+let currentLang = typeof localStorage !== 'undefined' ? (localStorage.getItem('suno-lang') || 'en') : 'en';
 let generator = null;
 // Reported by the About dialog; both arrive with the JSON payload
 let appVersion = null;
@@ -9,17 +9,20 @@ const CATEGORY_ORDER_KEY = 'suno-category-order';
 
 const readStoredCategoryOrder = () => {
   try {
+    if (typeof localStorage === 'undefined' || typeof PromptGenerator === 'undefined') {
+      return typeof PromptGenerator !== 'undefined' ? PromptGenerator.categoryOrder(null) : [];
+    }
     return PromptGenerator.categoryOrder(JSON.parse(localStorage.getItem(CATEGORY_ORDER_KEY)));
   } catch (error) {
-    return PromptGenerator.categoryOrder(null);
+    return typeof PromptGenerator !== 'undefined' ? PromptGenerator.categoryOrder(null) : [];
   }
 };
 
 const emptyExcludes = () => ({ genres: [], vocals: [], instruments: [], chords: [], moods: [], structures: [] });
 
 // The Lyrics pane's sections and the categories that can carry a metatag
-const LYRIC_SECTIONS = PromptGenerator.LYRIC_SECTIONS;
-const LYRIC_CATEGORIES = PromptGenerator.LYRIC_CATEGORIES;
+const LYRIC_SECTIONS = typeof PromptGenerator !== 'undefined' ? PromptGenerator.LYRIC_SECTIONS : [];
+const LYRIC_CATEGORIES = typeof PromptGenerator !== 'undefined' ? PromptGenerator.LYRIC_CATEGORIES : [];
 // i18n key for each section's label, keyed by its section key
 const LYRIC_SECTION_LABEL_KEYS = {
   intro: 'lyricIntro',
@@ -76,7 +79,7 @@ let selections = {
   lyrics: defaultLyrics()
 };
 
-const CATEGORIES = PromptGenerator.CATEGORIES;
+const CATEGORIES = typeof PromptGenerator !== 'undefined' ? PromptGenerator.CATEGORIES : [];
 
 // Bring older saved projects up to the current data format
 const normalizeSelections = (sel) => {
@@ -2741,25 +2744,36 @@ const updateAllCheckboxes = () => {
 };
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
-  // Set initial language
-  updateLanguage(currentLang);
-  // Help needs no data, so it is wired up before the JSON arrives — that is
-  // exactly when someone is most likely to reach for it.
-  setupHelp();
-  setupAbout();
-  setupCustomInputs();
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    // Set initial language
+    updateLanguage(currentLang);
+    // Help needs no data, so it is wired up before the JSON arrives — that is
+    // exactly when someone is most likely to reach for it.
+    setupHelp();
+    setupAbout();
+    setupCustomInputs();
 
-  window.electronAPI.onJsonData((data) => {
-    appVersion = data.appVersion || null;
-    dataFiles = data.dataFiles || null;
-    generator = new PromptGenerator(data);
-    populateTabs();
-    setupTabs();
-    setupButtons();
-    setupSearch();
-    setupLyricsPanel();
-    if (typeof setupProgressionEditor === 'function') setupProgressionEditor();
-    updatePreview();
+    window.electronAPI.onJsonData((data) => {
+      appVersion = data.appVersion || null;
+      dataFiles = data.dataFiles || null;
+      generator = new PromptGenerator(data);
+      populateTabs();
+      setupTabs();
+      setupButtons();
+      setupSearch();
+      setupLyricsPanel();
+      if (typeof setupProgressionEditor === 'function') setupProgressionEditor();
+      updatePreview();
+    });
   });
-});
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    keywordTrans,
+    keywordLabel,
+    getCurrentLang: () => currentLang,
+    setCurrentLang: (lang) => { currentLang = lang; }
+  };
+}
