@@ -446,8 +446,7 @@ class PromptGenerator {
         ];
       }
       case 'instruments': {
-        const instruments = this.data.instruments?.instruments || {};
-        return Object.entries(instruments).flatMap(([key, data]) =>
+        return this.getInstrumentEntries().flatMap(([key, data]) =>
           [key, ...(data.techniques || []).map(t => PromptGenerator.techniqueValue(key, t))]);
       }
       case 'chords':
@@ -580,9 +579,17 @@ class PromptGenerator {
     return result;
   }
 
+  getInstrumentEntries() {
+    if (!this._instrumentEntries || this._cachedInstrumentsRef !== this.data?.instruments?.instruments) {
+      this._cachedInstrumentsRef = this.data?.instruments?.instruments;
+      this._instrumentEntries = Object.entries(this.data?.instruments?.instruments || {});
+    }
+    return this._instrumentEntries;
+  }
+
   // Random instruments (2-4 with more techniques each)
   randomInstruments() {
-    const instruments = Object.entries(this.data.instruments?.instruments || {});
+    const instruments = this.getInstrumentEntries().slice();
     if (instruments.length === 0) return [];
 
     // Weighted selection: more instruments used
@@ -824,7 +831,7 @@ class PromptGenerator {
   instrumentIndex() {
     if (!this._instrumentIndex) {
       const map = new Map();
-      Object.entries(this.data.instruments?.instruments || {}).forEach(([key, data]) => {
+      this.getInstrumentEntries().forEach(([key, data]) => {
         map.set(PromptGenerator.matchKey(key), key);
         (data.aliases || []).forEach(alias => {
           const aliasKey = PromptGenerator.matchKey(alias);
@@ -1162,7 +1169,7 @@ class PromptGenerator {
 
     // Structure instruments by instrument with techniques
     if (this.data.instruments?.instruments) {
-      for (const [instrumentName, instrumentData] of Object.entries(this.data.instruments.instruments)) {
+      for (const [instrumentName, instrumentData] of this.getInstrumentEntries()) {
         if (instrumentData.techniques) {
           items.instruments.byInstrument[instrumentName] = instrumentData.techniques;
           items.instruments.allTechniques.push(...instrumentData.techniques);
