@@ -109,7 +109,14 @@ const normalizeSelections = (sel) => {
   normalized.categoryOrder = PromptGenerator.categoryOrder(normalized.categoryOrder || selections.categoryOrder);
   if (generator) normalized.vocals = generator.normalizeVocals(normalized.vocals);
   // Genres such as "Synthwave / Retrowave" were split into separate items
-  normalized.genres = [...new Set(normalized.genres.flatMap(g => g.split(' / ').map(x => x.trim())))];
+  const genreSet = new Set();
+  for (let i = 0; i < normalized.genres.length; i++) {
+    const parts = normalized.genres[i].split(' / ');
+    for (let j = 0; j < parts.length; j++) {
+      genreSet.add(parts[j].trim());
+    }
+  }
+  normalized.genres = Array.from(genreSet);
   normalized.progression = normalizeProgression(normalized.progression);
   return normalized;
 };
