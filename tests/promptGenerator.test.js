@@ -84,6 +84,133 @@ test('PromptGenerator.generatePrompt generates correct prompt string', () => {
   assert.ok(prompt.includes('[EXCLUDE: dark]'));
 });
 
+test('PromptGenerator.generatePrompt formats genres with era genres first', () => {
+  const generator = new PromptGenerator(realData);
+  const selections = {
+    genres: ['Synth-Pop', '1980s', 'Rock'],
+    categoryOrder: PromptGenerator.ORDER_ITEMS
+  };
+
+  const prompt = generator.generatePrompt(selections);
+  // '1980s' is in Era group, so it should be reordered before non-era genres ('Synth-Pop', 'Rock')
+  assert.equal(prompt, '1980s, Synth-Pop, Rock');
+});
+
+test('PromptGenerator.generatePrompt formats vocals with modes, tones, deduplication, and positions', () => {
+  const generator = new PromptGenerator(realData);
+  const tones = generator.toneDescriptors();
+  const tone1 = tones[0] || 'warm';
+  const tone2 = tones[1] || 'bright';
+
+  // Test vocal mode conversion to style phrase, tone leading, and position appending
+  const selections = {
+    vocals: ['female'], // 'female' is a vocal mode name; should map to style phrase 'female vocal'
+    vocalTones: { female: [tone1, tone2] },
+    positions: { 'vocals:female': { pan: 'panned left', depth: 'upfront' } },
+    categoryOrder: PromptGenerator.ORDER_ITEMS
+  };
+
+  const prompt = generator.generatePrompt(selections);
+  assert.equal(prompt, `${tone1} ${tone2} female vocal (panned left, upfront)`);
+
+  // Test deduplication: when leadWithTones is called on a phrase already starting with that tone word
+  const leadTone = tone1;
+  assert.equal(generator.leadWithTones(`${leadTone} female vocal`, [leadTone]), `${leadTone} female vocal`);
+});
+
+test('PromptGenerator.generatePrompt formats instruments, implied instruments, and handles implied exclusions', () => {
+  const generator = new PromptGenerator(realData);
+  const tones = generator.toneDescriptors();
+  const tone = tones[0] || 'warm';
+
+  // Explicit instrument selection with technique
+  const selections = {
+    instruments: ['Grand Piano::legato arpeggios'],
+    instrumentTones: { 'Grand Piano': [tone] },
+    instrumentNotes: { 'Grand Piano': 'like a music box' },
+    positions: {
+      'instruments:Grand Piano': { pan: 'panned left' },
+      // 'Acoustic Guitar' is not explicitly in instruments array, but has position => implied instrument!
+      'instruments:Acoustic Guitar': { pan: 'panned right' }
+    },
+    categoryOrder: PromptGenerator.ORDER_ITEMS
+  };
+
+  const prompt = generator.generatePrompt(selections);
+  assert.ok(prompt.includes(`${tone} Grand Piano (legato arpeggios, like a music box, panned left)`));
+  assert.ok(prompt.includes('Acoustic Guitar (panned right)'));
+
+  // If implied instrument is listed in excludes.instruments, it must be omitted
+  const selectionsWithExcludes = {
+    ...selections,
+    excludes: {
+      instruments: ['Acoustic Guitar']
+    }
+  };
+
+  const promptWithExcludes = generator.generatePrompt(selectionsWithExcludes);
+  assert.ok(promptWithExcludes.includes(`${tone} Grand Piano (legato arpeggios, like a music box, panned left)`));
+  assert.ok(!promptWithExcludes.includes('Acoustic Guitar (panned right)'));
+  assert.ok(promptWithExcludes.includes('[EXCLUDE: Acoustic Guitar]'));
+});
+
+test('PromptGenerator.generatePrompt formats chord progressions and exclude blocks', () => {
+  const generator = new PromptGenerator(realData);
+  const selections = {
+    chords: ['major key'],
+    progression: {
+      key: 'C',
+      mode: 'major',
+      meter: '4/4',
+      bars: 4,
+      chords: [
+        { root: 'C', quality: 'maj', start: 0, dur: 1 },
+        { root: 'G', quality: 'maj', start: 1, dur: 1 },
+        { root: 'A', quality: 'min', start: 2, dur: 1 },
+        { root: 'F', quality: 'maj', start: 3, dur: 1 }
+      ]
+    },
+    excludes: {
+      genres: ['Metal'],
+      instruments: ['Electric Guitar::distortion'],
+      vocals: ['screaming vocal']
+    },
+    categoryOrder: PromptGenerator.ORDER_ITEMS
+  };
+
+  const prompt = generator.generatePrompt(selections);
+  assert.ok(prompt.includes('in C major, C - G - Am - F progression, 4/4 4 bars'));
+  // Excluded items should map to display phrases in trailing [EXCLUDE: ...]
+  assert.ok(prompt.includes('[EXCLUDE: Metal, screaming vocal, distortion]'));
+});
+
+test('PromptGenerator.generatePrompt respects custom category ordering, customs, others, and handles empty selections', () => {
+  const generator = new PromptGenerator(realData);
+
+  // Custom category order: moods -> bpm -> genres -> others
+  const customOrder = ['moods', 'bpm', 'genres', 'others'];
+  const selections = {
+    bpm: 100,
+    moods: ['energetic'],
+    genres: ['Pop'],
+    others: 'extra notes',
+    customs: {
+      genres: 'dancepop',
+      moods: 'uplifting'
+    },
+    categoryOrder: customOrder
+  };
+
+  const prompt = generator.generatePrompt(selections);
+  // Expected order: energetic, uplifting, 100 bpm, Pop, dancepop, extra notes
+  assert.equal(prompt, 'energetic, uplifting, 100 bpm, Pop, dancepop, extra notes');
+
+  // Empty selections edge case
+  const emptySelections = {};
+  const emptyPrompt = generator.generatePrompt(emptySelections);
+  assert.equal(emptyPrompt, '');
+});
+
 test('PromptGenerator.parsePrompt parses raw style prompt back into selections', () => {
   const generator = new PromptGenerator(realData);
   const rawText = '128 bpm, Synth-Pop, female vocal, warm Grand Piano (legato, panned left), [EXCLUDE: dark]';
