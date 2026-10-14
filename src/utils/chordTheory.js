@@ -221,6 +221,13 @@ class ChordTheory {
 
   // What a melody pitch is against the key and the chord sounding below it:
   // 'chord' (a chord tone), 'scale' (diatonic passing tone) or 'chromatic'.
+  static parseChord(str) {
+    if (!str || str === '-') return null;
+    const m = str.match(/^([A-G][b#]?)(.*?)(\/(.+))?$/);
+    if (!m) return null;
+    return { root: m[1], quality: m[2] || '', bass: m[4] };
+  }
+
   static noteKind(key, mode, chord, midi) {
     const pc = ((midi % 12) + 12) % 12;
     if (chord) {
