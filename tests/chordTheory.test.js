@@ -166,6 +166,41 @@ test('ChordTheory.buildFromTemplate builds chord progression timeline', () => {
   assert.equal(chords[3].root, 'F');
 });
 
+test('ChordTheory.parseChord - empty, placeholder, and invalid inputs', () => {
+  assert.equal(ChordTheory.parseChord(null), null);
+  assert.equal(ChordTheory.parseChord(undefined), null);
+  assert.equal(ChordTheory.parseChord(''), null);
+  assert.equal(ChordTheory.parseChord('-'), null);
+  assert.equal(ChordTheory.parseChord('Hmaj'), null);
+  assert.equal(ChordTheory.parseChord('123'), null);
+  assert.equal(ChordTheory.parseChord('XYZ'), null);
+});
+
+test('ChordTheory.parseChord - simple and accidental roots', () => {
+  assert.deepEqual(ChordTheory.parseChord('C'), { root: 'C', quality: '', bass: undefined });
+  assert.deepEqual(ChordTheory.parseChord('G'), { root: 'G', quality: '', bass: undefined });
+  assert.deepEqual(ChordTheory.parseChord('F#'), { root: 'F#', quality: '', bass: undefined });
+  assert.deepEqual(ChordTheory.parseChord('Bb'), { root: 'Bb', quality: '', bass: undefined });
+  assert.deepEqual(ChordTheory.parseChord('Db'), { root: 'Db', quality: '', bass: undefined });
+});
+
+test('ChordTheory.parseChord - chord qualities', () => {
+  assert.deepEqual(ChordTheory.parseChord('Cmaj7'), { root: 'C', quality: 'maj7', bass: undefined });
+  assert.deepEqual(ChordTheory.parseChord('Am7'), { root: 'A', quality: 'm7', bass: undefined });
+  assert.deepEqual(ChordTheory.parseChord('Dm7b5'), { root: 'D', quality: 'm7b5', bass: undefined });
+  assert.deepEqual(ChordTheory.parseChord('Gsus4'), { root: 'G', quality: 'sus4', bass: undefined });
+  assert.deepEqual(ChordTheory.parseChord('Cadd9'), { root: 'C', quality: 'add9', bass: undefined });
+  assert.deepEqual(ChordTheory.parseChord('Edim'), { root: 'E', quality: 'dim', bass: undefined });
+  assert.deepEqual(ChordTheory.parseChord('F#min'), { root: 'F#', quality: 'min', bass: undefined });
+});
+
+test('ChordTheory.parseChord - slash chords (bass notes)', () => {
+  assert.deepEqual(ChordTheory.parseChord('C/G'), { root: 'C', quality: '', bass: 'G' });
+  assert.deepEqual(ChordTheory.parseChord('Am7/G'), { root: 'A', quality: 'm7', bass: 'G' });
+  assert.deepEqual(ChordTheory.parseChord('F#/C#'), { root: 'F#', quality: '', bass: 'C#' });
+  assert.deepEqual(ChordTheory.parseChord('Bbm7b5/Db'), { root: 'Bb', quality: 'm7b5', bass: 'Db' });
+});
+
 test('ChordTheory.noteKind classifies melody notes', () => {
   const chord = { root: 'C', quality: 'maj' }; // C, E, G (MIDI pitch classes 0, 4, 7)
   // MIDI 60 is C4 (pitch class 0) -> chord tone
